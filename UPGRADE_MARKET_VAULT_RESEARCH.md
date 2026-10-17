@@ -1,0 +1,39 @@
+# Exact upgrades, live prices, acquisition, Vault and combat records
+
+Reviewed17October2026. This adds read-only data and manual records to the existing standalone guide. It does not buy, craft, claim rewards, inspect combat logs automatically or change editorial scores.
+
+## Source equipment catalogue
+
+Fetched all115 selected build-record source URLs (113unique URLs, MetaBattle/Snow Crows). Parsed the **first primary equipment variant**, excluding optional later equipment blocks, food, infusions and narrative alternatives. Resolved item IDs against the real public `/v2/items` API:308source items fetched,255used primary-equipment/upgrade identities retained in the embedded `upgrade-data` catalogue. All115records have six rune slots, one relic and two/three/four sigils as appropriate to their shown physical weapons. Source-set membership is retained; the parser does not assume four distinct weapons for every profession.
+
+Compared every primary slot/name/stat multiset with the guide’s stored gear profiles.114matched immediately. The Champion Hunter Evoker cozy profile omitted the source’s Dire Backpiece; this was restored in both its gear strings and slot profile, yielding115matches. The source page also misspells two Trailblazer labels; verified item identity and the existing corrected stat family were retained. Source: https://snowcrows.com/builds/open-world/elementalist/champion-hunter-evoker-toad . Public weapon type `Harpoon` is normalized to land-spear display `Spear`, fixing dropped imported spear records. Underwater slots remain excluded.
+
+Exact upgrades are visible beside each revealed build and in the selected account’s equipment workspace. ID counts distinguish equipped upgrades, unattached spare candidates and remaining quantities, reserving shared spare counts across source weapon sets. Matched physical weapon sets may be swapped A/B; unrelated weapon types do not count as carrying the target’s sigils. Exact upgrade IDs do not prove stat compatibility, extraction feasibility, legendary copies or complete combat readiness. Replacing/stat-changing gear can destroy upgrades. Old templates/source equipment variants that fail the fingerprint pause automatic comparisons.
+
+## Public prices and recipes
+
+- [Prices](https://wiki.guildwars2.com/wiki/API:2/commerce/prices): `/v2/commerce/prices?ids=...`, no API key or Trading Post permission. Real public item/stat data and source equipment were fetched during implementation; private/account-specific successful paths use fixtures. Lowest sell offer and highest buy order are shown separately. Offers have quantities; absent/zero/insufficient quantities are unpriced, never a free item.404for all non-listed IDs becomes an unpriced basket;429/network failures produce an explicit failure. Positive lowest-unit estimates are not depth-of-market totals and can change before purchase. Buyer costs are not reduced by selling tax. Account eligibility and stock require an in-game check.
+- [Recipe search](https://wiki.guildwars2.com/wiki/API:2/recipes/search) and [recipe definitions](https://wiki.guildwars2.com/wiki/API:2/recipes): up to ten recipes for the exact requested output item, with discipline/rating, unlock flags, output batch size and item/currency/guild ingredients. Both old item_id and current type/id ingredient shapes are supported. Only item inputs enter the coin subtotal; currencies and guild requirements stay separate. Missing components use the selected account’s inventory snapshot and recorded binding eligibility. Owned material value, recipe sheets, fees, recursive crafting and daily gates are excluded; no cheapest-craft or profit claim is made.
+- [Character crafting](https://wiki.guildwars2.com/wiki/API:2/characters/:id/crafting) and [recipes](https://wiki.guildwars2.com/wiki/API:2/characters/:id/recipes): optional private verification only while the connected API account matches the inspected snapshot’s account. Active discipline/rating and known recipes are checked; unavailable responses remain unknown. Private keys never go to public price/item/recipe endpoints.
+
+The pricing UI explicitly labels a **missing-upgrade/complete-upgrade-set subtotal**, not the cost of an entire build. Source primary equipment IDs have separate route/recipe inspectors because ascended/stat-selectable/account-bound item IDs are not interchangeable with tradable exotic alternatives. Item metadata and standard recipes do not certify vendor access, achievements, expansion entitlement, discovery, selectable-stat availability or weapon-training unlocks; exact-item Wiki acquisition links and build expansion checks expose those remaining gates before spending. Source and ingredient links/names can contain item spoilers, called out before lookup.
+
+Quotes are session-only, user-triggered and dated; no market requests occur on initial load. Account/target changes and disconnect/pagehide cancel stale lookups. All requests use the fixed official API origin with the existing documented browser authentication format only for private endpoints.
+
+## Wizard’s Vault
+
+[Daily](https://wiki.guildwars2.com/wiki/API:2/account/wizardsvault/daily), weekly and [listings](https://wiki.guildwars2.com/wiki/API:2/account/wizardsvault/listings) require account+progression, which is already optional in guided setup. They are independent optional scan sections with previous-data/date preservation on failures. Daily/weekly objective progress, claim status and meta thresholds are stored; names require a separate personal-spoiler opt-in. Snapshots can predate resets and must be refreshed after logging in.
+
+The API documentation reports unreliable purchased counts (often always0) and season data that does not refresh until a character logs in. Therefore the application never certifies remaining seasonal stock or purchase eligibility. It highlights reported ascended equipment, Laurel and related gearing listings, compares one listed cost against recorded Astral Acclaim if wallet data exists, and requires an in-game stock/container/stat check. This is not a complete reward-value tier list. Names reset hidden when scanning/switching/importing accounts; shared account files and whole-guide backups include Vault records without keys.
+
+## Manual combat journal
+
+Up to100 bounded records: date, encounter, original selected Steve/Matt pair/roles, outcome, optional duration, combined deaths, main lesson, next change and notes. Add/edit/remove/cancel/clear/copy, escaped output, reload and whole-guide backups are supported. Editing keeps the original pair and record position, rather than silently substituting today’s roster. Journal clearing is separate from roster reset.
+
+The last five entered manual records inform explicit control/recovery/uptime/movement practice advice in the duo journal and account duo workspace. Different champions and setup choices are not controlled comparisons. No DPS, boon uptime, objective skill rating, clear rate or automatic bible-score changes are inferred from these notes.
+
+## Verification and limits
+
+`tests/upgrades-vault-journal.cjs` checks all115catalogue/fingerprint/quantity invariants, the corrected backpiece and spear API type, equipped/spare counts, public price boundaries and rate-limit failures, recipe quantities/currencies/active discipline/unlock status, Vault response shapes and failed-refresh preservation, personal-name gating, journal CRUD/original-pair/escaping/persistence and mobile320/390/768 with optional axe. Existing account, navigation, data, mobile and duo regressions remain in use. Live production HTML and browser checks follow deployment.
+
+Real successful private imports and physical Safari are not available for verification here. Every result remains a snapshot or a manual report; there is no live game telemetry, backend sync or enterprise-service certification.
