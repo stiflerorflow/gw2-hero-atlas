@@ -1151,6 +1151,91 @@
           display: none;
         }
       }
+
+      /* The mastery view retains the atlas palette, with an account-wide identity. */
+      .mastery-mode .hero, .mastery-mode .journey, .mastery-mode .plannerbar,
+      .mastery-mode .hpcredit, .mastery-mode #reset { display: none; }
+      .mp-heading { display: grid; grid-template-columns: 1fr minmax(280px, 440px); gap: 28px; align-items: center; padding: 24px 0; }
+      .mp-heading h1 { font-size: clamp(34px, 4vw, 48px); margin-top: 10px; }
+      .mp-heading p { max-width: 690px; color: var(--muted); }
+      .mp-heading em { color: var(--green); font-style: normal; }
+      .mp-stats { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+      .mp-stats > div { padding: 20px 13px; min-width: 0; }
+      .mp-stats > div + div { border-left: 1px solid var(--line); }
+      .mp-stats strong { display: block; color: var(--green); font: 34px Georgia, serif; margin-bottom: 8px; }
+      .mp-stats span { display: block; color: var(--muted); font-size: 12px; }
+      .mp-account { padding: 16px 20px; border-left: 3px solid var(--green); background: var(--soft); border-radius: 0 9px 9px 0; color: var(--muted); }
+      .mp-account b { color: var(--text); }
+      .mp-hidden { padding: 15px 0 5px; color: var(--muted); }
+      .mp-toolbar { display: grid; grid-template-columns: minmax(190px, 1.4fr) minmax(180px, 1fr) minmax(185px, 1fr) auto; gap: 14px; align-items: end; margin: 20px 0 10px; padding: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+      .mp-toolbar > label { display: grid; gap: 6px; font-size: 12px; color: var(--muted); min-width: 0; }
+      .mp-toolbar input[type=search], .mp-toolbar select { width: 100%; min-width: 0; }
+      .mp-checks { display: grid; gap: 8px; padding-bottom: 4px; }
+      .mp-checks label { white-space: nowrap; font-size: 12px; }
+      .mp-listbar { margin-bottom: 15px; }
+      .mp-listbar p { margin: 0; color: var(--muted); }
+      .mp-group { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 16px; background: var(--panel); overflow: hidden; }
+      .mp-group > summary { display: flex; gap: 20px; justify-content: space-between; align-items: center; padding: 20px; list-style: none; }
+      .mp-group > summary::-webkit-details-marker, .mp-card > summary::-webkit-details-marker { display: none; }
+      .mp-group > summary::after { content: '+'; color: var(--green); font-size: 24px; }
+      .mp-group[open] > summary::after { content: '−'; }
+      .mp-group h2 { font: 25px Georgia, serif; margin: 0 0 5px; }
+      .mp-group small { display: block; }
+      .mp-group .mp-group-total { margin-left: auto; white-space: nowrap; color: var(--green); font-size: 13px; }
+      .mp-group[data-mpgroup=hard] > summary h2 { color: var(--gold); }
+      .mp-cards { border-top: 1px solid var(--line); }
+      .mp-card { border-bottom: 1px solid var(--line); }
+      .mp-card:last-child { border-bottom: 0; }
+      .mp-card > summary { display: grid; grid-template-columns: 1fr auto; gap: 10px 22px; list-style: none; padding: 18px 20px; }
+      .mp-card > summary:hover { background: var(--soft); }
+      .mp-card h3 { font-size: 16px; margin: 4px 0 6px; color: var(--text); }
+      .mp-card .mp-why { color: var(--muted); margin: 7px 0 0; max-width: 850px; font-size: 13px; }
+      .mp-badges { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+      .mp-badge { display: inline-block; border-radius: 5px; background: #273d35; color: var(--muted); padding: 3px 7px; font-size: 11px; }
+      .mp-badge.achievement { background: #35452d; color: #d5efbc; }
+      .mp-badge.ready { color: var(--green); }
+      .mp-badge.blocked { color: var(--gold); }
+      .mp-point { text-align: right; color: #d9c2ef; white-space: nowrap; font-weight: 700; }
+      .mp-point small { color: var(--muted); margin-top: 8px; font-weight: 400; }
+      .mp-card[open] .mp-point small::after { content: ' ↑'; }
+      .mp-card:not([open]) .mp-point small::after { content: ' ↓'; }
+      .mp-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(230px, 350px); gap: 26px; padding: 4px 20px 24px; }
+      .mp-body h4 { margin: 18px 0 8px; font-size: 12px; color: var(--green); letter-spacing: .08em; text-transform: uppercase; }
+      .mp-body p, .mp-body li { color: var(--muted); }
+      .mp-body ol { padding-left: 21px; }
+      .mp-body li { padding: 0 0 8px 3px; }
+      .mp-prereqs { margin: 14px 0; padding: 12px; border: 1px solid var(--line); border-radius: 8px; }
+      .mp-prereqs strong { color: var(--text); }
+      .mp-waypoint { background: var(--soft); padding: 14px; border-radius: 8px; }
+      .mp-waypoint code { overflow-wrap: anywhere; }
+      .mp-map { width: 100%; display: block; border: 1px solid var(--line); border-radius: 8px; margin: 12px 0; background: #0d1d1a; }
+      .mp-completion { padding: 14px; background: var(--soft); border-radius: 8px; margin-top: 14px; }
+      .mp-completion label { display: flex; align-items: flex-start; gap: 10px; font-weight: 650; }
+      .mp-completion small { display: block; margin: 8px 0 0 28px; }
+      .mp-sources { font-size: 12px; margin-top: 16px; }
+      .mp-sources a { display: inline-block; margin-top: 5px; padding: 5px 0; }
+      .mp-evidence { color: var(--muted); margin: 24px 0 35px; border-top: 1px solid var(--line); padding-top: 18px; }
+      .mp-evidence p { max-width: 1000px; margin: 14px 0; }
+      @media (max-width: 1050px) { .mp-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (max-width: 700px) {
+        .tabs { flex-wrap: wrap; overflow: visible; }
+        .tabs .tab { flex: 1 1 calc(50% - 6px); padding: 10px 7px; font-size: 12px; white-space: normal; }
+        .mp-heading { grid-template-columns: 1fr; gap: 8px; padding: 20px 0; }
+        .mp-stats > div { padding: 14px 10px; }
+        .mp-stats strong { font-size: 29px; }
+        .mp-toolbar { padding: 14px; gap: 12px; }
+        .mp-toolbar > label:first-child { grid-column: 1 / -1; }
+        .mp-checks { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+        .mp-checks label { white-space: normal; }
+        .mp-card > summary, .mp-group > summary { padding: 15px; gap: 10px; }
+        .mp-group h2 { font-size: 21px; }
+        .mp-group .mp-group-total { white-space: normal; text-align: right; }
+        .mp-body { grid-template-columns: 1fr; padding: 0 15px 18px; gap: 8px; }
+        .mp-body > aside { order: -1; }
+        .mp-body h4 { margin-top: 14px; }
+        .mp-account { padding: 14px; font-size: 13px; }
+        .mp-point { font-size: 12px; }
+      }
     </style>
   </head>
   <body>
@@ -1171,6 +1256,12 @@
           the HTML and open it in a full browser with JavaScript enabled.
         </p></noscript
       >
+      <nav class="tabs" aria-label="Guide view">
+        <button type="button" class="tab active" data-tab="atlas">Map atlas</button
+        ><button type="button" class="tab" data-tab="mastery">PoF mastery points</button
+        ><button type="button" class="tab" data-tab="route">My route</button
+        ><button type="button" class="tab" data-tab="help">Dips, shortcuts &amp; help</button>
+      </nav>
       <div class="hero">
         <div>
           <div class="eyebrow">Your world. At your pace.</div>
@@ -1313,13 +1404,13 @@
       <div class="profilebar row between">
         <div class="row">
           <label class="inline"
-            >Character
+            ><span id="characterlabel">Character</span>
             <select id="character"></select></label
           ><button type="button" id="addchar">+ Add</button
           ><button type="button" id="renamechar" class="quiet">Rename</button
           ><button type="button" id="reset" class="quiet">Reset</button>
         </div>
-        <div class="row">
+        <div class="row hpcredit">
           <label class="inline"
             >Starting credit
             <input id="starting" type="number" min="0" max="5000" step="1" /></label
@@ -1441,8 +1532,8 @@
             <p class="muted compact">
               Mounts and masteries carry across characters. Requirements describe the listed route.
               Higher-tier mastery ticks include their earlier tiers. No route here requires a
-              Skyscale. Unlocks with no matching route, such as High Vault and Jackal, are recorded
-              for your reference; ticking them does not override the written route.
+              Skyscale. Ticking an unlock never grants achievement credit or overrides a written
+              approach. The mastery checklist is shared by the whole account.
             </p>
             <div class="unlockgrid" id="unlocks"></div>
           </div>
@@ -1470,11 +1561,7 @@
           ><button type="button" id="editlimits" class="quiet">Adjust limits</button>
         </div>
       </div>
-      <nav class="tabs" aria-label="Guide view">
-        <button type="button" class="tab active" data-tab="atlas">Map atlas</button
-        ><button type="button" class="tab" data-tab="route">My route</button
-        ><button type="button" class="tab" data-tab="help">Dips, shortcuts &amp; help</button>
-      </nav>
+
       <div id="atlasview">
         <div id="maps" class="maps" role="group" aria-label="Map selection"></div>
         <div class="workspace">
@@ -1534,6 +1621,50 @@
           <article id="detail" class="detail"></article>
         </div>
       </div>
+      <section id="masteryview" aria-labelledby="masterytitle" hidden>
+        <div class="mp-heading">
+          <div>
+            <div class="eyebrow">Path of Fire · account-wide checklist</div>
+            <h1 id="masterytitle">Mastery points.<br /><em>Less faff first.</em></h1>
+            <p>Start with short walks, swims and simple mount hops. Easy achievements are called out;
+              longer climbs and poor-value detours have their own groups.</p>
+          </div>
+          <div class="mp-stats" aria-label="Mastery checklist progress">
+            <div><strong id="mpcollected">0</strong><span>collected in this checklist</span></div>
+            <div><strong id="mpremaining">0</strong><span>uncollected sources revealed</span></div>
+            <div><strong id="mpquick">0</strong><span>easy options with your kit</span></div>
+          </div>
+        </div>
+        <div class="mp-account"><b>One point per source, once per account.</b>
+          Purple mastery points train PoF masteries; they are separate from hero points and still need mastery XP.
+          This checklist records collected rewards, not your current unspent balance.
+          Switching characters keeps these ticks. Backup / restore includes them.</div>
+        <div id="mphidden" class="mp-hidden"></div>
+        <div class="mp-toolbar">
+          <label>Find a source<input id="mpsearch" type="search" placeholder="Search revealed mastery sources…" /></label>
+          <label>Map<select id="mpmap"><option value="all">All revealed PoF maps</option></select></label>
+          <label>Source<select id="mptype"><option value="all">Insights + achievements</option><option value="insight">Insights only</option><option value="achievement">Achievements only</option><option value="easyachievement">Easy achievements only</option></select></label>
+          <div class="mp-checks"><label class="check"><input id="mpready" type="checkbox" /> Ready with my kit</label><label class="check"><input id="mphide" type="checkbox" checked /> Hide collected</label></div>
+        </div>
+        <div class="row between mp-listbar"><p id="mpcount" role="status" aria-live="polite"></p><button id="mpclear" type="button" class="quiet">Clear filters</button></div>
+        <div id="mpgroups"></div>
+        <details class="mp-evidence"><summary>How these recommendations work</summary>
+          <p>All 40 PoF insights plus 33 additional achievement rewards are listed. Every entry awards
+            one purple mastery point; the rewards were checked against ArenaNet achievement data.
+            Story mission rewards and Living World Season 4 maps are outside this catalogue.</p>
+          <p>Difficulty follows traversal, waits and backtracking, rather than combat alone.
+            “Hard · not worth doing for a quick point” means low priority for your preferences;
+            a friend portal or an already-owned flying mount may make a detour worthwhile.</p>
+          <p>“Ready with my kit” checks the listed mount/mastery requirements and this character’s
+            map access. Sources with an unconfirmed route, collection/story gate or group timing
+            are kept out of that filter. Map waypoint discovery is still your responsibility.</p>
+          <p>Read each achievement’s in-game completion status before travelling. Owning a mount
+            does not automatically tick its purchase achievement here. A map marker can represent
+            an achievement interaction; it is counted once, never again as a second insight.</p>
+          <p>Researched 17 October 2026 using the GW2 Wiki and ArenaNet API. Travel ratings are editorial;
+            routes have not been play-tested in game. External source pages may contain story spoilers.</p>
+        </details>
+      </section>
       <div id="helpview" class="help" hidden>
         <p class="muted">
           External references leave this guide’s spoiler controls and may contain later map names or
@@ -8242,6 +8373,2964 @@
 ]
       }
     </script>
+    <script id="mastery-data" type="application/json">
+[
+  {
+    "id": "mp-391",
+    "achievementId": 3655,
+    "masteryId": 391,
+    "name": "Amnoon Bazaar",
+    "map": "co",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Amnoon Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        58615.4,
+        43742.9
+      ],
+      "id": 2747,
+      "chat_link": "[&BLsKAAA=]"
+    },
+    "reqs": [
+      [
+        "raptor"
+      ]
+    ],
+    "why": "A short stair climb and one ordinary Raptor jump; no Canyon Jumping needed.",
+    "steps": [
+      "Go east to Amnoon Bazaar, then north up the staircases.",
+      "From the top stairs west of the marker, leap across on your Raptor and commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59018.6,
+      43615.5
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Crystal_Oasis_Insight:_Amnoon_Bazaar",
+    "api": "https://api.guildwars2.com/v2/achievements/3655"
+  },
+  {
+    "id": "mp-361",
+    "achievementId": 3763,
+    "masteryId": 361,
+    "name": "Old Amnoon",
+    "map": "co",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Amnoon Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        58615.4,
+        43742.9
+      ],
+      "id": 2747,
+      "chat_link": "[&BLsKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A short swim from town, with no mount or jumping route.",
+    "steps": [
+      "Go west through Amnoon Harbor and enter the bay.",
+      "Swim west to the sunken plaza before the Old Amnoon point of interest; the insight is underwater on a pillar."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      57698.9,
+      43793.3
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Crystal_Oasis_Insight:_Old_Amnoon",
+    "api": "https://api.guildwars2.com/v2/achievements/3763"
+  },
+  {
+    "id": "mp-380",
+    "achievementId": 3805,
+    "masteryId": 380,
+    "name": "Sifuri Quicksand",
+    "map": "co",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Temple of Kormir Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60972.9,
+        43251.6
+      ],
+      "id": 2624,
+      "chat_link": "[&BEAKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer"
+      ]
+    ],
+    "why": "Simple with Skimmer; the Raptor-only alternative is deliberately not the easy route.",
+    "steps": [
+      "Travel west toward Sifuri Sand Sea and the rocks in the quicksand.",
+      "Cross on Skimmer, land on the rocks and commune."
+    ],
+    "caution": "Quicksand dismounts and kills quickly. Canyon Jumping can work with two fast leaps, but that is a less forgiving alternative.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59443.8,
+      42554.3
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Crystal_Oasis_Insight:_Sifuri_Quicksand",
+    "api": "https://api.guildwars2.com/v2/achievements/3805"
+  },
+  {
+    "id": "mp-355",
+    "achievementId": 3710,
+    "masteryId": 355,
+    "name": "Imed's Grotto",
+    "map": "co",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Amnoon Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        58615.4,
+        43742.9
+      ],
+      "id": 2747,
+      "chat_link": "[&BLsKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer"
+      ],
+      [
+        "springer"
+      ]
+    ],
+    "why": "A cave entrance and a few awkward landings; easier after a water mount is unlocked.",
+    "steps": [
+      "Head southwest along the coast to the grotto entrance.",
+      "Use Skimmer to reach its alcove, or swim to the small right-hand ledge and mount Springer.",
+      "Inside, reach the central rock platform and hop up to the commune."
+    ],
+    "caution": "Raptor-only dismount tricks exist but are not a low-effort recommendation.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      57730,
+      44515.4
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Crystal_Oasis_Insight:_Imed's_Grotto",
+    "api": "https://api.guildwars2.com/v2/achievements/3710"
+  },
+  {
+    "id": "mp-386",
+    "achievementId": 3717,
+    "masteryId": 386,
+    "name": "Sanctum of Nabkha",
+    "map": "co",
+    "type": "insight",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Destiny's Gorge Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        61588.6,
+        44187.2
+      ],
+      "id": 2707,
+      "chat_link": "[&BJMKAAA=]"
+    },
+    "reqs": [
+      [
+        "sand"
+      ]
+    ],
+    "why": "A portal mini-dungeon with floating platforms: poor value if you dislike technical jumping.",
+    "steps": [
+      "Travel to Sanctum of Nabkha and use the Jackal sand-portal route.",
+      "Follow the portal/platform sequence to the upper commune; use the linked route images before attempting it."
+    ],
+    "caution": "High Vault shortcuts exist, but still involve cliff and platform navigation. A friend lift can change the effort substantially.",
+    "precision": true,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      61063.2,
+      44706
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Crystal_Oasis_Insight:_Sanctum_of_Nabkha",
+    "api": "https://api.guildwars2.com/v2/achievements/3717"
+  },
+  {
+    "id": "mp-349",
+    "achievementId": 3714,
+    "masteryId": 349,
+    "name": "Glint's Legacy",
+    "map": "co",
+    "type": "insight",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Destiny's Gorge Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        61588.6,
+        44187.2
+      ],
+      "id": 2707,
+      "chat_link": "[&BJMKAAA=]"
+    },
+    "reqs": [
+      [
+        "high"
+      ]
+    ],
+    "why": "Repeated corner jumps, hostile caves and scaffolding for a single point.",
+    "steps": [
+      "Head toward Fortunate Strike and enter the southern mine cave.",
+      "Follow the rising rail track, then use High Vault on the left-hand ledges to reach the tent exit.",
+      "Continue onto the plateau and climb the broken scaffolding below the insight."
+    ],
+    "caution": "Veteran guards and a jump around a pillar add friction. Leave this until easy points are exhausted.",
+    "precision": true,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      62054.7,
+      44292.9
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Crystal_Oasis_Insight:_Glint's_Legacy",
+    "api": "https://api.guildwars2.com/v2/achievements/3714"
+  },
+  {
+    "id": "mp-336",
+    "achievementId": 3605,
+    "masteryId": 336,
+    "name": "Makali Outpost",
+    "map": "dh",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Makali Outpost Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60676.5,
+        42149.4
+      ],
+      "id": 2667,
+      "chat_link": "[&BGsKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "A nearby basic-Springer hop once you have bought the mount.",
+    "steps": [
+      "Locate the insight above Makali Outpost.",
+      "Use Springer to reach its ledge and commune. High Vault is not the listed requirement."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60728.5,
+      42115.5
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Makali_Outpost",
+    "api": "https://api.guildwars2.com/v2/achievements/3605"
+  },
+  {
+    "id": "mp-402",
+    "achievementId": 3769,
+    "masteryId": 402,
+    "name": "Highjump Rise",
+    "map": "dh",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Highjump Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59604.9,
+        40332.9
+      ],
+      "id": 2717,
+      "chat_link": "[&BJ0KAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "Very close to the ranch: a natural first stop after buying Springer.",
+    "steps": [
+      "From Highjump Ranch Waypoint, locate the nearby raised insight.",
+      "Use the basic Springer jump to reach it and commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59549.3,
+      40287.1
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Highjump_Rise",
+    "api": "https://api.guildwars2.com/v2/achievements/3769"
+  },
+  {
+    "id": "mp-381",
+    "achievementId": 3878,
+    "masteryId": 381,
+    "name": "Brightwater Hollow",
+    "map": "dh",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Brightwater Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59352.1,
+        41882.9
+      ],
+      "id": 2705,
+      "chat_link": "[&BJEKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ],
+      [
+        "raptor"
+      ]
+    ],
+    "why": "A small hollow near the waypoint, rather than a long mountain climb.",
+    "steps": [
+      "Head south to the pond on the southern side of Brightwater Inlet.",
+      "Hop onto the skale ledge with Springer, or leap from the ramp south of the waypoint with Raptor.",
+      "Enter the hollow and commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58971.9,
+      42227.9
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Brightwater_Hollow",
+    "api": "https://api.guildwars2.com/v2/achievements/3878"
+  },
+  {
+    "id": "mp-385",
+    "achievementId": 3875,
+    "masteryId": 385,
+    "name": "Kanuz Overlook",
+    "map": "dh",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Brightwater Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59352.1,
+        41882.9
+      ],
+      "id": 2705,
+      "chat_link": "[&BJEKAAA=]"
+    },
+    "reqs": [
+      [
+        "canyon"
+      ]
+    ],
+    "why": "One planned long leap once Canyon Jumping is trained.",
+    "steps": [
+      "Travel toward Kanuz Overlook in Salt Flats.",
+      "Start on the cliff southeast of the insight and use a full Canyon Jumping leap to its platform."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60071.1,
+      42019.8
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Kanuz_Overlook",
+    "api": "https://api.guildwars2.com/v2/achievements/3875"
+  },
+  {
+    "id": "mp-331",
+    "achievementId": 3671,
+    "masteryId": 331,
+    "name": "Base of the Watchtower",
+    "map": "dh",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Lommuld Kraal Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60598.2,
+        40452.9
+      ],
+      "id": 2666,
+      "chat_link": "[&BGoKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "A straightforward wall climb after crossing the nearby bridge.",
+    "steps": [
+      "Take the southeast bridge from Lommuld Kraal Waypoint.",
+      "Use Springer on the wall ledges leading to the insight at the watchtower’s base."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      61296.8,
+      40765.1
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Base_of_the_Watchtower",
+    "api": "https://api.guildwars2.com/v2/achievements/3671"
+  },
+  {
+    "id": "mp-368",
+    "achievementId": 3755,
+    "masteryId": 368,
+    "name": "Standstill Spire",
+    "map": "dh",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Derelict Delve Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        57691.8,
+        40331.8
+      ],
+      "id": 2724,
+      "chat_link": "[&BKQKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "A manageable climb, with more ledges than the ranch and hollow stops.",
+    "steps": [
+      "Go east from Derelict Delve Waypoint toward the broken bridge.",
+      "Look north of the bridge for the insight and use Springer to climb the spire."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58309.9,
+      40223.4
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Standstill_Spire",
+    "api": "https://api.guildwars2.com/v2/achievements/3755"
+  },
+  {
+    "id": "mp-414",
+    "achievementId": 3783,
+    "masteryId": 414,
+    "name": "Lifeblood Falls Grub Ledge",
+    "map": "dh",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Lommuld Kraal Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60598.2,
+        40452.9
+      ],
+      "id": 2666,
+      "chat_link": "[&BGoKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "Several cliff jumps beside a ravine; keep it for a climbing evening.",
+    "steps": [
+      "Head north from Lommuld Kraal toward Lifeblood Ravine.",
+      "Use Springer to work up the cliff ledges toward the insight marker."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60704,
+      39992.5
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Lifeblood_Falls_Grub_Ledge",
+    "api": "https://api.guildwars2.com/v2/achievements/3783"
+  },
+  {
+    "id": "mp-378",
+    "achievementId": 3640,
+    "masteryId": 378,
+    "name": "Giant's Bough",
+    "map": "dh",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Highjump Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59604.9,
+        40332.9
+      ],
+      "id": 2717,
+      "chat_link": "[&BJ0KAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "The final walk is easy; reaching the high scarps takes a climb.",
+    "steps": [
+      "Head southwest and use Springer to climb into Windshear Scarps.",
+      "Once on the upper ground, follow the terrain to Giant’s Bough and commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58792.4,
+      40904
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Giant's_Bough",
+    "api": "https://api.guildwars2.com/v2/achievements/3640"
+  },
+  {
+    "id": "mp-370",
+    "achievementId": 3800,
+    "masteryId": 370,
+    "name": "Derelict Perch",
+    "map": "dh",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Derelict Delve Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        57691.8,
+        40331.8
+      ],
+      "id": 2724,
+      "chat_link": "[&BKQKAAA=]"
+    },
+    "reqs": [
+      [
+        "high"
+      ]
+    ],
+    "why": "Repeated High Vault ledges and a veteran guard, but no long puzzle.",
+    "steps": [
+      "Look up and north from Derelict Delve Waypoint.",
+      "Climb the ledges with High Vault, clear the veteran owl griffon and commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      57688.8,
+      40277
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Derelict_Perch",
+    "api": "https://api.guildwars2.com/v2/achievements/3800"
+  },
+  {
+    "id": "mp-390",
+    "achievementId": 3810,
+    "masteryId": 390,
+    "name": "Overreach Spider Nest",
+    "map": "dh",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Derelict Delve Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        57691.8,
+        40331.8
+      ],
+      "id": 2724,
+      "chat_link": "[&BKQKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "Pillar hopping near the vista; more fiddly than a ground commune.",
+    "steps": [
+      "Head south toward the vista and take the pillars on the right.",
+      "Use Springer to hop upward into the nest area and reach the insight."
+    ],
+    "caution": "A snowy-canopy glide-down route is an alternative if you already know the upper path.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      57714.1,
+      40877.9
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Overreach_Spider_Nest",
+    "api": "https://api.guildwars2.com/v2/achievements/3810"
+  },
+  {
+    "id": "mp-379",
+    "achievementId": 3656,
+    "masteryId": 379,
+    "name": "Palace of Aban",
+    "map": "dh",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Derelict Delve Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        57691.8,
+        40331.8
+      ],
+      "id": 2724,
+      "chat_link": "[&BKQKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "A hill approach followed by several palace-pillar jumps.",
+    "steps": [
+      "Head south and climb high on the hills before dropping onto the bridges in front of the palace.",
+      "Enter the palace, then use Springer on its pillars to reach the insight."
+    ],
+    "caution": "High Vault is recommended for comfort, but the wiki does not make it compulsory.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      57839.1,
+      41291.6
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Palace_of_Aban",
+    "api": "https://api.guildwars2.com/v2/achievements/3656"
+  },
+  {
+    "id": "mp-373",
+    "achievementId": 3713,
+    "masteryId": 373,
+    "name": "Sunderlands Crater",
+    "map": "dh",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Lommuld Kraal Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60598.2,
+        40452.9
+      ],
+      "id": 2666,
+      "chat_link": "[&BGoKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer",
+        "canyon"
+      ]
+    ],
+    "why": "Two mounts and an exposed ridge crossing add effort.",
+    "steps": [
+      "Cross the southeast bridge and scale the wall south of the watchtower insight with Springer.",
+      "Follow the southern ridge and use Canyon Jumping to cross the ravine to the commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      62102.4,
+      41107.1
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Sunderlands_Crater",
+    "api": "https://api.guildwars2.com/v2/achievements/3713"
+  },
+  {
+    "id": "mp-367",
+    "achievementId": 3591,
+    "masteryId": 367,
+    "name": "Above the Flats",
+    "map": "dh",
+    "type": "insight",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Brightwater Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59352.1,
+        41882.9
+      ],
+      "id": 2705,
+      "chat_link": "[&BJEKAAA=]"
+    },
+    "reqs": [
+      [
+        "sand"
+      ]
+    ],
+    "why": "Floating sand roads and several portals make this a poor early-point detour.",
+    "steps": [
+      "Reach the ground below the floating structure and use the portal at the western cliff.",
+      "On the upper plateau, find the next portal above a ledge beyond the bridge.",
+      "Follow the suspended sand paths and remaining portals to the insight."
+    ],
+    "caution": "Teleport to Friend can bypass the ascent if Matt can stand at the endpoint. The normal route still needs Shifting Sands.",
+    "precision": true,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59760.9,
+      41380.6
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Above_the_Flats",
+    "api": "https://api.guildwars2.com/v2/achievements/3591"
+  },
+  {
+    "id": "mp-376",
+    "achievementId": 3630,
+    "masteryId": 376,
+    "name": "Discarded Vessels",
+    "map": "dh",
+    "type": "insight",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Brightwater Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59352.1,
+        41882.9
+      ],
+      "id": 2705,
+      "chat_link": "[&BJEKAAA=]"
+    },
+    "reqs": [
+      [
+        "wind",
+        "sand"
+      ]
+    ],
+    "why": "Two advanced mount unlocks plus a vessel/pedestal transfer for one point.",
+    "steps": [
+      "Go west to Discarded Vessels.",
+      "Use Skimmer with Ride the Wind to enter the large vessel and reach the chest pedestal.",
+      "Switch to Jackal and blink through the sand portal to the commune."
+    ],
+    "caution": "Basic Skimmer does not provide the written high-hover approach. Tricky dismount workarounds are not assumed.",
+    "precision": true,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      57589.8,
+      41805.7
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_Discarded_Vessels",
+    "api": "https://api.guildwars2.com/v2/achievements/3630"
+  },
+  {
+    "id": "mp-392",
+    "achievementId": 3610,
+    "masteryId": 392,
+    "name": "The Tombs",
+    "map": "dh",
+    "type": "insight",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Lommuld Kraal Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60598.2,
+        40452.9
+      ],
+      "id": 2666,
+      "chat_link": "[&BGoKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer",
+        "glider"
+      ]
+    ],
+    "why": "A pillar-top dismount/glide trick is exactly the technical faff you prefer to skip.",
+    "steps": [
+      "Go southeast into the Tomb of the Primeval Kings.",
+      "Use Springer on the rear tail of the eastern cobra pillar to climb toward its head.",
+      "The basic-Springer route uses a precisely timed charged-jump dismount and glide onto the pillar. Consult the visual reference rather than improvising."
+    ],
+    "caution": "Flying-mount and later-mastery alternatives are easier if already owned; none is assumed here. A friend lift is preferable to practising the trick for one point.",
+    "precision": true,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      61963.3,
+      40338.6
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Highlands_Insight:_The_Tombs",
+    "api": "https://api.guildwars2.com/v2/achievements/3610"
+  },
+  {
+    "id": "mp-393",
+    "achievementId": 3761,
+    "masteryId": 393,
+    "name": "Ossa's Defeat",
+    "map": "er",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      [
+        "raptor"
+      ]
+    ],
+    "why": "A ground approach ending in a Raptor gap jump.",
+    "steps": [
+      "Go north toward Ossa’s Defeat in the northwest corner of the map.",
+      "Use Raptor to cross the gap at the marker, then commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58411,
+      44886.1
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Elon_Riverlands_Insight:_Ossa's_Defeat",
+    "api": "https://api.guildwars2.com/v2/achievements/3761"
+  },
+  {
+    "id": "mp-330",
+    "achievementId": 3563,
+    "masteryId": 330,
+    "name": "Leviathan's Gullet",
+    "map": "er",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Olishar's Oasis Camp Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60363.6,
+        46367.2
+      ],
+      "id": 2600,
+      "chat_link": "[&BCgKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer"
+      ]
+    ],
+    "why": "A direct Skimmer crossing with no platform sequence.",
+    "steps": [
+      "Head northwest from the camp toward the quicksand.",
+      "Skim across to the insight beside Leviathan’s Gullet and commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59745.5,
+      45890.2
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Elon_Riverlands_Insight:_Leviathan's_Gullet",
+    "api": "https://api.guildwars2.com/v2/achievements/3563"
+  },
+  {
+    "id": "mp-364",
+    "achievementId": 3795,
+    "masteryId": 364,
+    "name": "Heroes' Overlook",
+    "map": "er",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Augury's Shadow Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        61075,
+        45581
+      ],
+      "id": 2643,
+      "chat_link": "[&BFMKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "A short Springer approach to a nearby overlook.",
+    "steps": [
+      "Go west toward Heroes’ Overlook.",
+      "Use Springer through the earthen rock wall to the insight ledge and commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59870.9,
+      45370.3
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Elon_Riverlands_Insight:_Heroes'_Overlook",
+    "api": "https://api.guildwars2.com/v2/achievements/3795"
+  },
+  {
+    "id": "mp-411",
+    "achievementId": 3603,
+    "masteryId": 411,
+    "name": "Shallows of Despair",
+    "map": "er",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      [
+        "wind"
+      ],
+      [
+        "canyon"
+      ]
+    ],
+    "why": "The plateau needs advanced hover or a deliberate long leap.",
+    "steps": [
+      "Head south to the Shallows of Despair plateau.",
+      "Reach it with Skimmer’s Ride the Wind, or start on the neighbouring western plateau and leap across with Canyon Jumping."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58979.6,
+      47980.7
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Elon_Riverlands_Insight:_Shallows_of_Despair",
+    "api": "https://api.guildwars2.com/v2/achievements/3603"
+  },
+  {
+    "id": "mp-328",
+    "achievementId": 3704,
+    "masteryId": 328,
+    "name": "Pillars of Sovereignty",
+    "map": "er",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer",
+        "glider"
+      ],
+      [
+        "springer",
+        "canyon"
+      ]
+    ],
+    "why": "Climbing followed by a transfer to a separate pillar.",
+    "steps": [
+      "Go south to the Pillars of Supremacy point of interest.",
+      "Use Springer to climb on the western side, then glide or Canyon Jump to the insight’s pillar."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59013.5,
+      46844.2
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Elon_Riverlands_Insight:_Pillars_of_Sovereignty",
+    "api": "https://api.guildwars2.com/v2/achievements/3704"
+  },
+  {
+    "id": "mp-413",
+    "achievementId": 3701,
+    "masteryId": 413,
+    "name": "Sovereign Ridge",
+    "map": "er",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Olishar's Oasis Camp Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60363.6,
+        46367.2
+      ],
+      "id": 2600,
+      "chat_link": "[&BCgKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "Several ledges, including one concealed behind trees.",
+    "steps": [
+      "Go south to Palawa’s Grace, then southeast toward the ridge.",
+      "Find the northern ledge and climb with Springer; check behind the trees for the continuation."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60720.4,
+      47320.5
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Elon_Riverlands_Insight:_Sovereign_Ridge",
+    "api": "https://api.guildwars2.com/v2/achievements/3701"
+  },
+  {
+    "id": "mp-343",
+    "achievementId": 3767,
+    "masteryId": 343,
+    "name": "Vulture Drifts Summit",
+    "map": "er",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer",
+        "high"
+      ],
+      [
+        "canyon",
+        "high"
+      ]
+    ],
+    "why": "A quicksand crossing and a repeated High Vault ascent.",
+    "steps": [
+      "Cross the quicksand east of the ranch with Skimmer or Canyon Jumping.",
+      "Use High Vault on the northern ledges, including the ledge behind trees, to reach the summit."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59603.9,
+      46498.2
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Elon_Riverlands_Insight:_Vulture_Drifts_Summit",
+    "api": "https://api.guildwars2.com/v2/achievements/3767"
+  },
+  {
+    "id": "mp-416",
+    "achievementId": 3852,
+    "masteryId": 416,
+    "name": "Deadhouse Vault",
+    "map": "er",
+    "type": "insight",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Olishar's Oasis Camp Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60363.6,
+        46367.2
+      ],
+      "id": 2600,
+      "chat_link": "[&BCgKAAA=]"
+    },
+    "reqs": [
+      [
+        "sand"
+      ]
+    ],
+    "why": "A multi-room underground portal route with tar traps and remount interruptions.",
+    "steps": [
+      "Head south to the large statue near the Deadhouse, then east to the entrance sand portal.",
+      "Follow portals through the two tombs to the third room and the insight."
+    ],
+    "caution": "Tar traps force dismounts and enemies can prevent remounting. This is separate from any hero challenge.",
+    "precision": true,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60928.2,
+      48123.6
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Elon_Riverlands_Insight:_Deadhouse_Vault",
+    "api": "https://api.guildwars2.com/v2/achievements/3852"
+  },
+  {
+    "id": "mp-350",
+    "achievementId": 3885,
+    "masteryId": 350,
+    "name": "Silent Isle",
+    "map": "de",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Bonestrand Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60080.7,
+        48404.7
+      ],
+      "id": 2780,
+      "chat_link": "[&BNwKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A walk from the village; no sand portal is required by the ground approach.",
+    "steps": [
+      "Head southeast through the village and leave by its east gate.",
+      "Before using any Jackal portal, turn northeast down the terrain toward the insight."
+    ],
+    "caution": "Harpy and jacaranda attacks may interrupt you. Clear them before channeling.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      61241.9,
+      48457.1
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desolation_Insight:_Silent_Isle",
+    "api": "https://api.guildwars2.com/v2/achievements/3885"
+  },
+  {
+    "id": "mp-360",
+    "achievementId": 3620,
+    "masteryId": 360,
+    "name": "Shattered Ravines",
+    "map": "de",
+    "type": "insight",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Lair of the Forgotten Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        61423.3,
+        51140.4
+      ],
+      "id": 2753,
+      "chat_link": "[&BMEKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "Open ground and a small canyon rather than a mount puzzle.",
+    "steps": [
+      "Follow the southeast route to the basalt canyon at the map’s eastern edge.",
+      "Continue south past Uhiwi’s Bones and the statue to the insight."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      61759.6,
+      51839.3
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desolation_Insight:_Shattered_Ravines",
+    "api": "https://api.guildwars2.com/v2/achievements/3620"
+  },
+  {
+    "id": "mp-405",
+    "achievementId": 3695,
+    "masteryId": 405,
+    "name": "Arena of Vayu",
+    "map": "de",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "The Scourgeway Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60442.7,
+        50248.3
+      ],
+      "id": 2675,
+      "chat_link": "[&BHMKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer",
+        "springer"
+      ]
+    ],
+    "why": "A sulfur crossing followed by a wall climb and veteran guards.",
+    "steps": [
+      "Cross the two southern bridges, turn east after the second, then descend to the sulfur river.",
+      "Skim to the eastern rock ledge, switch to Springer and hop over the walls into the bowl.",
+      "Clear the air djinn and elemental near its southern edge, then commune."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60703.6,
+      50816.4
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desolation_Insight:_Arena_of_Vayu",
+    "api": "https://api.guildwars2.com/v2/achievements/3695"
+  },
+  {
+    "id": "mp-401",
+    "achievementId": 3659,
+    "masteryId": 401,
+    "name": "Henge of Joko",
+    "map": "de",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "The Scourgeway Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60442.7,
+        50248.3
+      ],
+      "id": 2675,
+      "chat_link": "[&BHMKAAA=]"
+    },
+    "reqs": [
+      [
+        "high"
+      ]
+    ],
+    "why": "A High Vault climb on the southern side; simpler than the portal-and-flight alternatives.",
+    "steps": [
+      "Travel south toward Henge of Joko.",
+      "Approach from the south and use High Vault on the ledges to the insight beside the point of interest."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60060.1,
+      51808.8
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desolation_Insight:_Henge_of_Joko",
+    "api": "https://api.guildwars2.com/v2/achievements/3659"
+  },
+  {
+    "id": "mp-335",
+    "achievementId": 3592,
+    "masteryId": 335,
+    "name": "Sand Jackal Leap",
+    "map": "de",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Sand Jackal Run Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59123.2,
+        52734.9
+      ],
+      "id": 2679,
+      "chat_link": "[&BHcKAAA=]"
+    },
+    "reqs": [
+      [
+        "sand"
+      ]
+    ],
+    "why": "A short portal route once the required mastery is already trained.",
+    "steps": [
+      "Use the eastern sand portal to enter Djinn Enclave and climb the stairs beside Drojkor.",
+      "At the top, follow the southern path down the first small stairs.",
+      "Drop onto the portal on the southern wall and use it to reach the insight."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59323,
+      52874
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desolation_Insight:_Sand_Jackal_Leap",
+    "api": "https://api.guildwars2.com/v2/achievements/3592"
+  },
+  {
+    "id": "mp-375",
+    "achievementId": 3600,
+    "masteryId": 375,
+    "name": "Tarstone Weeps",
+    "map": "de",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Joko's Domain Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60886.5,
+        52307.6
+      ],
+      "id": 2571,
+      "chat_link": "[&BAsKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "A winding cave-road approach with enemies, then a Springer ledge.",
+    "steps": [
+      "Take the road northeast, turn east at the fork, and follow the southeast curve through the spider cave.",
+      "After the road bends northeast, look north for the raised cave entrance before the next southern bend.",
+      "Use Springer to enter and clear the tar elementals around the insight."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      61750.9,
+      52336.8
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desolation_Insight:_Tarstone_Weeps",
+    "api": "https://api.guildwars2.com/v2/achievements/3600"
+  },
+  {
+    "id": "mp-403",
+    "achievementId": 3573,
+    "masteryId": 403,
+    "name": "Sandfall Sanctum",
+    "map": "de",
+    "type": "insight",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Bonestrand Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60080.7,
+        48404.7
+      ],
+      "id": 2780,
+      "chat_link": "[&BNwKAAA=]"
+    },
+    "reqs": [
+      [
+        "sand"
+      ]
+    ],
+    "why": "A mid-air portal transfer with little margin for error.",
+    "steps": [
+      "Follow the southwest road into Clanmarshal’s Pergola.",
+      "Use the portal by the southeast exit, then immediately blink through the next airborne portal to Sandfall Sanctum."
+    ],
+    "caution": "A Springer passage shortcut exists, but still requires careful entry and landing. Save this for a friend lift or a jumping mood.",
+    "precision": true,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60699.3,
+      49380.3
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desolation_Insight:_Sandfall_Sanctum",
+    "api": "https://api.guildwars2.com/v2/achievements/3573"
+  },
+  {
+    "id": "mp-371",
+    "achievementId": 3645,
+    "masteryId": 371,
+    "name": "The Mouth of Torment",
+    "map": "de",
+    "type": "insight",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Sand Jackal Run Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59123.2,
+        52734.9
+      ],
+      "id": 2679,
+      "chat_link": "[&BHcKAAA=]"
+    },
+    "reqs": [
+      [
+        "sand",
+        "high",
+        "glider"
+      ]
+    ],
+    "why": "Floating ledges, a spire climb and a long transfer make this an inefficient single point.",
+    "steps": [
+      "Take the northeastern sand portal, continue north and use the second portal.",
+      "From the exit ledge, use High Vault to climb the spire behind you, then glide to the insight’s platform."
+    ],
+    "caution": "Do not confuse this mastery insight with the nearby hero challenge: they have different routes. Skip if the glide is uncomfortable.",
+    "precision": true,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59081.9,
+      51508.6
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Desolation_Insight:_The_Mouth_of_Torment",
+    "api": "https://api.guildwars2.com/v2/achievements/3645"
+  },
+  {
+    "id": "mp-395",
+    "achievementId": 3841,
+    "masteryId": 395,
+    "name": "Zagonur Towers",
+    "map": "va",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Market Ruins Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        67375.7,
+        53930.7
+      ],
+      "id": 2676,
+      "chat_link": "[&BHQKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "Close to the waypoint, but the branded terrain makes landings less forgiving.",
+    "steps": [
+      "Look northeast from Market Ruins Waypoint toward the towers.",
+      "Use Springer to cross the branded section and reach the insight."
+    ],
+    "caution": "Keep crossings short and use safe ground; the surrounding storm is a traversal hazard.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      67649.8,
+      53728.7
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Domain_of_Vabbi_Insight:_Zagonur_Towers",
+    "api": "https://api.guildwars2.com/v2/achievements/3841"
+  },
+  {
+    "id": "mp-383",
+    "achievementId": 3803,
+    "masteryId": 383,
+    "name": "Kodash Brazier",
+    "map": "va",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Market Ruins Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        67375.7,
+        53930.7
+      ],
+      "id": 2676,
+      "chat_link": "[&BHQKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer"
+      ]
+    ],
+    "why": "A storm-safe Skimmer journey followed by two veteran guards.",
+    "steps": [
+      "Skim northeast past the Hunter Glorg hero challenge.",
+      "Go around the back of the insight building; pass the chest and clear the two veteran priests before communing."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      68154.6,
+      53174.4
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Domain_of_Vabbi_Insight:_Kodash_Brazier",
+    "api": "https://api.guildwars2.com/v2/achievements/3803"
+  },
+  {
+    "id": "mp-337",
+    "achievementId": 3692,
+    "masteryId": 337,
+    "name": "Yahnur Sandfall",
+    "map": "va",
+    "type": "insight",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Market Ruins Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        67375.7,
+        53930.7
+      ],
+      "id": 2676,
+      "chat_link": "[&BHQKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer",
+        "springer"
+      ]
+    ],
+    "why": "A river crossing, safe bubbles and a Springer transfer.",
+    "steps": [
+      "Follow the eastern river toward Yahnur Plateau on Skimmer, stopping inside safe bubbles.",
+      "Use Springer to reach the upper safe bubble, turn right and drop to the insight."
+    ],
+    "caution": "Do not linger in the storm outside safe areas. A short route can still be hazardous.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      68099.7,
+      55074.4
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Domain_of_Vabbi_Insight:_Yahnur_Sandfall",
+    "api": "https://api.guildwars2.com/v2/achievements/3692"
+  },
+  {
+    "id": "mp-333",
+    "achievementId": 3744,
+    "masteryId": 333,
+    "name": "Just a Sip",
+    "map": "co",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Amnoon Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        58615.4,
+        43742.9
+      ],
+      "id": 2747,
+      "chat_link": "[&BLsKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "Easy achievement: a short kitchen minigame in town, with no jumping route.",
+    "steps": [
+      "Go to the Pot of Soup in Amnoon’s civic-center kitchen and speak to Master Chef Laraib.",
+      "During the two-minute challenge, pick up each requested ingredient and throw it to the chef within the request window.",
+      "Enable “Show All Usable Object Names” to find ingredients; aim near his feet in action camera."
+    ],
+    "caution": "It is timed and may take a retry to learn the kitchen. It awards one mastery point once, not a point for every attempt.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58282.7,
+      43518.8
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Pot_of_Soup",
+    "api": "https://api.guildwars2.com/v2/achievements/3744"
+  },
+  {
+    "id": "mp-409",
+    "achievementId": 3644,
+    "masteryId": 409,
+    "name": "A Trip Down Memory Lane",
+    "map": "co",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Temple of Kormir Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60972.9,
+        43251.6
+      ],
+      "id": 2624,
+      "chat_link": "[&BEAKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "Easy achievement: repeat a memory sequence instead of fighting or climbing.",
+    "steps": [
+      "Find Pahan and the Forgotten Teleporter in Hatari Tablelands.",
+      "Watch the switches light up, then activate them in the same order. Repeat the rounds until the challenge is complete."
+    ],
+    "caution": "Use your own short written sequence if helpful. Repeating the minigame later does not award another mastery point.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60065.1,
+      42703.9
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Pahan",
+    "api": "https://api.guildwars2.com/v2/achievements/3644"
+  },
+  {
+    "id": "mp-418",
+    "achievementId": 3806,
+    "masteryId": 418,
+    "name": "Dune Rider",
+    "map": "co",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Amnoon Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        58615.4,
+        43742.9
+      ],
+      "id": 2747,
+      "chat_link": "[&BLsKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "Easy achievement to check first: the introductory PoF raptor reward may already be earned.",
+    "steps": [
+      "Search the Achievements panel for Dune Rider.",
+      "It is awarded by the PoF introductory raptor-unlock step. If it is already complete, mark it collected here; do not replay it for another point."
+    ],
+    "caution": "Owning a Raptor from an account/level unlock does not prove this particular PoF achievement is complete. No story replay is recommended.",
+    "precision": false,
+    "wait": false,
+    "manual": "PoF introductory raptor achievement must be available; check in game.",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Dune_Rider",
+    "api": "https://api.guildwars2.com/v2/achievements/3806"
+  },
+  {
+    "id": "mp-342",
+    "achievementId": 3567,
+    "masteryId": 342,
+    "name": "Fleet of Foot",
+    "map": "dh",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Highjump Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59604.9,
+        40332.9
+      ],
+      "id": 2717,
+      "chat_link": "[&BJ0KAAA=]"
+    },
+    "reqs": [
+      [
+        "canyon"
+      ]
+    ],
+    "why": "Easy achievement: the Springer purchase you are already working toward also awards a point.",
+    "steps": [
+      "Train Raptor Canyon Jumping and complete the Highjump Ranch heart.",
+      "Buy the Springer saddle from Unja for 1 gold and 50 Trade Contracts.",
+      "Check Fleet of Foot in Achievements and mark it collected if already awarded."
+    ],
+    "caution": "The mastery-point reward is separate from the mount unlock. Recording Springer in this guide never silently marks the reward collected.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Fleet_of_Foot",
+    "api": "https://api.guildwars2.com/v2/achievements/3567"
+  },
+  {
+    "id": "mp-369",
+    "achievementId": 3627,
+    "masteryId": 369,
+    "name": "Skimming the Surface",
+    "map": "er",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      [
+        "canyon"
+      ]
+    ],
+    "why": "Easy achievement: earn a point while making the planned Skimmer purchase.",
+    "steps": [
+      "Complete the Skimmer Ranch heart after meeting the Canyon Jumping requirement.",
+      "Buy the saddle from Ardra for 4 gold and 50 Trade Contracts, then check Skimming the Surface."
+    ],
+    "caution": "Only the first account unlock earns the point. Do not buy another saddle for a repeat reward.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Skimming_the_Surface",
+    "api": "https://api.guildwars2.com/v2/achievements/3627"
+  },
+  {
+    "id": "mp-417",
+    "achievementId": 3818,
+    "masteryId": 417,
+    "name": "Desert Dogs",
+    "map": "de",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Sand Jackal Run Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59123.2,
+        52734.9
+      ],
+      "id": 2679,
+      "chat_link": "[&BHcKAAA=]"
+    },
+    "reqs": [
+      [
+        "high",
+        "skimmer"
+      ],
+      [
+        "wind"
+      ]
+    ],
+    "why": "Useful purchase reward, but reaching the enclave and training its prerequisite take effort.",
+    "steps": [
+      "Have High Vault or Ride the Wind trained so the Jackal heart is available.",
+      "Reach Djinn Enclave, finish Drojkor’s heart, and purchase the Jackal saddle.",
+      "Check Desert Dogs before counting this as a new point."
+    ],
+    "caution": "Budget for the saddle and Trade Contracts. This is not a free commune; the prerequisite mastery must already be trained.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Desert_Dogs",
+    "api": "https://api.guildwars2.com/v2/achievements/3818"
+  },
+  {
+    "id": "mp-338",
+    "achievementId": 3570,
+    "masteryId": 338,
+    "name": "Reins of the Raptor",
+    "map": "co",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Amnoon Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        58615.4,
+        43742.9
+      ],
+      "id": 2747,
+      "chat_link": "[&BLsKAAA=]"
+    },
+    "reqs": [
+      [
+        "raptor"
+      ]
+    ],
+    "why": "Low mechanical difficulty, but several hearts and delivery conversations add backtracking.",
+    "steps": [
+      "Start the five-item collection with Aksim’s letter from the PoF introduction.",
+      "Help the refugee camp and speak to Karima; deliver her supplies to Hakim at the Temple of Kormir.",
+      "Help Kabir in Destiny’s Gorge for his treat, then return to Cook Rehman after the other treats are collected."
+    ],
+    "caution": "Good to combine with hearts you were doing anyway. Not a two-minute pickup if all hearts are still unfinished.",
+    "precision": false,
+    "wait": false,
+    "manual": "Collection letter/introductory PoF progression must be available.",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Reins_of_the_Raptor",
+    "api": "https://api.guildwars2.com/v2/achievements/3570"
+  },
+  {
+    "id": "mp-363",
+    "achievementId": 3551,
+    "masteryId": 363,
+    "name": "Lost Pilgrims",
+    "map": "co",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Temple of Kormir Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60972.9,
+        43251.6
+      ],
+      "id": 2624,
+      "chat_link": "[&BEAKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "Three graves, awkward ledges and a nearby elite make this less relaxed than it first sounds.",
+    "steps": [
+      "Visit the three ritual-priest graves around Elona Reach.",
+      "Carry a nearby free Vision Crystal bundle to each grave, summon the priest and speak to the spirit.",
+      "Each carried bundle disappears after a priest; repeat for all three."
+    ],
+    "caution": "No crafted Vision Crystal purchase is needed. A hydra patrols the canyon grave; wait for it to pass or clear it. The linked guide gives the separate locations.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Vision_Crystal_(bundle)",
+    "api": "https://api.guildwars2.com/v2/achievements/3551"
+  },
+  {
+    "id": "mp-388",
+    "achievementId": 3773,
+    "masteryId": 388,
+    "name": "Crystal Oasis Bounty Tour",
+    "map": "co",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Amnoon Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        58615.4,
+        43742.9
+      ],
+      "id": 2747,
+      "chat_link": "[&BLsKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "Combat is manageable with a squad, but board travel and finding groups cost time.",
+    "steps": [
+      "Take a bounty from each of the map’s bounty-board locations.",
+      "Join a group and complete one from each location, checking Crystal Oasis Bounty Tour for missing boards."
+    ],
+    "caution": "This is three board locations, not every bounty on the map. Avoid waiting around if no group is active.",
+    "precision": false,
+    "wait": true,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Crystal_Oasis_Bounty_Tour",
+    "api": "https://api.guildwars2.com/v2/achievements/3773"
+  },
+  {
+    "id": "mp-347",
+    "achievementId": 3884,
+    "masteryId": 347,
+    "name": "Springer Backpacking",
+    "map": "dh",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Highjump Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59604.9,
+        40332.9
+      ],
+      "id": 2717,
+      "chat_link": "[&BJ0KAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "Twelve collection items, merchant errands and high ledges: too much running for a quick point.",
+    "steps": [
+      "After Fleet of Foot, speak to Unja and begin Springer Backpacking.",
+      "Use the collection panel to track the twelve treats and deliveries around the map; the linked guide has each location."
+    ],
+    "caution": "Keep it as a side project while exploring, rather than a dedicated mastery-point run.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Springer_Backpacking",
+    "api": "https://api.guildwars2.com/v2/achievements/3884"
+  },
+  {
+    "id": "mp-356",
+    "achievementId": 3707,
+    "masteryId": 356,
+    "name": "Skimmer Search",
+    "map": "er",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer"
+      ]
+    ],
+    "why": "A six-item collection that fits normal exploration better than a quick detour.",
+    "steps": [
+      "Speak to Ardra after purchasing Skimmer, then deliver her missive to Ebele.",
+      "Follow the collection’s remaining conversations and recovery tasks, checking each item before moving on."
+    ],
+    "caution": "Check the collection panel for prior credit. It is not an automatic extra reward just for owning Skimmer.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Skimmer_Search",
+    "api": "https://api.guildwars2.com/v2/achievements/3707"
+  },
+  {
+    "id": "mp-362",
+    "achievementId": 3849,
+    "masteryId": 362,
+    "name": "Equipment Tracker",
+    "map": "er",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A five-piece scavenger hunt with a return trip, not a single commune.",
+    "steps": [
+      "Go north to Master Sergeant Shadi in Deadlock Sweep and ask about the missing equipment.",
+      "Find the five gear pieces using her list and the linked location guide.",
+      "Return to Shadi and hand in the complete set to receive the reward."
+    ],
+    "caution": "The final return conversation matters. Do not mark complete merely for finding the first gear piece.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58663.6,
+      45066.8
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Equipment_Tracker",
+    "api": "https://api.guildwars2.com/v2/achievements/3849"
+  },
+  {
+    "id": "mp-410",
+    "achievementId": 3590,
+    "masteryId": 410,
+    "name": "Mysteries of the Exalted",
+    "map": "er",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer"
+      ]
+    ],
+    "why": "Easy achievement: a small lights puzzle once you have basic Skimmer.",
+    "steps": [
+      "Head north to the gap in the ground near the mastery marker; descend and skim across the quicksand.",
+      "After the cave bats, turn left into the pylon doorway.",
+      "Light all four artifacts. A useful solution is to leave one lit, then activate the artifact diagonally opposite it."
+    ],
+    "caution": "Check nearby enemies first. The point is in a cave, not on top of the hill.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58824.3,
+      45981.1
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Mysteries_of_the_Exalted",
+    "api": "https://api.guildwars2.com/v2/achievements/3590"
+  },
+  {
+    "id": "mp-399",
+    "achievementId": 3833,
+    "masteryId": 399,
+    "name": "Descension",
+    "map": "er",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Augury's Shadow Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        61075,
+        45581
+      ],
+      "id": 2643,
+      "chat_link": "[&BFMKAAA=]"
+    },
+    "reqs": [
+      [
+        "sand"
+      ]
+    ],
+    "why": "An elite fight is fine; the portal route and hostile cave add the effort.",
+    "steps": [
+      "Find the sand portal northwest of Augury Rock, east of Godslost Sandfalls.",
+      "Use Shifting Sands to enter the Cave of the Lost and defeat Second Spear Binah."
+    ],
+    "caution": "Clear nearby ghosts if they interfere. This awards the Descension achievement, not a hero point.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      60175.3,
+      44936.9
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Descension",
+    "api": "https://api.guildwars2.com/v2/achievements/3833"
+  },
+  {
+    "id": "mp-340",
+    "achievementId": 3669,
+    "masteryId": 340,
+    "name": "Magic Hunter",
+    "map": "er",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "Many scattered magic-node routes for a single point; poor quick-run value.",
+    "steps": [
+      "Find Researcher Raizza and start Magic Hunter.",
+      "Complete the unstable-magic node circuits listed in the achievement, using the source’s route guide for each area."
+    ],
+    "caution": "The achievement has many objectives. Do it while exploring if you enjoy the movement routes, not as your first mastery-point choice.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58319.4,
+      45956.8
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Magic_Hunter",
+    "api": "https://api.guildwars2.com/v2/achievements/3669"
+  },
+  {
+    "id": "mp-339",
+    "achievementId": 3857,
+    "masteryId": 339,
+    "name": "Sulfur Shooter",
+    "map": "de",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "The Darklands Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59187.1,
+        50521.2
+      ],
+      "id": 2723,
+      "chat_link": "[&BKMKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "Easy achievement: test a bundle on three ordinary enemy types, rather than a jumping puzzle.",
+    "steps": [
+      "Find Creator Jadi in Chantry of Shadows and borrow the experimental sulfur weapon.",
+      "Use it on a Forged Soldier, Weaponeer and Scavenger, then kill each affected target.",
+      "Check the three objectives and return to Jadi if the completion interaction is still required."
+    ],
+    "caution": "Use the weapon before killing each target so the correct credit registers.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      59443.8,
+      50373.4
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Creator_Jadi",
+    "api": "https://api.guildwars2.com/v2/achievements/3857"
+  },
+  {
+    "id": "mp-359",
+    "achievementId": 3728,
+    "masteryId": 359,
+    "name": "Honoring the Fallen",
+    "map": "de",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "The Darklands Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59187.1,
+        50521.2
+      ],
+      "id": 2723,
+      "chat_link": "[&BKMKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "A short climb, but three enemy drops and a return trip make duration unpredictable.",
+    "steps": [
+      "Go northeast to the raised stone sun and use /bow or /salute to summon Dehvad.",
+      "Collect his three requested drops from Awakened, skree harpies and devourers.",
+      "Return, summon him again, and hand in all three."
+    ],
+    "caution": "Check the achievement first; you may already have some drops or credit.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      58992,
+      50279.8
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/Honoring_the_Fallen",
+    "api": "https://api.guildwars2.com/v2/achievements/3728"
+  },
+  {
+    "id": "mp-332",
+    "achievementId": 3593,
+    "masteryId": 332,
+    "name": "Path of the Gods",
+    "map": "de",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Bonestrand Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60080.7,
+        48404.7
+      ],
+      "id": 2780,
+      "chat_link": "[&BNwKAAA=]"
+    },
+    "reqs": [
+      [
+        "sand"
+      ]
+    ],
+    "why": "Seven scattered statues, including a portal detour: too much map coverage for one point.",
+    "steps": [
+      "Use the achievement checklist and source map to locate all seven statues.",
+      "Use /kneel at each. The last waterfall-side statue needs a sand-portal route."
+    ],
+    "caution": "This is one mastery point for completing the whole set, not one per statue. Do not confuse optional emote achievements with mastery rewards.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Path_of_the_Gods",
+    "api": "https://api.guildwars2.com/v2/achievements/3593"
+  },
+  {
+    "id": "mp-407",
+    "achievementId": 3871,
+    "masteryId": 407,
+    "name": "Jackal Reconnaissance",
+    "map": "de",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Sand Jackal Run Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59123.2,
+        52734.9
+      ],
+      "id": 2679,
+      "chat_link": "[&BHcKAAA=]"
+    },
+    "reqs": [
+      [
+        "jackal"
+      ]
+    ],
+    "why": "An eight-item delivery and recovery collection with several long trips.",
+    "steps": [
+      "Begin with Drojkor after Desert Dogs, then speak to the collection’s named contacts before searching for their items.",
+      "Follow the linked collection route and return each delivery to the right contact."
+    ],
+    "caution": "Some objects only appear after their prerequisite conversation. Better as incidental exploration than a fast point.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Jackal_Reconnaissance",
+    "api": "https://api.guildwars2.com/v2/achievements/3871"
+  },
+  {
+    "id": "mp-400",
+    "achievementId": 3836,
+    "masteryId": 400,
+    "name": "Yitfei the Light",
+    "map": "va",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Vehtendi Academy Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        66421.2,
+        54770.7
+      ],
+      "id": 2575,
+      "chat_link": "[&BA8KAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "Easy achievement: a short dialogue quiz near the academy, with no planned fight.",
+    "steps": [
+      "Go to Vehtendi Vineyard in the southeast corner of the academy and speak to Yitfei.",
+      "Answer the four riddles. If you want the answers: fire, darkness, grapes, youth."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      67076.3,
+      55457.4
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/High_Elder_Yitfei_the_Light",
+    "api": "https://api.guildwars2.com/v2/achievements/3836"
+  },
+  {
+    "id": "mp-397",
+    "achievementId": 3667,
+    "masteryId": 397,
+    "name": "Zomi the Accomplished",
+    "map": "va",
+    "type": "achievement",
+    "tier": "easy",
+    "points": 1,
+    "wp": {
+      "name": "Market Ruins Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        67375.7,
+        53930.7
+      ],
+      "id": 2676,
+      "chat_link": "[&BHQKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer"
+      ]
+    ],
+    "why": "Easy achievement once in the bazaar: four dialogue answers instead of combat.",
+    "steps": [
+      "Use Skimmer to reach Zomi in Kodash Bazaar, avoiding storm exposure.",
+      "Answer the four riddles: the tide, a dream, time, a mirror."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      65997.3,
+      54005.6
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/High_Elder_Zomi_the_Accomplished",
+    "api": "https://api.guildwars2.com/v2/achievements/3667"
+  },
+  {
+    "id": "mp-354",
+    "achievementId": 3643,
+    "masteryId": 354,
+    "name": "Kaadsseo the Wise",
+    "map": "va",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Seborhin Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        65531.2,
+        53474.3
+      ],
+      "id": 2768,
+      "chat_link": "[&BNAKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "The quiz is easy; reaching the cliff is the extra work.",
+    "steps": [
+      "Reach the cliff in the northeastern Eastern Mihan Hillsides with Springer.",
+      "Speak to Kaadsseo and answer: a book, wisdom, monuments, the wind."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      66273.8,
+      52447.9
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/High_Elder_Kaadsseo_the_Wise",
+    "api": "https://api.guildwars2.com/v2/achievements/3643"
+  },
+  {
+    "id": "mp-408",
+    "achievementId": 3872,
+    "masteryId": 408,
+    "name": "Juaruadun the Flawless",
+    "map": "va",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Market Ruins Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        67375.7,
+        53930.7
+      ],
+      "id": 2676,
+      "chat_link": "[&BHQKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer",
+        "springer"
+      ]
+    ],
+    "why": "An easy quiz after a storm-safe approach and cave climb.",
+    "steps": [
+      "Skim north toward the red raid portal; enter the cave immediately to its right without using the raid portal.",
+      "Work clockwise up through the cave to Juaruadun.",
+      "Answer: a mistake, a rock, a lie, perfection."
+    ],
+    "caution": "One reward per account. Check the achievement before travelling; another character may already have earned it.",
+    "precision": false,
+    "wait": false,
+    "manual": "",
+    "coord": [
+      67564,
+      52747.6
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/High_Elder_Juaruadun_the_Flawless",
+    "api": "https://api.guildwars2.com/v2/achievements/3872"
+  },
+  {
+    "id": "mp-415",
+    "achievementId": 3628,
+    "masteryId": 415,
+    "name": "Kumaa the Feisty",
+    "map": "va",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Necropolis Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        65111.6,
+        54720.3
+      ],
+      "id": 2634,
+      "chat_link": "[&BEoKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A local djinn challenge; the approach and combat make it a second-pass option.",
+    "steps": [
+      "Travel toward Glowering Overlook and locate Kumaa the Feisty at the mastery marker.",
+      "Speak to the djinn, start the challenge and win the fight. Use the source reference for the precise local approach."
+    ],
+    "caution": "A map icon can represent a combat challenge rather than a commune. Bring Matt if you prefer; no group-event completion is assumed.",
+    "precision": false,
+    "wait": false,
+    "manual": "Local ascent requirements are not fully documented; check the linked map before travelling.",
+    "coord": [
+      63771.6,
+      54902.6
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/High_Elder_Kumaa_the_Feisty",
+    "api": "https://api.guildwars2.com/v2/achievements/3628"
+  },
+  {
+    "id": "mp-396",
+    "achievementId": 3775,
+    "masteryId": 396,
+    "name": "Yoonam the Intrepid",
+    "map": "va",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Seborhin Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        65531.2,
+        53474.3
+      ],
+      "id": 2768,
+      "chat_link": "[&BNAKAAA=]"
+    },
+    "reqs": [
+      [
+        "springer"
+      ]
+    ],
+    "why": "A local djinn challenge; the approach and combat make it a second-pass option.",
+    "steps": [
+      "Travel toward the Ruins of Mihanu Township in northern Dehwan Expanse and locate Yoonam the Intrepid at the mastery marker.",
+      "Speak to the djinn, start the challenge and win the fight. Use the source reference for the precise local approach."
+    ],
+    "caution": "A map icon can represent a combat challenge rather than a commune. Bring Matt if you prefer; no group-event completion is assumed.",
+    "precision": false,
+    "wait": false,
+    "manual": "Local ascent requirements are not fully documented; check the linked map before travelling.",
+    "coord": [
+      66736,
+      52511.7
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/High_Elder_Yoonam_the_Intrepid",
+    "api": "https://api.guildwars2.com/v2/achievements/3775"
+  },
+  {
+    "id": "mp-357",
+    "achievementId": 3653,
+    "masteryId": 357,
+    "name": "Ziadih the Fearless",
+    "map": "va",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Market Ruins Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        67375.7,
+        53930.7
+      ],
+      "id": 2676,
+      "chat_link": "[&BHQKAAA=]"
+    },
+    "reqs": [
+      [
+        "skimmer"
+      ]
+    ],
+    "why": "A local djinn challenge; the approach and combat make it a second-pass option.",
+    "steps": [
+      "Travel toward the southwest side of Grand Court of Sebelkeh and locate Ziadih the Fearless at the mastery marker.",
+      "Speak to the djinn, start the challenge and win the fight. Use the source reference for the precise local approach."
+    ],
+    "caution": "A map icon can represent a combat challenge rather than a commune. Bring Matt if you prefer; no group-event completion is assumed.",
+    "precision": false,
+    "wait": false,
+    "manual": "Local ascent requirements are not fully documented; check the linked map before travelling.",
+    "coord": [
+      67226.5,
+      53441.9
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/High_Elder_Ziadih_the_Fearless",
+    "api": "https://api.guildwars2.com/v2/achievements/3653"
+  },
+  {
+    "id": "mp-372",
+    "achievementId": 3851,
+    "masteryId": 372,
+    "name": "Jilai the Radiant",
+    "map": "va",
+    "type": "achievement",
+    "tier": "medium",
+    "points": 1,
+    "wp": {
+      "name": "Necropolis Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        65111.6,
+        54720.3
+      ],
+      "id": 2634,
+      "chat_link": "[&BEoKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A local djinn challenge; the approach and combat make it a second-pass option.",
+    "steps": [
+      "Travel toward Kaluun Ravine and locate Jilai the Radiant at the mastery marker.",
+      "Speak to the djinn, start the challenge and win the fight. Use the source reference for the precise local approach."
+    ],
+    "caution": "A map icon can represent a combat challenge rather than a commune. Bring Matt if you prefer; no group-event completion is assumed.",
+    "precision": false,
+    "wait": false,
+    "manual": "Local ascent requirements are not fully documented; check the linked map before travelling.",
+    "coord": [
+      65596.7,
+      55471.3
+    ],
+    "wiki": "https://wiki.guildwars2.com/wiki/High_Elder_Jilai_the_Radiant",
+    "api": "https://api.guildwars2.com/v2/achievements/3851"
+  },
+  {
+    "id": "mp-384",
+    "achievementId": 3625,
+    "masteryId": 384,
+    "name": "Lost Lore of Crystal Oasis",
+    "map": "co",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Amnoon Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        58615.4,
+        43742.9
+      ],
+      "id": 2747,
+      "chat_link": "[&BLsKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A full-map 7-page collection: keep it incidental rather than chasing one point.",
+    "steps": [
+      "Open Lost Lore of Crystal Oasis in Achievements and check which of the 7 pages you already have.",
+      "Use the linked collection map to gather only the missing pages; some are on raised or awkward terrain."
+    ],
+    "caution": "No single waypoint or empty travel kit completes this collection. Detailed page prerequisites vary; check the collection guide before setting out.",
+    "precision": false,
+    "wait": false,
+    "manual": "Multi-location collection; individual page access must be checked.",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Lost_Lore_of_Crystal_Oasis",
+    "api": "https://api.guildwars2.com/v2/achievements/3625"
+  },
+  {
+    "id": "mp-387",
+    "achievementId": 3594,
+    "masteryId": 387,
+    "name": "Lost Lore of Desert Highlands",
+    "map": "dh",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Lommuld Kraal Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60598.2,
+        40452.9
+      ],
+      "id": 2666,
+      "chat_link": "[&BGoKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A full-map 7-page collection: keep it incidental rather than chasing one point.",
+    "steps": [
+      "Open Lost Lore of Desert Highlands in Achievements and check which of the 7 pages you already have.",
+      "Use the linked collection map to gather only the missing pages; some are on raised or awkward terrain."
+    ],
+    "caution": "No single waypoint or empty travel kit completes this collection. Detailed page prerequisites vary; check the collection guide before setting out.",
+    "precision": false,
+    "wait": false,
+    "manual": "Multi-location collection; individual page access must be checked.",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Lost_Lore_of_Desert_Highlands",
+    "api": "https://api.guildwars2.com/v2/achievements/3594"
+  },
+  {
+    "id": "mp-398",
+    "achievementId": 3632,
+    "masteryId": 398,
+    "name": "Lost Lore of Elon Riverlands",
+    "map": "er",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Skimmer Ranch Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        59093.8,
+        46548.8
+      ],
+      "id": 2663,
+      "chat_link": "[&BGcKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A full-map 7-page collection: keep it incidental rather than chasing one point.",
+    "steps": [
+      "Open Lost Lore of Elon Riverlands in Achievements and check which of the 7 pages you already have.",
+      "Use the linked collection map to gather only the missing pages; some are on raised or awkward terrain."
+    ],
+    "caution": "No single waypoint or empty travel kit completes this collection. Detailed page prerequisites vary; check the collection guide before setting out.",
+    "precision": false,
+    "wait": false,
+    "manual": "Multi-location collection; individual page access must be checked.",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Lost_Lore_of_Elon_Riverlands",
+    "api": "https://api.guildwars2.com/v2/achievements/3632"
+  },
+  {
+    "id": "mp-353",
+    "achievementId": 3633,
+    "masteryId": 353,
+    "name": "Lost Lore of the Desolation",
+    "map": "de",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Bonestrand Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        60080.7,
+        48404.7
+      ],
+      "id": 2780,
+      "chat_link": "[&BNwKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A full-map 7-page collection: keep it incidental rather than chasing one point.",
+    "steps": [
+      "Open Lost Lore of the Desolation in Achievements and check which of the 7 pages you already have.",
+      "Use the linked collection map to gather only the missing pages; some are on raised or awkward terrain."
+    ],
+    "caution": "No single waypoint or empty travel kit completes this collection. Detailed page prerequisites vary; check the collection guide before setting out.",
+    "precision": false,
+    "wait": false,
+    "manual": "Multi-location collection; individual page access must be checked.",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Lost_Lore_of_the_Desolation",
+    "api": "https://api.guildwars2.com/v2/achievements/3633"
+  },
+  {
+    "id": "mp-346",
+    "achievementId": 3555,
+    "masteryId": 346,
+    "name": "Lost Lore of the Domain of Vabbi",
+    "map": "va",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Market Ruins Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        67375.7,
+        53930.7
+      ],
+      "id": 2676,
+      "chat_link": "[&BHQKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A full-map 7-page collection: keep it incidental rather than chasing one point.",
+    "steps": [
+      "Open Lost Lore of the Domain of Vabbi in Achievements and check which of the 7 pages you already have.",
+      "Use the linked collection map to gather only the missing pages; some are on raised or awkward terrain."
+    ],
+    "caution": "No single waypoint or empty travel kit completes this collection. Detailed page prerequisites vary; check the collection guide before setting out.",
+    "precision": false,
+    "wait": false,
+    "manual": "Multi-location collection; individual page access must be checked.",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Lost_Lore_of_the_Domain_of_Vabbi",
+    "api": "https://api.guildwars2.com/v2/achievements/3555"
+  },
+  {
+    "id": "mp-344",
+    "achievementId": 3867,
+    "masteryId": 344,
+    "name": "Open Skies: On Wings and a Prayer",
+    "map": "va",
+    "type": "achievement",
+    "tier": "hard",
+    "points": 1,
+    "wp": {
+      "name": "Market Ruins Waypoint",
+      "type": "waypoint",
+      "floor": 1,
+      "coord": [
+        67375.7,
+        53930.7
+      ],
+      "id": 2676,
+      "chat_link": "[&BHQKAAA=]"
+    },
+    "reqs": [
+      []
+    ],
+    "why": "A post-story flying-mount collection with substantial travel and cost: not a quick mastery-point source.",
+    "steps": [
+      "Check whether this optional collection is already complete in Achievements.",
+      "Only pursue it if you want the mount itself; use its full collection guide after you are ready for post-story content."
+    ],
+    "caution": "No plot details are included here. The external collection guide contains substantial story spoilers.",
+    "precision": false,
+    "wait": false,
+    "manual": "Post-story collection gate and substantial purchase requirements; check in game.",
+    "coord": null,
+    "wiki": "https://wiki.guildwars2.com/wiki/Open_Skies:_On_Wings_and_a_Prayer",
+    "api": "https://api.guildwars2.com/v2/achievements/3867"
+  }
+]
+    </script>
     <script>
       "use strict";
       const DATA = JSON.parse(document.getElementById("guide-data").textContent),
@@ -8250,6 +11339,9 @@
         KEYS = Object.keys(MAPS),
         BYID = Object.fromEntries(STOPS.map((s) => [s.id, s])),
         KNOWN_IDS = new Set(STOPS.map((s) => s.id)),
+        MASTERY = JSON.parse(document.getElementById("mastery-data").textContent),
+        MP_BYID = Object.fromEntries(MASTERY.map(s => [s.id, s])),
+        MP_IDS = new Set(MASTERY.map(s => s.id)),
         MAX_PROFILES = 100,
         STORE = "gw2-hero-atlas-v2",
         OLDSTORE = "gw2-road250-v1";
@@ -8273,6 +11365,7 @@
         springer: "Springer",
         high: "Springer · High Vault",
         skimmer: "Skimmer",
+        wind: "Skimmer · Ride the Wind",
         jackal: "Jackal",
         sand: "Jackal · Shifting Sands",
         skiff: "Skiff unlocked",
@@ -8289,6 +11382,7 @@
         raptor: ["canyon"],
         springer: ["high"],
         jackal: ["sand"],
+        skimmer: ["wind"],
       };
       const COMBAT = [
           "No planned fight",
@@ -8346,6 +11440,7 @@
         scope: 1.5,
         eod: false,
         eodScope: 0,
+        mastery: {},
         filters: defaults(),
       };
       state.active = state.profiles[0].id;
@@ -8414,6 +11509,8 @@
           version: 3,
           active: profiles.some((p) => p.id === s.active) ? s.active : profiles[0].id,
           profiles,
+          mastery: Object.fromEntries(Object.entries(s.mastery || {})
+            .filter(([k, v]) => MP_IDS.has(k) && v === true)),
           scope:
             s.version >= 2 && [0, 1, 1.5, 2, 3].includes(Number(s.scope)) ? Number(s.scope) : 0,
           eod: s.version >= 2 && s.eod === true,
@@ -8467,7 +11564,7 @@
         if ((e.key === STORE || e.key === null) && e.newValue !== persistence.raw) blockStaleSave();
       });
       const profile = () => state.profiles.find((p) => p.id === state.active) || state.profiles[0];
-      let tab = "atlas",
+      let tab = location.hash === "#mastery" ? "mastery" : "atlas",
         currentMap = allowed(BYID[profile().selected]?.map || "vb")
           ? BYID[profile().selected]?.map || "vb"
           : "vb",
@@ -8945,7 +12042,13 @@
           b.setAttribute("aria-current", b.dataset.tab === tab ? "page" : "false");
         });
         $("helpview").hidden = tab !== "help";
-        $("atlasview").hidden = tab === "help";
+        $("atlasview").hidden = !["atlas", "route"].includes(tab);
+        $("masteryview").hidden = tab !== "mastery";
+        document.body.classList.toggle("mastery-mode", tab === "mastery");
+        $("print").textContent = tab === "mastery" ? "Print expanded groups" : "Print route";
+        $("characterlabel").textContent = tab === "mastery" ? "Character for map access" : "Character";
+        if (tab === "mastery") $("setupsummary").textContent = "Shared mount unlocks · character map access";
+        renderMastery();
         restoreFocus(focus, true);
         scheduleMapResize();
       }
@@ -8978,6 +12081,7 @@
       }
       function changeTab(t) {
         tab = t;
+        try { history.replaceState(null, "", location.pathname + location.search + (t === "mastery" ? "#mastery" : "")); } catch {}
         $("search").value = "";
         if (t === "route") {
           const r = route();
@@ -9439,6 +12543,11 @@
         e.target.value = "";
       };
       function populatePrint() {
+        if (tab === "mastery") {
+          const sources = masteryShown().filter(s => masteryView.groups[s.tier]);
+          $("printout").innerHTML = `<h1>PoF mastery points · account checklist</h1><p>${sources.length} sources in expanded groups. One point per source, once per account. This is not an unspent balance. Only revealed maps are included.</p>` + sources.map(s => `<article><h2>${esc(s.name)} · ${esc(MAPS[s.map].title)} · 1 MP</h2><p>${esc(MP_TIERS[s.tier].title)} · ${s.type === "achievement" ? "Achievement" : "Insight"}</p><p>${esc(s.why)}</p><p><b>Start:</b> ${esc(s.wp.name)} ${esc(s.wp.chat_link)}</p><p><b>Requirements:</b> ${esc(masteryRequirements(s))}</p><ol>${s.steps.map(t => `<li>${esc(t)}</li>`).join("")}</ol><p>${esc(s.caution)}</p></article>`).join("");
+          return;
+        }
         const p = profile(),
           ss = route();
         $("printout").innerHTML =
@@ -9455,6 +12564,140 @@
         populatePrint();
         window.print();
       };
+      const MP_TIERS = {
+        easy: { title: "Easy ones", note: "Short approaches and simple interactions. Missing unlocks are still shown." },
+        medium: { title: "Medium / hard ones", note: "Manageable second choices, with more climbing, travel or setup." },
+        hard: { title: "Hard · not worth doing for a quick point", note: "Low priority for your preferences. Keep these for exploration, a friend lift or a specific goal." },
+      };
+      const masteryView = { query: "", map: "all", type: "all", ready: false, hide: true,
+        groups: { easy: true, medium: false, hard: false }, open: new Set() };
+      function masteryRequirements(s) {
+        return s.reqs.map(r => r.map(k => NAMES[k]).join(" + ") || "No special mount mastery")
+          .join(" OR ") + (s.manual ? ". " + s.manual : "");
+      }
+      function masteryBlockers(s) {
+        const out = [];
+        if (!profile().access[s.map]) out.push("Map access not enabled for this character");
+        const req = missing(s);
+        if (req.length) out.push("Needs " + req.map(k => NAMES[k]).join(", "));
+        if (s.manual) out.push("Check achievement / route prerequisites");
+        if (s.wait) out.push("Group or event timing to arrange");
+        return out;
+      }
+      function masteryShown() {
+        const q = masteryView.query.trim().toLowerCase();
+        return MASTERY.filter(s => allowed(s.map))
+          .filter(s => masteryView.map === "all" || s.map === masteryView.map)
+          .filter(s => masteryView.type === "all" || (masteryView.type === "easyachievement"
+            ? s.type === "achievement" && s.tier === "easy" : s.type === masteryView.type))
+          .filter(s => !masteryView.hide || !state.mastery[s.id])
+          .filter(s => !masteryView.ready || !masteryBlockers(s).length)
+          .filter(s => !q || (s.name + " " + MAPS[s.map].title + " " + s.why).toLowerCase().includes(q));
+      }
+      function masteryCard(s) {
+        const done = !!state.mastery[s.id], blockers = masteryBlockers(s);
+        return `<details class="mp-card" data-mpcard="${s.id}" ${masteryView.open.has(s.id) ? "open" : ""}>
+          <summary id="mpsummary-${s.id}"><div>
+            <div class="eyebrow">${esc(MAPS[s.map].title)}</div><h3>${esc(s.name)}</h3>
+            <div class="mp-badges"><span class="mp-badge ${s.type === "achievement" ? "achievement" : ""}">${s.type === "achievement" ? (s.tier === "easy" ? "★ Easy achievement" : "Achievement reward") : "Map insight"}</span>
+              <span class="mp-badge ${done || !blockers.length ? "ready" : "blocked"}">${done ? "✓ Collected · account-wide" : blockers.length ? esc(blockers[0]) : "Ready with your kit"}</span>
+              ${s.precision ? '<span class="mp-badge">Technical jumps</span>' : ""}</div>
+            <p class="mp-why">${esc(s.why)}</p></div>
+            <div class="mp-point">1 MP<small>Details</small></div>
+          </summary>
+          <div class="mp-body"><div>
+            <div class="mp-prereqs"><strong>Listed approach needs</strong><p>${esc(masteryRequirements(s))}</p>
+              ${blockers.length ? `<small>${blockers.map(esc).join(" · ")}</small>` : '<small>Recorded kit and map access match. Check the in-game achievement before travelling.</small>'}</div>
+            <h4>${s.type === "achievement" ? "Earn the achievement reward" : "Get to the insight"}</h4>
+            <ol>${s.steps.map(t => `<li>${esc(t)}</li>`).join("")}</ol>
+            <div class="caution">${esc(s.caution)}</div>
+            <div class="mp-completion"><label><input type="checkbox" data-mpdone="${s.id}" ${done ? "checked" : ""} />Collected on this account</label>
+              <small>Tick only after receiving the reward or confirming it was completed before. This never adds hero points.</small></div>
+            <div class="mp-sources">External references may contain story spoilers.<br />
+              <a href="${esc(s.wiki)}" target="_blank" rel="noopener">Route / achievement reference ↗</a> ·
+              <a href="${esc(s.api)}" target="_blank" rel="noopener">Verified mastery reward ↗</a></div>
+          </div><aside><div class="mp-waypoint"><div class="eyebrow">${s.coord ? "Starting waypoint" : "Starting reference · multiple locations"}</div>
+            <b>${esc(s.wp.name)}</b><div class="row between space-top"><code>${esc(s.wp.chat_link)}</code>
+              <button type="button" data-mpcopy="${s.id}">Copy</button></div>
+            <small>Discover this waypoint on the character you are using.</small></div>
+            <div data-mppreview="${s.id}"></div>
+          </aside></div></details>`;
+      }
+      function masteryPreview(id) {
+        const s = MP_BYID[id], node = document.querySelector(`[data-mppreview="${id}"]`);
+        if (!s || !node || !allowed(s.map) || node.childElementCount || !s.coord) return;
+        const m = MAPS[s.map], w = (m.rect[1][0] - m.rect[0][0]) / 4, h = (m.rect[1][1] - m.rect[0][1]) / 4,
+          x = (s.coord[0] - m.rect[0][0]) / 4, y = (s.coord[1] - m.rect[0][1]) / 4,
+          wx = (s.wp.coord[0] - m.rect[0][0]) / 4, wy = (s.wp.coord[1] - m.rect[0][1]) / 4;
+        node.innerHTML = `<svg class="mp-map" role="img" aria-label="${esc(s.name)} location in ${esc(m.title)}" viewBox="-16 -16 ${w+32} ${h+32}">
+          <image href="${m.image}" width="${w}" height="${h}"/>
+          <path d="M${wx} ${wy-8} ${wx+8} ${wy} ${wx} ${wy+8} ${wx-8} ${wy}Z" fill="#83cbd5" stroke="#132d25" stroke-width="2"/>
+          <circle cx="${x}" cy="${y}" r="12" fill="#d9b3ef" stroke="#fff" stroke-width="3"/><circle cx="${x}" cy="${y}" r="3" fill="#34233d"/>
+          </svg><small>Purple: exact ArenaNet mastery marker · blue: starting waypoint. Terrain layer only; pins do not show elevation or a walkable route.</small>`;
+      }
+      function renderMastery() {
+        if (masteryView.map !== "all" && !allowed(masteryView.map)) masteryView.map = "all";
+        const maps = KEYS.filter(k => MAPS[k].group === "pof" && allowed(k));
+        $("mpmap").innerHTML = '<option value="all">All revealed PoF maps</option>' + maps.map(k => `<option value="${k}">${esc(MAPS[k].title)}</option>`).join("");
+        $("mpmap").value = masteryView.map;
+        const revealed = MASTERY.filter(s => allowed(s.map)), shown = masteryShown();
+        $("mpcollected").textContent = MASTERY.filter(s => state.mastery[s.id]).length;
+        $("mpremaining").textContent = revealed.filter(s => !state.mastery[s.id]).length;
+        $("mpquick").textContent = revealed.filter(s => s.tier === "easy" && !state.mastery[s.id] && !masteryBlockers(s).length).length;
+        $("mphidden").innerHTML = !maps.length
+          ? 'PoF is hidden by your spoiler boundary. <button type="button" data-mplimits>Review spoiler settings</button> No later map names, art or sources are shown.'
+          : `${revealed.length} of ${MASTERY.length} sources revealed · later maps stay hidden. <button type="button" data-mplimits class="quiet">Spoilers, map access &amp; mount unlocks</button>`;
+        $("mpcount").textContent = `${shown.length} sources shown · ${shown.filter(s => s.type === "achievement" && s.tier === "easy").length} easy achievement rewards`;
+        $("mpgroups").innerHTML = Object.entries(MP_TIERS).map(([key, group]) => {
+          const list = shown.filter(s => s.tier === key).sort((a,b) => KEYS.indexOf(a.map) - KEYS.indexOf(b.map) ||
+            (state.mastery[a.id] ? 1 : 0) - (state.mastery[b.id] ? 1 : 0) || masteryBlockers(a).length - masteryBlockers(b).length);
+          return `<details class="mp-group" data-mpgroup="${key}" ${masteryView.groups[key] ? "open" : ""}>
+            <summary><div><h2>${group.title}</h2><small>${group.note}</small></div><span class="mp-group-total">${list.length} ${list.length === 1 ? "source" : "sources"}</span></summary>
+            <div class="mp-cards">${list.length ? list.map(masteryCard).join("") : '<div class="empty">No sources in this group match your current map, source and collection filters.</div>'}</div></details>`;
+        }).join("");
+        for (const id of masteryView.open) masteryPreview(id);
+      }
+      $("mpsearch").oninput = e => { masteryView.query = e.target.value; renderMastery(); };
+      $("mpmap").onchange = e => { masteryView.map = e.target.value; renderMastery(); };
+      $("mptype").onchange = e => {
+        masteryView.type = e.target.value;
+        if (e.target.value === "easyachievement") masteryView.groups.easy = true;
+        renderMastery();
+      };
+      $("mpready").onchange = e => { masteryView.ready = e.target.checked; renderMastery(); };
+      $("mphide").onchange = e => { masteryView.hide = e.target.checked; renderMastery(); };
+      $("mpclear").onclick = () => {
+        Object.assign(masteryView, { query: "", map: "all", type: "all", ready: false, hide: true });
+        $("mpsearch").value = ""; $("mptype").value = "all"; $("mpready").checked = false; $("mphide").checked = true;
+        renderMastery();
+      };
+      $("mpgroups").addEventListener("toggle", e => {
+        const d = e.target;
+        if (!d.isConnected) return;
+        if (d.dataset.mpgroup) masteryView.groups[d.dataset.mpgroup] = d.open;
+        if (d.dataset.mpcard) {
+          if (d.open) { masteryView.open.add(d.dataset.mpcard); masteryPreview(d.dataset.mpcard); }
+          else masteryView.open.delete(d.dataset.mpcard);
+        }
+      }, true);
+      $("masteryview").addEventListener("change", e => {
+        const id = e.target.dataset.mpdone;
+        if (!id || !MP_IDS.has(id) || !allowed(MP_BYID[id].map)) return;
+        if (e.target.checked) state.mastery[id] = true;
+        else delete state.mastery[id];
+        save();
+        renderMastery();
+        const summary = $("mpsummary-" + id);
+        (summary || $("mpgroups").querySelector("summary"))?.focus({ preventScroll: true });
+      });
+      $("masteryview").addEventListener("click", e => {
+        const copyButton = e.target.closest("[data-mpcopy]");
+        if (copyButton) { const s = MP_BYID[copyButton.dataset.mpcopy]; if (s && allowed(s.map)) copy(s.wp.chat_link); }
+        if (e.target.closest("[data-mplimits]")) {
+          $("settings").open = true; $("scope").focus(); $("settings").scrollIntoView({ block: "start" });
+        }
+      });
+
       controls();
       render(true);
       if (persistence.raw === null || persistence.blocked) save();

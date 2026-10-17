@@ -6,8 +6,12 @@ EoD has its own staged spoiler boundary and stays hidden by default. Revealing a
 
 Progress and notes are saved locally in each browser. They are not uploaded to GitHub or automatically synced. Use the guide’s backup/export and restore controls to transfer progress between the downloaded and hosted versions or between devices.
 
+The **PoF mastery points** tab lists all 40 PoF insights and 33 additional mastery-point achievement rewards, grouped by easy, medium/hard and low-priority hard routes. Easy achievement rewards are highlighted. Search, map and availability filters obey the existing PoF spoiler boundary. Mastery completions are tracked once per account, shared across character profiles, and included in progress backups; they never add hero points or imply a current unspent mastery-point balance. The tab opens directly at `#mastery`.
+
 Open `index.html` directly in a browser, or serve this repository with GitHub Pages from the `main` branch and repository root. No build or dependencies are required.
 
 This is an unofficial fan guide, not affiliated with or endorsed by ArenaNet. Source attributions and Guild Wars 2 Wiki links are preserved inside the application.
 
 The [EoD research notes](EOD_RESEARCH.md) contain later location names; read them only if you are comfortable with map spoilers. In the application, source links appear only for revealed maps and warn before leaving the spoiler-controlled guide.
+
+[PoF mastery research notes](POF_MASTERY_RESEARCH.md) also contain later map and achievement names. Individual reward and route references are available inside revealed mastery cards.
