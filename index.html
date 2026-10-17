@@ -1257,6 +1257,9 @@
 
 
 .sp-formgrid input[type="checkbox"]{width:18px;min-width:18px}.sp-formgrid label.inline{white-space:normal;min-width:0}
+      dialog {max-height:calc(100dvh - 32px);overflow-y:auto}
+      #modalcopy {width:100%;min-height:140px;max-height:45vh;resize:vertical;margin-top:8px;white-space:pre-wrap}
+      .sp-demand i {background:var(--gold)}
     </style>
   </head>
   <body>
@@ -1660,10 +1663,10 @@
 <label>What matters most?<select id="spqpriority"><option value="balanced">Balanced</option><option value="fun">Fun</option><option value="fantasy">Class fantasy</option><option value="ceiling">Skill ceiling</option><option value="power">Combat power</option></select></label></div><button type="submit" class="primary">Find my matches</button><button type="button" id="spquizreset">Reset quiz</button></form><div id="spquizresults" aria-live="polite"></div></div></details>
 <details class="sp-tool" id="spgear"><summary><span>Gear-sharing planner <small>Potential reuse, stat changes and weapon access</small></span></summary><div class="sp-toolbody"><p>Compare an owned setup with a target build. Matching stats are potential reuse, not a guarantee that a physical item can be moved. Armour must match weight; trinkets work across weights. Character binding, item tier, runes, sigils, relics and fractal agony resistance need a separate check.</p><div class="sp-formgrid">
 <label>What do you own?<select id="spgearsource"></select></label><label>Armour weight of my full Berserker set<select id="spgearweight"><option value="Light">Light</option><option value="Medium">Medium</option><option value="Heavy">Heavy</option></select></label><label>Target build<select id="spgeartarget"></select></label></div><p class="muted">“Full Berserker” means six armour pieces and six trinkets. Weapons are unknown until you choose an owned build. A source build represents its primary equipment set, not every optional variant.</p>
-<fieldset class="sp-access"><legend>My expansion &amp; weapon access · independent of spoiler reveals</legend><div class="sp-formgrid"><label class="inline"><input type="checkbox" data-spown="hot" id="spown-hot" />Heart of Thorns</label><label class="inline"><input type="checkbox" data-spown="pof" id="spown-pof" />Path of Fire</label><label class="inline"><input type="checkbox" data-spown="eod" id="spown-eod" />End of Dragons</label><label class="inline"><input type="checkbox" data-spown="soto" id="spown-soto" />Secrets of the Obscure</label><label class="inline"><input type="checkbox" data-spown="jw" id="spown-jw" />Janthir Wilds</label><label class="inline"><input type="checkbox" data-spown="voe" id="spown-voe" />Newest expansion</label><label class="inline"><input type="checkbox" data-spown="weaponmaster" id="spown-weaponmaster" />Weaponmaster Training unlocked</label><label class="inline"><input type="checkbox" data-spown="expanded" id="spown-expanded" />Expanded Weapon Proficiency unlocked</label><label class="inline"><input type="checkbox" data-spown="spear" id="spown-spear" />Land spear unlocked</label></div></fieldset><div id="spgearresults" aria-live="polite"></div><button type="button" id="spgearcopy">Copy gear checklist</button></div></details>
+<fieldset class="sp-access"><legend>My expansion &amp; weapon access · independent of spoiler reveals</legend><div class="sp-formgrid"><label class="inline"><input type="checkbox" data-spown="hot" id="spown-hot" />Heart of Thorns</label><label class="inline"><input type="checkbox" data-spown="pof" id="spown-pof" />Path of Fire</label><label class="inline"><input type="checkbox" data-spown="eod" id="spown-eod" />End of Dragons</label><label class="inline"><input type="checkbox" data-spown="soto" id="spown-soto" />Secrets of the Obscure</label><label class="inline"><input type="checkbox" data-spown="jw" id="spown-jw" />Janthir Wilds</label><label class="inline"><input type="checkbox" data-spown="voe" id="spown-voe" />Newest expansion</label><label class="inline"><input type="checkbox" data-spown="weaponmaster" id="spown-weaponmaster" />Weaponmaster Training unlocked</label><label class="inline"><input type="checkbox" data-spown="expanded" id="spown-expanded" />Expanded Weapon Proficiency unlocked</label><label class="inline"><input type="checkbox" data-spown="spear" id="spown-spear" />Land spear unlocked</label></div></fieldset><p id="spgearstatus" class="sr" role="status"></p><div id="spgearresults"></div><button type="button" id="spgearcopy">Copy gear checklist</button></div></details>
 <details class="sp-tool" id="spjournal"><summary><span>My spec journal <small>Favourites, tried specs, personal ratings and goals</small></span></summary><div class="sp-toolbody"><p>Your journal and learning checkpoints are shared across this browser’s characters and included in Back up progress. They do not change editorial ratings. Hidden specs stay out of this view.</p><div id="spjournalentries"></div></div></details>
 
-  <div class="sp-toolbar"><label>Search revealed specs<input id="spsearch" type="search" placeholder="Spec, profession, weapon or playstyle" /></label><label>Profession<select id="spprofession"><option value="all">All professions</option></select></label><label>Card & comparison focus<select id="splens"><option value="top">Top-rated / benchmark pick</option><option value="power">Power / Berserker route</option></select></label><label>Sort<select id="spsort"><option value="comfort">Cozy comfort</option><option value="survival">Survivability</option><option value="effort">Fewest inputs</option><option value="overall">Overall rating</option><option value="fantasy">Class fantasy</option><option value="ceiling">Highest ceiling</option><option value="profession">Profession</option><option value="floor">Easiest skill floor</option><option value="flow">Smoothest flow</option><option value="fun">Fun fit</option><option value="dps">Group benchmark DPS</option></select></label><button type="button" id="spclear">Clear filters</button></div>
+  <div class="sp-toolbar"><label>Search revealed specs<input id="spsearch" type="search" placeholder="Spec, build, weapon or playstyle" /></label><label>Profession<select id="spprofession"><option value="all">All professions</option></select></label><label>Card & comparison focus<select id="splens"><option value="top">Top-rated / benchmark pick</option><option value="power">Power / Berserker route</option></select></label><label>Sort<select id="spsort"><option value="comfort">Cozy comfort</option><option value="survival">Survivability</option><option value="effort">Fewest inputs</option><option value="overall">Overall rating</option><option value="fantasy">Class fantasy</option><option value="ceiling">Highest ceiling</option><option value="profession">Profession</option><option value="floor">Easiest skill floor</option><option value="flow">Smoothest flow</option><option value="fun">Fun fit</option><option value="dps">Group benchmark DPS</option></select></label><button type="button" id="spclear">Clear filters</button></div>
   <div class="sp-subfilters"><label>My collection<select id="spcollection"><option value="all">All revealed specs</option><option value="favorite">Favourites</option><option value="tried">Tried</option><option value="untried">Not tried yet</option><option value="goals">With learning goals</option></select></label><label>Good fits for<select id="spencounter"><option value="all">All encounters</option><option value="champion">Solo champions</option><option value="moving">Moving bosses</option><option value="burst">Short burst phases</option><option value="mechanics">Heavy mechanics</option><option value="fractals">Fractals</option><option value="events">Open-world events</option></select></label></div>
   <p id="spcount" role="status"></p><section id="spcompare" aria-label="Selected specialization comparison" hidden></section><div id="spcards" class="sp-cards"></div>
   <p class="sp-footnote">An expandable reference, not a permanent tier list. Research and source revisions are dated. New balance changes need a fresh audit. Progress in the atlas and mastery checklist is kept separately.</p>
@@ -1944,6 +1947,7 @@
           <label class="sr" for="modalinput">Value</label
           ><input type="text" id="modalinput" maxlength="100" />
         </div>
+        <div id="modalcopyfield" hidden><label for="modalcopy">Text to copy</label><textarea id="modalcopy" readonly rows="7"></textarea></div>
         <div class="actions">
           <button type="button" value="cancel" id="modalcancel">Cancel</button
           ><button type="submit" value="ok" id="modalok" class="primary">Save</button>
@@ -30714,6 +30718,7 @@
             : "Browser storage is unavailable. Changes stay in this tab; back up progress before closing.";
       }
       function showSaveWarning(message) {
+        if(persistence.recovery===null && $("savewarning").textContent===message)return;
         $("savewarning").textContent = message;
         if (persistence.recovery !== null) {
           const b = document.createElement("button");
@@ -30739,7 +30744,13 @@
         if ((e.key === STORE || e.key === null) && e.newValue !== persistence.raw) blockStaleSave();
       });
       const profile = () => state.profiles.find((p) => p.id === state.active) || state.profiles[0];
-      let tab = location.hash === "#specs" ? "specs" : location.hash === "#mastery" ? "mastery" : "atlas",
+      const APP_TABS = ["atlas", "route", "help", "mastery", "specs"];
+      function tabFromHash() { const key=location.hash.slice(1); return APP_TABS.includes(key)?key:"atlas"; }
+      function updateViewURL(t, mode = "push") {
+        const url=location.pathname+location.search+(t==="atlas"?"":"#"+t);
+        if (url!==location.pathname+location.search+location.hash) try { history[mode==="replace"?"replaceState":"pushState"](null,"",url); } catch {}
+      }
+      let tab = tabFromHash(),
         currentMap = allowed(BYID[profile().selected]?.map || "vb")
           ? BYID[profile().selected]?.map || "vb"
           : "vb",
@@ -30858,7 +30869,12 @@
       function captureFocus() {
         const e = document.activeElement;
         if (!e || e === document.body) return null;
-        if (e.id) return { id: e.id };
+        if (e.id) {
+          const f={id:e.id};
+          if(typeof e.selectionStart==="number")Object.assign(f,{start:e.selectionStart,end:e.selectionEnd,direction:e.selectionDirection,value:e.value});
+          return f;
+        }
+        if(e.tagName==="SUMMARY" && e.parentElement.dataset.spdetail)return {detail:e.parentElement.dataset.spdetail};
         for (const key of [
           "data-earned",
           "data-stop",
@@ -30879,13 +30895,17 @@
       }
       function restoreFocus(f, fallback = false) {
         if (!f) return;
-        let e = f.id
-          ? $(f.id)
+        let e = f.detail
+          ? Array.from(document.querySelectorAll('[data-spdetail]')).find(d=>d.dataset.spdetail===f.detail)?.querySelector('summary')
+          : f.id ? $(f.id)
           : Array.from(
               (f.scope ? $(f.scope) : document)?.querySelectorAll("[" + f.key + "]") || [],
             ).find((n) => n.getAttribute(f.key) === f.value);
         if (!e || e.disabled || !e.getClientRects().length) e = fallback ? $("detailtitle") : null;
-        if (e && e.getClientRects().length) e.focus({ preventScroll: true });
+        if (e && e.getClientRects().length) {
+          e.focus({ preventScroll: true });
+          if(typeof f.start==="number" && e.value===f.value && e.setSelectionRange)try{e.setSelectionRange(f.start,f.end,f.direction);}catch{}
+        }
       }
       function toast(t) {
         $("toast").textContent = t;
@@ -30897,6 +30917,8 @@
         modalAction = action;
         $("modaltitle").textContent = title;
         $("modaltext").textContent = text;
+        $("modalcopyfield").hidden = true;
+        $("modalcopy").value = "";
         $("modalfield").hidden = !input;
         $("modalinput").value = value;
         $("modalinput").readOnly = false;
@@ -30925,7 +30947,7 @@
       });
       $("modal").addEventListener("close", () => {
         // A queued close from an earlier dialog must not clear a newer action.
-        if (!$("modal").open) modalAction = null;
+        if (!$("modal").open) { modalAction = null; if(document.activeElement===document.body)document.querySelector(`[data-tab="${tab}"]`)?.focus({preventScroll:true}); }
       });
       function controls() {
         const focus = captureFocus(),
@@ -31257,9 +31279,10 @@
         save();
         render(changed);
       }
-      function changeTab(t) {
+      function changeTab(t, fromHistory = false) {
+        if (!APP_TABS.includes(t) || t===tab) return;
         tab = t;
-        try { history.replaceState(null, "", location.pathname + location.search + (["mastery","specs"].includes(t) ? "#"+t : "")); } catch {}
+        if (!fromHistory) updateViewURL(t);
         $("search").value = "";
         if (t === "route") {
           const r = route();
@@ -31267,7 +31290,14 @@
           currentMap = r[0]?.map || "vb";
         }
         render(true);
+        if(fromHistory)document.querySelector(`[data-tab="${t}"]`)?.focus({preventScroll:true});
       }
+      function syncViewFromURL() {
+        const key=location.hash.slice(1);
+        if(!key || APP_TABS.includes(key))changeTab(tabFromHash(),true);
+      }
+      window.addEventListener("hashchange",syncViewFromURL);
+      window.addEventListener("popstate",syncViewFromURL);
       function next(id) {
         $("search").value = "";
         const r = route();
@@ -31337,21 +31367,22 @@
         } else apply();
         $("eodscope").value = state.eodScope;
       }
-      async function copy(text) {
+      async function copy(text, kind = "waypoint") {
+        const labels = {waypoint:["Waypoint", "Paste into your GW2 chat box."],build:["Build template", "Paste the template code into Guild Wars 2."],gear:["Gear checklist", "Keep it with your gearing notes."]},
+          [label, instruction] = labels[kind] || ["Text", "Paste it where you need it."];
         try {
           await navigator.clipboard.writeText(text);
-          toast("Waypoint copied. Paste into your GW2 chat box.");
-        } catch (e) {
-          confirmBox(
-            "Copy waypoint",
-            "Select and copy this code, then paste it into your GW2 chat box.",
-            null,
-            true,
-            text,
-            "Done",
-          );
-          $("modalinput").readOnly = true;
-          $("modalinput").select();
+          toast(label + " copied. " + instruction);
+        } catch {
+          if ($("modal").open) { toast("Close the open dialog, then try Copy again."); return; }
+          const multiline = text.includes("\n");
+          confirmBox("Copy " + label.toLowerCase(), "Select and copy the text below. " + instruction,
+            null, !multiline, multiline ? "" : text, "Done");
+          if (multiline) {
+            $("modalcopyfield").hidden = false;
+            $("modalcopy").value = text;
+            $("modalcopy").focus(); $("modalcopy").select();
+          } else { $("modalinput").readOnly = true; $("modalinput").select(); }
         }
       }
       $("setupweaver").onclick = () => {
@@ -31414,6 +31445,7 @@
           return;
         }
         tab = "atlas";
+        updateViewURL("atlas");
         currentMap = k;
         $("search").value = "";
         profile().selected = "";
@@ -31703,6 +31735,7 @@
               state.specReveal = { eod: false, voe: false };
               currentMap = "vb";
               tab = "atlas";
+              updateViewURL("atlas", "replace");
               controls();
               render(true);
               const saved = save(true);
@@ -31883,7 +31916,7 @@
 
       const SPEC = JSON.parse($("spec-data").textContent), SP_TOOLS = JSON.parse($("spec-tools-data").textContent), SP_BUILDS = {...SPEC.builds,...SP_TOOLS.builds},
         SP_BYID = Object.fromEntries(SPEC.specs.map(s => [s.id,s])),
-        spView = { context: "solo", lens: "top", profession: "all", query: "", sort: "overall", open: new Set(), compare: [], details: new Set(), cozyLane:"relaxed", collection:"all", encounter:"all", quiz:null },
+        spView = { context: "solo", lens: "top", profession: "all", query: "", sort: "overall", open: new Set(), compare: [], details: new Set(), cozyLane:"relaxed", collection:"all", encounter:"all", quiz:null, quizDirty:false },
         SP_LABELS = { overall: "Overall", fantasy: "Class fantasy", complexity: "Complexity", floor: "Skill floor", ceiling: "Skill ceiling ↑", fun: "Fun fit", flow: "Rotation flow", power: "Combat power" };
       function specAllowed(s) { return ["hot","pof"].includes(s.expansion) || state.specReveal?.[s.expansion] === true; }
       function specBuild(s) { return spView.context==="cozy"?cozyBuild(s):SP_BUILDS[s[spView.context][spView.lens]]; }
@@ -31893,7 +31926,7 @@
           .filter(s=>{const n=state.specPersonal[s.id]||{};return spView.collection==="all"||spView.collection==="favorite"&&n.favorite||spView.collection==="tried"&&n.tried||spView.collection==="untried"&&!n.tried||spView.collection==="goals"&&n.goal?.trim();})
           .filter(s=>spView.encounter==="all"||encounterFit(s,specBuild(s),spView.encounter).score>=4)
           .filter(s => spView.profession === "all" || s.profession === spView.profession)
-          .filter(s => !q || [s.name,s.profession,s.identity,s.fantasy,...Object.values(specContext(s)).map(id=>SP_BUILDS[id]?.weapons||"")].join(" ").toLowerCase().includes(q))
+          .filter(s => !q || [s.name,s.profession,s.identity,s.fantasy,...Object.values(specContext(s)).map(id=>SP_BUILDS[id]?[SP_BUILDS[id].name,SP_BUILDS[id].weapons,...SP_BUILDS[id].traits].join(" "):"")].join(" ").toLowerCase().includes(q))
           .sort((a,b) => {
             const x=specBuild(a),y=specBuild(b),k=spView.sort;
             if(k==="profession") return a.profession.localeCompare(b.profession)||a.name.localeCompare(b.name);
@@ -31902,7 +31935,7 @@
           });
       }
       function specRatings(b) {
-        return `<div class="sp-ratings">${Object.entries(specLabels()).map(([k,label])=>`<div>${label}<strong>${b.ratings[k]} / 5</strong><span class="sp-meter" aria-hidden="true"><i style="width:${b.ratings[k]*20}%"></i></span></div>`).join("")}</div>`;
+        return `<div class="sp-ratings">${Object.entries(specLabels()).map(([k,label])=>`<div>${label}<strong>${b.ratings[k]} / 5</strong><span class="sp-meter ${["effort","floor","complexity"].includes(k)?"sp-demand":""}" aria-hidden="true"><i style="width:${b.ratings[k]*20}%"></i></span></div>`).join("")}</div>`;
       }
       function specPanel(s,id,title) {
         const b=spView.context==="cozy"?cozyBuild(s):SP_BUILDS[id];
@@ -31914,7 +31947,7 @@
           <p><b>Gear direction:</b> ${esc([...new Set(SP_TOOLS.gear[b.id].map(g=>g.stat))].join(" + "))} ${b.power?"· power route; check each slot, not just the stat family.":"· separate gear investment from a Berserker set."}</p>
           <p><b>Trait lines:</b> ${esc(b.traits.join(" / ")||"See source template")}</p>${b.skills.length?`<p><b>Listed heal / utilities / elite:</b> ${b.skills.map(esc).join(" · ")}</p>`:""}
           ${b.expacs.length?`<p><b>Source-listed expansion requirements:</b> ${b.expacs.map(esc).join(" · ")}</p>`:""}
-          <details class="sp-gear"><summary>Exact stat slots &amp; build template</summary><ul>${SP_TOOLS.gear[b.id].map(g=>`<li>${esc(g.key)} · ${esc(g.stat)}</li>`).join("")}</ul><p><small>Open the source for exact runes, sigils, relic, food and variant-specific skill priorities. Template codes import traits and skills, not equipment.</small></p>${b.code?`<div class="sp-code"><button type="button" id="spcopy-${s.id}-${esc(title.startsWith("Power")?"power":"top")}" data-spcopy="${b.id}">Copy build</button><code>${esc(b.code)}</code></div>`:'<p>No usable template code was published in this source snapshot. Follow its manual traits and skill setup.</p>'}</details>
+          <details class="sp-gear" data-spdetail="gear-${s.id}-${b.id}"><summary id="spgearsummary-${s.id}-${b.id}">Exact stat slots &amp; build template</summary><ul>${SP_TOOLS.gear[b.id].map(g=>`<li>${esc(g.key)} · ${esc(g.stat)}</li>`).join("")}</ul><p><small>Open the source for exact runes, sigils, relic, food and variant-specific skill priorities. Template codes import traits and skills, not equipment.</small></p>${b.code?`<div class="sp-code"><button type="button" id="spcopy-${s.id}-${esc(title.startsWith("Power")?"power":"top")}" data-spcopy="${b.id}">Copy build</button><code>${esc(b.code)}</code></div>`:'<p>No usable template code was published in this source snapshot. Follow its manual traits and skill setup.</p>'}</details>
           ${learningPath(s,b)}<div class="sp-source"><a href="${esc(b.url)}" target="_blank" rel="noopener">Full ${esc(b.source)} build &amp; rotation ↗</a><small>Source revision: ${esc(b.updated)}${old?" · older revision; source still lists this build":""}<br />Source balance label: ${esc(b.patch)} · checked ${SPEC.snapshot}</small>External build pages may reveal later expansion equipment and skill names.</div></article>`;
       }
       function specCard(s) {
@@ -31943,12 +31976,15 @@
         $("spsort").value=spView.sort;
         const shown=specShown(),revealed=SPEC.specs.filter(specAllowed);
         $("spcount").textContent=`${shown.length} of ${revealed.length} revealed specs shown · ${36-revealed.length} hidden · ratings follow the selected setting and build focus`;
-        $("spcards").innerHTML=(spView.query||spView.profession!=="all"?"":specAwards(shown))+(shown.length?shown.map(specCard).join(""):'<div class="empty">No revealed specs match. Clear filters or review the expansion reveals above.</div>');
+        $("spcards").innerHTML=(spView.query||spView.profession!=="all"||spView.collection!=="all"||spView.encounter!=="all"?"":specAwards(shown))+(shown.length?shown.map(specCard).join(""):'<div class="empty">No revealed specs match. Clear filters or review the expansion reveals above.</div>');
         renderSpecCompare();
         for(const d of $("spcards").querySelectorAll('[data-spdetail]'))if(spView.details.has(d.dataset.spdetail))d.open=true;
         renderSpecTools();
       }
-      function refreshSpecs() {const f=captureFocus();renderSpecs();restoreFocus(f);}
+      function refreshSpecs() {
+        const f=captureFocus();renderSpecs();restoreFocus(f);
+        if(f && (document.activeElement===document.body || !document.activeElement.getClientRects().length))$("spcollection").focus({preventScroll:true});
+      }
       for(const ctx of ["solo","group","cozy"])$("sp"+ctx).onclick=()=>{spView.context=ctx;if(ctx==="cozy")spView.sort=spView.cozyLane==="relaxed"?"comfort":"survival";refreshSpecs();};
       $("spsearch").oninput=e=>{spView.query=e.target.value;refreshSpecs();};
       for(const [id,key] of [["spprofession","profession"],["splens","lens"],["spsort","sort"]])$(id).onchange=e=>{spView[key]=e.target.value;refreshSpecs();};
@@ -31956,8 +31992,8 @@
       for(const expansion of ["eod","voe"])$("spreveal"+expansion).onchange=e=>{state.specReveal=state.specReveal||{};state.specReveal[expansion]=e.target.checked;spView.query="";$("spsearch").value="";save();refreshSpecs();};
       $("spcards").addEventListener("toggle",e=>{if(!e.target.isConnected||!e.target.dataset.spcard)return;const id=e.target.dataset.spcard;if(e.target.open)spView.open.add(id);else spView.open.delete(id);},true);
       $("specview").addEventListener("change",e=>{const id=e.target.dataset.spcompare;if(!id||!specAllowed(SP_BYID[id]))return;if(e.target.checked){if(spView.compare.length>=3){e.target.checked=false;toast("Compare up to 3 specs. Remove one from the comparison first.");return;}spView.compare.push(id);}else spView.compare=spView.compare.filter(x=>x!==id);renderSpecCompare();});
-      $("specview").addEventListener("click",e=>{const c=e.target.closest('[data-spcopy]');if(c){const b=SP_BUILDS[c.dataset.spcopy];if(b&&specAllowed(SPEC.specs.find(s=>s.name===b.spec)))copy(b.code);}
-        const remove=e.target.closest('[data-spremove]');if(remove||e.target.id==="spcompareclear"){spView.compare=remove?spView.compare.filter(x=>x!==remove.dataset.spremove):[];refreshSpecs();$("spcompareclear")?.focus({preventScroll:true});}
+      $("specview").addEventListener("click",e=>{const c=e.target.closest('[data-spcopy]');if(c){const b=SP_BUILDS[c.dataset.spcopy];if(b&&specAllowed(SPEC.specs.find(s=>s.name===b.spec)))copy(b.code, "build");}
+        const remove=e.target.closest('[data-spremove]');if(remove||e.target.id==="spcompareclear"){spView.compare=remove?spView.compare.filter(x=>x!==remove.dataset.spremove):[];refreshSpecs();($("spcompareclear") || $("spsummary-"+remove?.dataset.spremove) || $("spcollection")).focus({preventScroll:true});}
       });
       $("spprofession").innerHTML+=[...new Set(SPEC.specs.map(s=>s.profession))].sort().map(p=>`<option value="${p}">${p}</option>`).join("");
 
@@ -31985,7 +32021,7 @@
         return `<details class="sp-journey" data-spdetail="learn-${s.id}-${b.id}"><summary>Learning path · ${[0,1,2].filter(i=>bits&(1<<i)).length}/3 checkpoints</summary><p><small>Editorial practice progression for ${esc(b.name)}. The starter is deliberately incomplete and has no claimed DPS. Checkpoints are your own assessment.</small></p>${stages.map((stage,i)=>`<div class="sp-step"><h4>${stage.title}</h4><ol>${stage.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>${i===2?`<p><a href="${esc(b.url)}" target="_blank" rel="noopener">Open the exact full rotation / usage guide ↗</a></p>`:""}<label><input type="checkbox" id="splearn-${s.id}-${b.id}-${i}" data-splearn="${esc(key)}" data-spstage="${i}" ${bits&(1<<i)?"checked":""} />I can do this comfortably</label><small>Practice goal: ${esc(stage.goal)}</small></div>`).join("")}</details><button type="button" id="spplan-${s.id}-${b.id}" data-spplan="${b.id}">Plan gear for this build</button>`;
       }
       function personalPanel(s){const n=state.specPersonal[s.id]||{},rating=(key,label)=>`<label>${label}<select id="spnote-${s.id}-${key}" data-spnote="${s.id}" data-spfield="${key}"><option value="0">Not rated yet</option>${[1,2,3,4,5].map(v=>`<option value="${v}" ${n[key]===v?"selected":""}>${v} / 5</option>`).join("")}</select></label>`;
-        return `<details class="sp-personal" data-spdetail="personal-${s.id}"><summary>My experience${n.favorite?' <span>★ Favourite</span>':""}${n.tried?" · Tried":""}</summary><div class="sp-formgrid"><label class="inline"><input id="spnote-${s.id}-favorite" type="checkbox" data-spnote="${s.id}" data-spfield="favorite" ${n.favorite?"checked":""} />Favourite</label><label class="inline"><input id="spnote-${s.id}-tried" type="checkbox" data-spnote="${s.id}" data-spfield="tried" ${n.tried?"checked":""} />I’ve tried this spec</label>${rating("fun","My fun rating")}${rating("flow","My flow rating")}</div><label>My next learning goal<input id="spnote-${s.id}-goal" data-spnote="${s.id}" data-spfield="goal" maxlength="200" value="${esc(n.goal||"")}" placeholder="What I want to practise next" /></label><label>Notes<textarea id="spnote-${s.id}-notes" data-spnote="${s.id}" data-spfield="notes" maxlength="2000" placeholder="Favourite variant, comfort changes, things to remember">${esc(n.notes||"")}</textarea></label><div id="spnotestatus-${s.id}" class="sp-notestatus" role="status">Browser-local · included in progress backups · applies across settings</div></details>`;
+        return `<details class="sp-personal" data-spdetail="personal-${s.id}"><summary id="sppersonalsummary-${s.id}">My experience${n.favorite?' <span>★ Favourite</span>':""}${n.tried?" · Tried":""}</summary><div class="sp-formgrid"><label class="inline"><input id="spnote-${s.id}-favorite" type="checkbox" data-spnote="${s.id}" data-spfield="favorite" ${n.favorite?"checked":""} />Favourite</label><label class="inline"><input id="spnote-${s.id}-tried" type="checkbox" data-spnote="${s.id}" data-spfield="tried" ${n.tried?"checked":""} />I’ve tried this spec</label>${rating("fun","My fun rating")}${rating("flow","My flow rating")}</div><label>My next learning goal<input id="spnote-${s.id}-goal" data-spnote="${s.id}" data-spfield="goal" maxlength="200" value="${esc(n.goal||"")}" placeholder="What I want to practise next" /></label><label>Notes<textarea id="spnote-${s.id}-notes" data-spnote="${s.id}" data-spfield="notes" maxlength="2000" placeholder="Favourite variant, comfort changes, things to remember">${esc(n.notes||"")}</textarea></label><div id="spnotestatus-${s.id}" class="sp-notestatus" role="status">Browser-local · included in progress backups · applies across settings</div></details>`;
       }
       function encounterFit(s,b,key){if(!b)return {score:1,why:"No verified recommendation for this build focus."};const p=SP_TOOLS.profiles[s.id],power=b.power||(!/Condition|Condi|Champion Hunter/.test(b.name)&&s.solo.power===b.id),survival=b.cozy?b.ratings.survival:p.relaxedScores.survival;
         if(key==="champion")return {score:spView.context==="group"?3:survival,why:spView.context==="group"?"Group damage assumes supplied boons and healing. Use a solo or survival setup before judging champion comfort.":p.defense};
@@ -31995,7 +32031,7 @@
         if(key==="fractals")return {score:spView.context!=="group"?2:p.lowCC?3:4,why:spView.context!=="group"?"This is an open-world setup, not a fractal recommendation. Switch to group view and check role, ascended gear, agony resistance and encounter utility.":p.lowCC?"Arrange enough breakbar control in the party. Follow the source’s utility swaps and check your group role and agony resistance.":"Control, burst timing and party boons matter as much as a benchmark. Bring the required utility and agony resistance; this is not a speedrun ranking."};
         return {score:["Reaper","Scrapper","Tempest","Scourge","Dragonhunter","Untamed"].includes(s.name)?4:3,why:"For ordinary events, prioritize cleave, getting credit on nearby enemies and moving safely between packs. "+(p.lowCC?"Keep an optional control tool available.":"Avoid using every control skill before a breakbar appears.")};
       }
-      function encounterPanel(s){const b=specBuild(s);return `<details class="sp-encounters" data-spdetail="encounters-${s.id}"><summary>Where this build fits · encounter guidance</summary><p><small>Editorial suitability for the card’s current setting and build focus: 4–5 strong, 3 workable, 1–2 demanding or use a different setup. No encounter DPS is predicted.</small></p><div class="sp-encountergrid">${Object.entries(SP_ENCOUNTERS).map(([k,title])=>{const r=encounterFit(s,b,k);return `<div><b>${title}</b><strong>${r.score}/5 · ${r.score>=4?"Strong fit":r.score===3?"Workable":"Needs care / another setup"}</strong><p>${esc(r.why)}</p></div>`;}).join("")}</div></details>`;}
+      function encounterPanel(s){const b=specBuild(s);return `<details class="sp-encounters" data-spdetail="encounters-${s.id}"><summary id="spencountersummary-${s.id}">Where this build fits · encounter guidance</summary><p><small>Editorial suitability for the card’s current setting and build focus: 4–5 strong, 3 workable, 1–2 demanding or use a different setup. No encounter DPS is predicted.</small></p><div class="sp-encountergrid">${Object.entries(SP_ENCOUNTERS).map(([k,title])=>{const r=encounterFit(s,b,k);return `<div><b>${title}</b><strong>${r.score}/5 · ${r.score>=4?"Strong fit":r.score===3?"Workable":"Needs care / another setup"}</strong><p>${esc(r.why)}</p></div>`;}).join("")}</div></details>`;}
       function buildHasRange(b){const s=SPEC.specs.find(s=>s.name===b.spec),items=SP_TOOLS.gear[b.id]||[],weapons=items.filter(g=>g.type==="weapon").map(g=>g.name);return weapons.some(w=>["Longbow","Shortbow","Rifle","Scepter"].includes(w)||w==="Staff"&&!["Thief","Revenant"].includes(s.profession)||w==="Pistol"&&items.find(g=>g.type==="weapon")?.name==="Pistol"||w==="Axe"&&s.profession==="Ranger");}
       function quizMatch(s,a){const b=specBuild(s),p=SP_TOOLS.profiles[s.id],reasons=[];if(!b)return null;let score=0,max=0;
         const add=(points,total,why)=>{score+=points;max+=total;if(points>=total*.75&&why)reasons.push(why);};
@@ -32007,12 +32043,12 @@
         const priority=a.priority==="balanced"?"overall":a.priority;add(b.ratings[priority]-1,4,"Strong "+(a.priority==="balanced"?"overall":a.priority)+" fit in this setting.");
         return {s,b,score:Math.round(score*100)/100,max,reasons:reasons.slice(0,4)};
       }
-      function renderQuiz(){if(!spView.quiz){$("spquizresults").innerHTML='<p class="muted">Choose preferences, then find your matches. Hidden specs are never considered.</p>';return;}
+      function renderQuiz(){if(spView.quizDirty){$("spquizresults").innerHTML='<p role="status">Preferences changed. Select “Find my matches” to update your results.</p>';return;}if(!spView.quiz){$("spquizresults").innerHTML='<p class="muted">Choose preferences, then find your matches. Hidden specs are never considered.</p>';return;}
         const results=specShown().map(s=>quizMatch(s,spView.quiz)).filter(Boolean).sort((a,b)=>b.score-a.score||a.s.name.localeCompare(b.s.name)).slice(0,3);
         $("spquizresults").innerHTML=`<p>${spView.context==="cozy"?(spView.cozyLane==="relaxed"?"AFK / no-brain":"Unkillable"):spView.context} · current filters and revealed specs · ties are equal matches</p>`+(results.length?`<div class="sp-resultgrid">${results.map(r=>`<article class="sp-result"><strong>${r.score.toFixed(1)} / ${r.max} fit points</strong><h3>${esc(r.s.name)}</h3><p>${esc(r.b.name)}</p><ul>${r.reasons.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><button type="button" data-spshow="${r.s.id}">Explore ${esc(r.s.name)}</button></article>`).join("")}</div>`:'<p>No verified builds match the current filters. Clear filters or change build focus.</p>');
       }
-      function renderJournal(){const list=SPEC.specs.filter(specAllowed).filter(s=>{const n=state.specPersonal[s.id];return n&&(n.favorite||n.tried||n.fun||n.flow||n.goal||n.notes);});
-        $("spjournalentries").innerHTML=list.length?list.map(s=>{const n=state.specPersonal[s.id];return `<article class="sp-journalitem"><b>${esc(s.name)}</b> · ${n.favorite?"★ Favourite · ":""}${n.tried?"Tried":"Not tried yet"}<p>My fun: ${n.fun?n.fun+"/5":"unrated"} · My flow: ${n.flow?n.flow+"/5":"unrated"}</p>${n.goal?`<p><b>Goal:</b> ${esc(n.goal)}</p>`:""}${n.notes?`<p>${esc(n.notes)}</p>`:""}<button type="button" data-spshow="${s.id}">Open spec &amp; edit</button></article>`;}).join(""):'<p class="muted">Your journal is empty for revealed specs. Open a spec → My experience to add a favourite, personal rating, goal or note.</p>';
+      function renderJournal(){const list=SPEC.specs.filter(specAllowed).filter(s=>{const n=state.specPersonal[s.id];return n&&(n.favorite||n.tried||n.fun||n.flow||n.goal?.trim()||n.notes?.trim());});
+        $("spjournalentries").innerHTML=list.length?list.map(s=>{const n=state.specPersonal[s.id];return `<article class="sp-journalitem"><b>${esc(s.name)}</b> · ${n.favorite?"★ Favourite · ":""}${n.tried?"Tried":"Not tried yet"}<p>My fun: ${n.fun?n.fun+"/5":"unrated"} · My flow: ${n.flow?n.flow+"/5":"unrated"}</p>${n.goal?`<p><b>Goal:</b> ${esc(n.goal)}</p>`:""}${n.notes?`<p>${esc(n.notes)}</p>`:""}<button type="button" data-spshow="${s.id}" data-spedit>Open spec &amp; edit</button></article>`;}).join(""):'<p class="muted">Your journal is empty for revealed specs. Open a spec → My experience to add a favourite, personal rating, goal or note.</p>';
       }
       function gearOptions(){return [...new Set(SPEC.specs.filter(specAllowed).flatMap(s=>[...Object.values(s.solo),...Object.values(s.group),SP_TOOLS.profiles[s.id].relaxed,SP_TOOLS.profiles[s.id].survival]).filter(Boolean))].map(id=>SP_BUILDS[id]).sort((a,b)=>a.spec.localeCompare(b.spec)||a.name.localeCompare(b.name));}
       function gearOption(b){return `<option value="${b.id}">${esc(b.spec+" · "+b.name+" · "+b.weapons+" · "+(b.context==="group"?"group":"open world"))}</option>`;}
@@ -32027,31 +32063,37 @@
         return [...new Set(out)];
       }
       function gearPlan(){const kit=state.specKit,source=gearBuildAllowed(kit.source)?SP_BUILDS[kit.source]:null,target=gearBuildAllowed($("spgeartarget").value)?SP_BUILDS[$("spgeartarget").value]:null;if(!target)return null;
-        const sourceWeight=source?SP_WEIGHTS[SPEC.specs.find(s=>s.name===source.spec).profession]:kit.weight,targetWeight=SP_WEIGHTS[SPEC.specs.find(s=>s.name===target.spec).profession],owned=source?[...SP_TOOLS.gear[source.id]]:[...['Head','Shoulders','Chest','Hands','Legs','Feet','Backpiece','Accessory','Accessory','Amulet','Ring','Ring']].map((name,i)=>({name,key:name+" "+(i===8||i===11?2:1),stat:"Berserker",type:i<6?"armour":"trinket"})),used=new Set();
-        const rows=SP_TOOLS.gear[target.id].map(g=>{const index=owned.findIndex((o,i)=>!used.has(i)&&o.type===g.type&&o.name===g.name&&o.stat===g.stat&&(g.type!=="armour"||sourceWeight===targetWeight));if(index>=0)used.add(index);const match=index>=0;return {...g,match,note:match?"Potential reuse · check binding and upgrades":g.type==="armour"&&sourceWeight!==targetWeight?"Need "+targetWeight.toLowerCase()+" armour · weight differs":g.type==="weapon"?"Acquire or stat-change this weapon":"Acquire or stat-change this slot"};});
+        const sourceWeight=source?SP_WEIGHTS[SPEC.specs.find(s=>s.name===source.spec).profession]:kit.source==="berserker"?kit.weight:"Unknown",targetWeight=SP_WEIGHTS[SPEC.specs.find(s=>s.name===target.spec).profession],owned=source?[...SP_TOOLS.gear[source.id]]:kit.source!=="berserker"?[]:[...['Head','Shoulders','Chest','Hands','Legs','Feet','Backpiece','Accessory','Accessory','Amulet','Ring','Ring']].map((name,i)=>({name,key:name+" "+(i===8||i===11?2:1),stat:"Berserker",type:i<6?"armour":"trinket"})),used=new Set();
+        const rows=SP_TOOLS.gear[target.id].map(g=>{const index=owned.findIndex((o,i)=>!used.has(i)&&o.type===g.type&&o.name===g.name&&o.stat===g.stat&&(g.type!=="armour"||sourceWeight===targetWeight));if(index>=0)used.add(index);const match=index>=0;return {...g,match,note:match?"Potential reuse · check binding and upgrades":sourceWeight==="Unknown"?"Owned setup hidden · verify this item":g.type==="armour"&&sourceWeight!==targetWeight?"Need "+targetWeight.toLowerCase()+" armour · weight differs":g.type==="weapon"?"Acquire or stat-change this weapon":"Acquire or stat-change this slot"};});
         return {source,target,rows,targetWeight,sourceWeight,access:gearAccess(target)};
       }
+      function updateText(id,text){const node=$(id);if(node&&node.textContent!==text)node.textContent=text;}
       function renderGear(){const opts=gearOptions(),kit=state.specKit,source=$("spgearsource"),target=$("spgeartarget"),prior=kit.target;
-        source.innerHTML='<option value="berserker">Full Berserker armour + trinkets · weapons unknown</option>'+opts.map(gearOption).join("");source.value=gearBuildAllowed(kit.source)?kit.source:"berserker";$("spgearweight").value=kit.weight;$("spgearweight").disabled=source.value!=="berserker";
-        target.innerHTML=opts.map(gearOption).join("");target.value=gearBuildAllowed(prior)&&opts.some(b=>b.id===prior)?prior:opts[0]?.id||"";
-        document.querySelectorAll('[data-spown]').forEach(n=>n.checked=!!kit.own[n.dataset.spown]);const plan=gearPlan();if(!plan){$("spgearresults").textContent="No revealed target builds.";return;}
-        $("spgearresults").innerHTML=`<h3>${esc(plan.target.name)} · ${esc(plan.target.weapons)}</h3><p>${plan.sourceWeight} owned armour → ${plan.targetWeight} target armour. Exact primary stat slots only; optional variants and upgrade components are not counted.</p><div class="sp-gearcounts"><span><b>${plan.rows.filter(r=>r.match).length}</b> potential matches</span><span><b>${plan.rows.filter(r=>!r.match).length}</b> stat / item changes</span></div><div class="sp-checklist"><b>Access check</b>${plan.access.length?`<ul>${plan.access.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:'<p>Your recorded expansion and training selections cover the checked weapon rules. Confirm the source’s remaining equipment prerequisites before buying.</p>'}<small>Specializations still need their hero-point training. Ownership does not imply every mastery or relic is unlocked.</small></div><div class="sp-table-scroll" role="region" aria-label="Gear slot comparison" tabindex="0"><table class="sp-geartable"><thead><tr><th scope="col">Target slot</th><th scope="col">Stats</th><th scope="col">Action</th></tr></thead><tbody>${plan.rows.map(r=>`<tr><td>${esc(r.key)}</td><td>${esc(r.stat)}</td><td>${esc(r.note)}</td></tr>`).join("")}</tbody></table></div><p><a href="${esc(plan.target.url)}" target="_blank" rel="noopener">Check exact runes, sigils, relic, food and alternatives ↗</a></p>`;
+        const uniqueOptions=(preferred)=>{const seen=new Set();return [...opts.filter(b=>b.id===preferred),...opts.filter(b=>b.id!==preferred)].filter(b=>{if(seen.has(b.url))return false;seen.add(b.url);return true;}).sort((a,b)=>a.spec.localeCompare(b.spec)||a.name.localeCompare(b.name));};
+        source.innerHTML='<option value="berserker">Full Berserker armour + trinkets · weapons unknown</option>'+uniqueOptions(kit.source).map(gearOption).join("");source.value=gearBuildAllowed(kit.source)?kit.source:"berserker";
+        if(kit.source!=="berserker"&&!gearBuildAllowed(kit.source)){source.insertAdjacentHTML("afterbegin",'<option value="hidden" disabled>Saved owned build is hidden · choose a setup</option>');source.value="hidden";}$("spgearweight").value=kit.weight;$("spgearweight").disabled=source.value!=="berserker";
+        target.innerHTML=uniqueOptions(prior).map(gearOption).join("");target.value=gearBuildAllowed(prior)&&opts.some(b=>b.id===prior)?prior:"";
+        if(!target.value){target.insertAdjacentHTML("afterbegin",'<option value="" disabled>Saved target is hidden · choose a build</option>');target.value="";}
+        document.querySelectorAll('[data-spown]').forEach(n=>n.checked=!!kit.own[n.dataset.spown]);const plan=gearPlan();$("spgearcopy").disabled=!plan;if(!plan){updateText("spgearstatus","Saved target is hidden. Choose a revealed target build.");$("spgearresults").textContent="Your saved target is outside the spoiler boundary. Choose a revealed build or reveal its expansion above. The saved choice is retained.";return;}
+        updateText("spgearstatus",plan.target.name+": "+plan.rows.filter(r=>r.match).length+" potential matches, "+plan.rows.filter(r=>!r.match).length+(plan.sourceWeight==="Unknown"?" unverified slots":" stat or item changes")+", "+plan.access.length+" access checks outstanding.");
+        $("spgearresults").innerHTML=`<h3>${esc(plan.target.name)} · ${esc(plan.target.weapons)}</h3><p>${plan.sourceWeight==="Unknown"?"Your saved owned build is hidden. No owned items are assumed; choose an owned setup to compare. ":""}${plan.sourceWeight} owned armour → ${plan.targetWeight} target armour. Exact primary stat slots only; optional variants and upgrade components are not counted.</p><div class="sp-gearcounts"><span><b>${plan.rows.filter(r=>r.match).length}</b> potential matches</span><span><b>${plan.rows.filter(r=>!r.match).length}</b> ${plan.sourceWeight==="Unknown"?"unverified slots":"stat / item changes"}</span></div><div class="sp-checklist"><b>Access check</b>${plan.access.length?`<ul>${plan.access.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:'<p>Your recorded expansion and training selections cover the checked weapon rules. Confirm the source’s remaining equipment prerequisites before buying.</p>'}<small>Specializations still need their hero-point training. Ownership does not imply every mastery or relic is unlocked.</small></div><div class="sp-table-scroll" role="region" aria-label="Gear slot comparison" tabindex="0"><table class="sp-geartable"><thead><tr><th scope="col">Target slot</th><th scope="col">Stats</th><th scope="col">Action</th></tr></thead><tbody>${plan.rows.map(r=>`<tr><td>${esc(r.key)}</td><td>${esc(r.stat)}</td><td>${esc(r.note)}</td></tr>`).join("")}</tbody></table></div><p><a href="${esc(plan.target.url)}" target="_blank" rel="noopener">Check exact runes, sigils, relic, food and alternatives ↗</a></p>`;
       }
       function specAwards(shown){
         const cozy=spView.context==="cozy",key=cozy?(spView.cozyLane==="relaxed"?"comfort":"survival"):"overall",winner=(cozy||spView.lens==="top")?shown.filter(s=>specBuild(s)).sort((a,b)=>specBuild(b).ratings[key]-specBuild(a).ratings[key]||a.name.localeCompare(b.name))[0]:null;
         return `<aside class="sp-awards"><div><b>Class-fantasy editor’s choice · Reaper · 5/5</b><p>Becoming a spectral executioner makes the death-bringer fantasy immediately visible and playable. An editorial preference; other specs also earn 5/5.</p></div>${winner?`<div><b>${cozy?(key==="comfort"?"Comfort leader":"Survivability leader"):"Highest overall"} shown · ${esc(winner.name)} · ${specBuild(winner).ratings[key].toFixed(2)}/5</b><p>For the current ${cozy?(spView.cozyLane==="relaxed"?"AFK / no-brain":"Unkillable"):spView.context} picks. Equal scores are ties; the highlight uses alphabetical order. Reveal more specs to widen the comparison.</p></div>`:""}</aside>`;
       }
       function renderSpecTools(){renderQuiz();renderJournal();renderGear();}
-      function showSpec(id){const s=SP_BYID[id];if(!s||!specAllowed(s))return;spView.query="";spView.profession="all";spView.collection="all";spView.encounter="all";$("spsearch").value="";$("spprofession").value="all";$("spcollection").value="all";$("spencounter").value="all";spView.open.add(id);refreshSpecs();const el=$("spsummary-"+id);el.focus();el.scrollIntoView({block:"start",behavior:"smooth"});}
-      $("spquizform").onsubmit=e=>{e.preventDefault();spView.quiz=Object.fromEntries(["range","pace","learning","sustain","theme","priority"].map(k=>[k,$("spq"+k).value]));renderQuiz();};
-      $("spquizreset").onclick=()=>{$("spquizform").reset();spView.quiz=null;renderQuiz();};
-      for(const id of ["spgearsource","spgearweight","spgeartarget"])$(id).onchange=()=>{state.specKit.source=$("spgearsource").value;state.specKit.weight=$("spgearweight").value;state.specKit.target=$("spgeartarget").value;save();renderGear();};
+      function showSpec(id,edit=false){const s=SP_BYID[id];if(!s||!specAllowed(s))return;spView.query="";spView.profession="all";spView.collection="all";spView.encounter="all";$("spsearch").value="";$("spprofession").value="all";$("spcollection").value="all";$("spencounter").value="all";spView.open.add(id);if(edit)spView.details.add("personal-"+id);refreshSpecs();const el=$(edit?"sppersonalsummary-"+id:"spsummary-"+id);el.focus();el.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});}
+      $("spquizform").onsubmit=e=>{e.preventDefault();spView.quizDirty=false;spView.quiz=Object.fromEntries(["range","pace","learning","sustain","theme","priority"].map(k=>[k,$("spq"+k).value]));renderQuiz();};
+      $("spquizform").onchange=()=>{if(spView.quiz){spView.quizDirty=true;renderQuiz();}};
+      $("spquizreset").onclick=()=>{$("spquizform").reset();spView.quiz=null;spView.quizDirty=false;renderQuiz();};
+      for(const id of ["spgearsource","spgearweight","spgeartarget"])$(id).onchange=()=>{if($("spgearsource").value!=="hidden")state.specKit.source=$("spgearsource").value;state.specKit.weight=$("spgearweight").value;if($("spgeartarget").value)state.specKit.target=$("spgeartarget").value;save();renderGear();};
       document.querySelectorAll('[data-spown]').forEach(n=>n.onchange=()=>{state.specKit.own[n.dataset.spown]=n.checked;save();renderGear();});
-      $("spgearcopy").onclick=()=>{const p=gearPlan();if(!p)return;copy("Gear checklist: "+p.target.name+"\nArmour: "+p.targetWeight+"\n"+p.rows.filter(r=>!r.match).map(r=>r.key+": "+r.stat+" — "+r.note).join("\n")+"\nAccess: "+(p.access.join("; ")||"Checked rules covered; confirm remaining prerequisites")+"\nCheck runes, sigils, relic, food, bindings and agony resistance separately.\n"+p.target.url);};
+      $("spgearcopy").onclick=()=>{const p=gearPlan();if(!p)return;copy("Gear checklist: "+p.target.name+"\nArmour: "+p.targetWeight+"\n"+p.rows.filter(r=>!r.match).map(r=>r.key+": "+r.stat+" — "+r.note).join("\n")+"\nAccess: "+(p.access.join("; ")||"Checked rules covered; confirm remaining prerequisites")+"\nCheck runes, sigils, relic, food, bindings and agony resistance separately.\n"+p.target.url, "gear");};
       for(const [id,key]of [["spcollection","collection"],["spencounter","encounter"]])$(id).onchange=e=>{spView[key]=e.target.value;refreshSpecs();};
       for(const lane of ["relaxed","survival"])$("spcozy-"+lane).onclick=()=>{spView.cozyLane=lane;spView.sort=lane==="relaxed"?"comfort":"survival";refreshSpecs();};
-      $("specview").addEventListener("click",e=>{const tool=e.target.closest('[data-sptool]');if(tool){const el=$(tool.dataset.sptool);el.open=true;el.querySelector('summary').focus();el.scrollIntoView({block:"start",behavior:"smooth"});}const show=e.target.closest('[data-spshow]');if(show)showSpec(show.dataset.spshow);const plan=e.target.closest('[data-spplan]');if(plan&&gearBuildAllowed(plan.dataset.spplan)){state.specKit.target=plan.dataset.spplan;$("spgeartarget").value=plan.dataset.spplan;save();renderGear();$("spgear").open=true;$("spgear").scrollIntoView({block:"start",behavior:"smooth"});$("spgeartarget").focus({preventScroll:true});}});
-      function updatePersonal(e){const el=e.target,id=el.dataset.spnote,key=el.dataset.spfield;if(!id||!specAllowed(SP_BYID[id]))return;const text=["goal","notes"].includes(key);if(e.type==="input"&&!text||e.type==="change"&&text)return;const n=state.specPersonal[id]||{};n[key]=el.type==="checkbox"?el.checked:["fun","flow"].includes(key)?Number(el.value):el.value.slice(0,key==="goal"?200:2000);state.specPersonal[id]=n;const saved=save();const status=$("spnotestatus-"+id);if(status)status.textContent=saved?"Saved in this browser · included in progress backups":"Kept in this tab only · back up before closing";renderJournal();if(!text){refreshSpecs();if($("spnotestatus-"+id))$("spnotestatus-"+id).textContent=saved?"Saved in this browser · included in progress backups":"Kept in this tab only · back up before closing";}}
+      $("specview").addEventListener("click",e=>{const tool=e.target.closest('[data-sptool]');if(tool){const el=$(tool.dataset.sptool);el.open=true;el.querySelector('summary').focus();el.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});}const show=e.target.closest('[data-spshow]');if(show)showSpec(show.dataset.spshow,show.hasAttribute("data-spedit"));const plan=e.target.closest('[data-spplan]');if(plan&&gearBuildAllowed(plan.dataset.spplan)){state.specKit.target=plan.dataset.spplan;$("spgeartarget").value=plan.dataset.spplan;save();renderGear();$("spgear").open=true;$("spgear").scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});$("spgeartarget").focus({preventScroll:true});}});
+      function updatePersonal(e){const el=e.target,id=el.dataset.spnote,key=el.dataset.spfield;if(!id||!specAllowed(SP_BYID[id]))return;const text=["goal","notes"].includes(key);if(e.type==="input"&&!text||e.type==="change"&&text)return;const n=state.specPersonal[id]||{};n[key]=el.type==="checkbox"?el.checked:["fun","flow"].includes(key)?Number(el.value):el.value.slice(0,key==="goal"?200:2000);state.specPersonal[id]=n;const saved=save();const status=$("spnotestatus-"+id);if(status)updateText(status.id,saved?"Saved in this browser · included in progress backups":"Kept in this tab only · back up before closing");renderJournal();if(!text){refreshSpecs();if($("spnotestatus-"+id))$("spnotestatus-"+id).textContent=saved?"Saved in this browser · included in progress backups":"Kept in this tab only · back up before closing";}}
       $("specview").addEventListener("input",updatePersonal);$("specview").addEventListener("change",updatePersonal);
       $("specview").addEventListener("change",e=>{const key=e.target.dataset.splearn;if(!key)return;const [ctx,id]=key.split(":"),b=SP_BUILDS[id];if(!b||!gearBuildAllowed(id)||!['solo','group','cozy-relaxed','cozy-survival'].includes(ctx))return;const bit=1<<Number(e.target.dataset.spstage);state.specLearning[key]=e.target.checked?(state.specLearning[key]||0)|bit:(state.specLearning[key]||0)&~bit;const ok=save();toast(ok?"Learning checkpoint saved.":"Checkpoint kept in this tab. Back up before closing.");const details=e.target.closest('details');details.querySelector('summary').textContent='Learning path · '+[0,1,2].filter(i=>(state.specLearning[key]||0)&(1<<i)).length+'/3 checkpoints';});
       $("spcards").addEventListener("toggle",e=>{if(!e.target.isConnected||!e.target.dataset.spdetail)return;const key=e.target.dataset.spdetail;if(e.target.open)spView.details.add(key);else spView.details.delete(key);},true);
