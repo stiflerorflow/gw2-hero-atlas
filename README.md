@@ -1,4 +1,4 @@
-# Guild Wars 2 Hero Point Atlas
+# GW2 Companion · Hero Point Atlas, Builds & Duo
 
 A self-contained, spoiler-controlled Heart of Thorns, Path of Fire and End of Dragons hero point atlas, with route filters, embedded maps, character profiles, and a 500-point Tempest-to-Weaver goal. The complete catalogue contains 100 challenges: 40 HoT, 29 PoF and 31 EoD, worth 1,000 HP across eligible first completions.
 
@@ -39,3 +39,5 @@ The temporary **Matt & Steve · duo** tab (`#duo`) is an editable notebook for t
 The **Sources & evidence** tab (`#sources`) adds a searchable research library and evidence notes next to build and duo recommendations. The bible’s optional **Import real setup** tool uses your own read-only official GW2 API key to save equipment/build snapshots locally and compare actual gear. Keys are never saved; account snapshots are included in personal backups. Each player connects separately; there is no automatic shared account sync. See [source/import scope and validation](SOURCES_IMPORT_RESEARCH.md). Regression: `node tests/sources-import.cjs`.
 
 Whole-tool audit checks: `node tests/sweep-functional.cjs`, `node tests/sweep-data.cjs`, `node tests/sweep-api.cjs` and `node tests/sweep-mobile.cjs`. They share the browser/URL environment variables above; the mobile sweep optionally uses `AXE_PATH` for WCAG checks. These scripts use isolated browser contexts and simulated keys; they do not modify your GW2 account.
+
+**Start here** (`#home`, also the default landing view) now provides a four-step API-key guide and a personal account workspace. Scan each player’s training/resources/progress/wallet, save tonight’s equipment/build tabs, confirm training when GW2 cannot return it, and choose a target blueprint for practical upgrade priorities. Optional permissions fail independently and retain previous dated data. Share an account-only file to combine Matt and Steve’s snapshots without replacing manual guide progress. The mastery tab offers a separate read-only API progress view. See [account-workspace contracts, privacy and limitations](ACCOUNT_WORKSPACE_RESEARCH.md). Test: `node tests/account-workspace.cjs` (optional `AXE_PATH`).
