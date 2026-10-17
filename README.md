@@ -21,3 +21,15 @@ The **Elite spec bible** tab (`#specs`) covers all 36 specializations, with sepa
 The bible’s **v2 tools** add a preference quiz, three-stage learning paths with saved checkpoints, a gear-sharing planner with armour-weight/stat/weapon-access checks, encounter suitability guidance, and a personal journal with favourites, tried status, fun/flow ratings, goals and notes. **Cozy builds** split into **AFK / no-brain** (low input while playing) and **Unkillable** (survival first). Each of the 36 specs has a sourced baseline for both lanes, with separate comfort, survival, effort and damage assessments. All new personal data is included in progress backups; restoring retains the data and hides later specs again. See [the v2 research and validation audit](SPEC_TOOLS_RESEARCH.md) for source selections and limitations (contains later spec names).
 
 The [UI/UX audit](UX_AUDIT.md) records the navigation, clipboard, focus, disclosure, quiz and gear-planner fixes and their verification coverage. All guide views support reloadable URLs and browser Back/Forward; `#route` and `#help` join the existing `#mastery` and `#specs` links.
+
+Optional mobile regression checks require Node.js and Playwright. They do not add runtime dependencies to the guide:
+
+```sh
+npm install --no-save --package-lock=false playwright
+npx playwright install chromium
+python3 -m http.server 8765 --bind 127.0.0.1
+# In another terminal:
+node tests/mobile-tools.cjs
+```
+
+Set `ATLAS_URL` to check a deployed copy. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` selects an existing Chromium installation; `PW_BROWSER=webkit` runs the same flows in WebKit when that browser and its system dependencies are installed. Screenshots are written to a temporary directory printed by the test.
