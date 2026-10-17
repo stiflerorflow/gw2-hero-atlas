@@ -34,3 +34,11 @@ The sweep also checks:
 - Real backup export/import carrying notes, learning checkpoints and gear settings; stale-save protection still prevents clobbering newer saved progress.
 
 Automation uses Chromium with keyboard, reduced-motion and touch-capable viewport checks. This is broad regression coverage, not a claim that every browser, physical device or screen reader was tested. Existing build research and ratings were not re-audited as a balance update.
+
+## Elite spec navigation follow-up — 2026-10-17
+
+A user reported that tapping Elite spec bible did nothing. Fresh production sessions did not reproduce that exact device failure. Navigation previously depended entirely on the final JavaScript handler, and every view render depended on rendering the map first.
+
+The five view controls now use native hash links. A small early loading handler shows the selected view and loading status before the embedded guide data finishes loading. Each view renders independently; a map-rendering failure cannot block the spec catalogue. Clicking the current view retries its render. Hidden generated spec/mastery content is discarded, preserving spoiler protection after backup imports or boundary reductions.
+
+Verified mobile touch navigation while the HTML response was deliberately paused before the embedded data, recovery by clicking the current tab, and spec navigation with an injected map-rendering exception. Existing navigation, accessibility, spec tools, mastery and backup regressions were also checked. This improves the failure paths without claiming to identify the user's exact browser failure.

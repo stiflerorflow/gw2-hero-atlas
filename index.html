@@ -8,6 +8,33 @@
       name="description"
       content="A standalone, spoiler-conscious Guild Wars 2 hero-point atlas. Offline maps, 100 challenges, prerequisite filters and independent character progress."
     />
+    <script>
+      // Navigation is available before the embedded catalogue has finished downloading.
+      document.documentElement.classList.add("guide-boot");
+      (function () {
+        const views=["atlas","route","help","mastery","specs"];
+        function previewView() {
+          if(window.guideReady)return;
+          const key=location.hash.slice(1);
+          document.documentElement.dataset.bootView=views.includes(key)?key:"atlas";
+        }
+        previewView();
+        window.addEventListener("hashchange",previewView);
+        document.addEventListener("click",function(e){
+          if(window.guideReady)return;
+          const link=e.target.closest("a[data-tab]");
+          if(!link)return;
+          document.documentElement.dataset.bootView=link.dataset.tab;
+          const status=document.getElementById("guideloading");
+          if(status)status.textContent="Opening "+link.textContent.trim()+"… Waiting for the guide data to finish loading.";
+        });
+        window.addEventListener("error",function(e){
+          if(window.guideReady||!e.error)return;
+          const status=document.getElementById("guideloading");
+          if(status)status.textContent="The guide could not finish loading. Reload this page or open it in your full browser. Your saved progress has not been cleared.";
+        });
+      })();
+    </script>
     <style>
       :root {
         color-scheme: dark;
@@ -1260,6 +1287,19 @@
       dialog {max-height:calc(100dvh - 32px);overflow-y:auto}
       #modalcopy {width:100%;min-height:140px;max-height:45vh;resize:vertical;margin-top:8px;white-space:pre-wrap}
       .sp-demand i {background:var(--gold)}
+
+      a.tab {display:inline-flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;border:1px solid transparent;border-radius:8px;padding:9px 12px}
+      a.tab:hover {border-color:var(--green);background:#2b4136}
+      #guideloading {padding:12px 16px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--gold)}
+      html:not(.guide-boot) #guideloading {display:none}
+      html.guide-boot #atlasview,html.guide-boot #specview,html.guide-boot #masteryview,html.guide-boot #helpview {display:none!important}
+      html.guide-boot[data-boot-view="atlas"] #atlasview,html.guide-boot[data-boot-view="route"] #atlasview,
+      html.guide-boot[data-boot-view="specs"] #specview,html.guide-boot[data-boot-view="mastery"] #masteryview,html.guide-boot[data-boot-view="help"] #helpview {display:block!important}
+      html.guide-boot[data-boot-view="specs"] :is(.hero,.journey,.plannerbar,.profilebar,#settings),
+      html.guide-boot[data-boot-view="mastery"] :is(.hero,.journey,.plannerbar,.hpcredit,#reset) {display:none!important}
+      html.guide-boot .tab.active {background:none;border-color:transparent;color:var(--muted)}
+      html.guide-boot[data-boot-view="atlas"] [data-tab="atlas"],html.guide-boot[data-boot-view="route"] [data-tab="route"],
+      html.guide-boot[data-boot-view="specs"] [data-tab="specs"],html.guide-boot[data-boot-view="mastery"] [data-tab="mastery"],html.guide-boot[data-boot-view="help"] [data-tab="help"] {background:var(--soft);border-color:var(--line);color:var(--text)}
     </style>
   </head>
   <body>
@@ -1281,12 +1321,13 @@
         </p></noscript
       >
       <nav class="tabs" aria-label="Guide view">
-        <button type="button" class="tab active" data-tab="atlas">Map atlas</button
-        ><button type="button" class="tab" data-tab="specs">Elite spec bible</button
-        ><button type="button" class="tab" data-tab="mastery">PoF mastery points</button
-        ><button type="button" class="tab" data-tab="route">My route</button
-        ><button type="button" class="tab" data-tab="help">Dips, shortcuts &amp; help</button>
+        <a class="tab active" href="#atlas" data-tab="atlas">Map atlas</a>
+        <a class="tab" href="#specs" data-tab="specs">Elite spec bible</a>
+        <a class="tab" href="#mastery" data-tab="mastery">PoF mastery points</a>
+        <a class="tab" href="#route" data-tab="route">My route</a>
+        <a class="tab" href="#help" data-tab="help">Dips, shortcuts &amp; help</a>
       </nav>
+      <p id="guideloading" role="status">Loading the interactive guide… You can choose a view while the maps and builds finish loading.</p>
       <div class="hero">
         <div>
           <div class="eyebrow">Your world. At your pace.</div>
@@ -31224,32 +31265,42 @@
       }
       function render(reset = false) {
         const focus = captureFocus();
-        const previousSelection = profile().selected;
         $("printout").innerHTML = "";
-        selectValid();
-        if (!reset && profile().selected !== previousSelection) revealSelectedOnMap();
-        summary();
-        renderMaps();
-        renderList();
-        renderMap(reset);
-        renderDetail();
-        help();
-        document.querySelectorAll("[data-tab]").forEach((b) => {
-          b.classList.toggle("active", b.dataset.tab === tab);
-          b.setAttribute("aria-current", b.dataset.tab === tab ? "page" : "false");
+        // Select the visible view before rendering its data. Independent tools must
+        // not depend on the SVG map or another hidden view rendering successfully.
+        document.querySelectorAll("[data-tab]").forEach(b=>{
+          b.classList.toggle("active",b.dataset.tab===tab);
+          b.setAttribute("aria-current",b.dataset.tab===tab?"page":"false");
         });
-        $("helpview").hidden = tab !== "help";
-        $("atlasview").hidden = !["atlas", "route"].includes(tab);
-        $("masteryview").hidden = tab !== "mastery";
-        $("specview").hidden = tab !== "specs";
-        document.body.classList.toggle("spec-mode", tab === "specs");
-        document.body.classList.toggle("mastery-mode", tab === "mastery");
-        $("print").textContent = tab === "specs" ? "Print filtered specs" : tab === "mastery" ? "Print expanded groups" : "Print route";
-        $("characterlabel").textContent = tab === "mastery" ? "Character for map access" : "Character";
-        if (tab === "mastery") $("setupsummary").textContent = "Shared mount unlocks · character map access";
-        renderMastery();
-        renderSpecs();
-        restoreFocus(focus, true);
+        $("helpview").hidden=tab!=="help";
+        $("atlasview").hidden=!["atlas","route"].includes(tab);
+        $("masteryview").hidden=tab!=="mastery";
+        $("specview").hidden=tab!=="specs";
+        document.body.classList.toggle("spec-mode",tab==="specs");
+        document.body.classList.toggle("mastery-mode",tab==="mastery");
+        $("print").textContent=tab==="specs"?"Print filtered specs":tab==="mastery"?"Print expanded groups":"Print route";
+        $("characterlabel").textContent=tab==="mastery"?"Character for map access":"Character";
+        window.guideReady=true;
+        document.documentElement.classList.remove("guide-boot");
+        $("guideloading").hidden=true;
+        // Discard hidden generated content so reducing spoiler settings or
+        // importing a backup cannot leave previously revealed names in the DOM.
+        if(tab!=="mastery")for(const id of ["mpgroups","mpmap","mphidden"])$(id).replaceChildren();
+        if(tab!=="specs")for(const id of ["spcards","spcompare","spquizresults","spjournalentries","spgearresults","spgearsource","spgeartarget"]) {
+          const node=$(id);if(node)node.replaceChildren();
+        }
+        if(tab==="specs") { renderSpecs(); restoreFocus(focus); return; }
+        if(tab==="mastery") {
+          $("setupsummary").textContent="Shared mount unlocks · character map access";
+          renderMastery(); restoreFocus(focus); return;
+        }
+        const previousSelection=profile().selected;
+        selectValid();
+        if(!reset&&profile().selected!==previousSelection)revealSelectedOnMap();
+        summary();
+        if(tab==="help") { help(); restoreFocus(focus); return; }
+        renderMaps(); renderList(); renderMap(reset); renderDetail(); help();
+        restoreFocus(focus,true);
         scheduleMapResize();
       }
       function revealSelectedOnMap() {
@@ -31280,11 +31331,12 @@
         render(changed);
       }
       function changeTab(t, fromHistory = false) {
-        if (!APP_TABS.includes(t) || t===tab) return;
+        if (!APP_TABS.includes(t)) return;
+        const changed=t!==tab;
         tab = t;
         if (!fromHistory) updateViewURL(t);
-        $("search").value = "";
-        if (t === "route") {
+        if(changed)$("search").value = "";
+        if (changed && t === "route") {
           const r = route();
           profile().selected = r[0]?.id || "";
           currentMap = r[0]?.map || "vb";
@@ -31455,7 +31507,7 @@
       document.addEventListener("click", (e) => {
         const b = e.target.closest("[data-tab],[data-map],[data-reveal]");
         if (!b) return;
-        if (b.dataset.tab) changeTab(b.dataset.tab);
+        if (b.dataset.tab) { e.preventDefault(); changeTab(b.dataset.tab); }
         else openMap(b.dataset.map || b.dataset.reveal);
       });
       $("character").onchange = (e) => {
