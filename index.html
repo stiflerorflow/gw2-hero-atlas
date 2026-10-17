@@ -12,7 +12,7 @@
       // Navigation is available before the embedded catalogue has finished downloading.
       document.documentElement.classList.add("guide-boot");
       (function () {
-        const views=["atlas","route","help","mastery","specs"];
+        const views=["atlas","route","help","mastery","specs","duo"];
         function previewView() {
           if(window.guideReady)return;
           const key=location.hash.slice(1);
@@ -1342,6 +1342,21 @@
         #spgear .sp-access .sp-formgrid {gap:4px}
         #spgearcopy {width:100%}
       }
+.duo-mode .hero,.duo-mode .journey,.duo-mode .plannerbar,.duo-mode .profilebar,.duo-mode #settings {display:none}
+#duoview {margin-top:28px;overflow-wrap:anywhere}
+.duo-heading {display:grid;grid-template-columns:1.6fr 1fr;gap:28px;align-items:start}.duo-heading h1 {font-size:clamp(34px,5vw,60px);line-height:1.12;margin:10px 0 18px}.duo-heading em {color:var(--gold);font-style:normal}.duo-heading p {color:var(--muted)}
+.duo-snapshot,.duo-notice,.duo-editor,.duo-session,.duo-sources {border:1px solid var(--line);border-radius:12px;padding:20px;background:var(--panel);margin:18px 0}.duo-snapshot {margin:0}.duo-snapshot b {color:var(--gold)}.duo-snapshot small {color:var(--muted)}.duo-notice {border-left:3px solid var(--gold);font-size:13px;color:var(--muted)}.duo-notice b {color:var(--text)}
+#duoview label {display:grid;gap:8px;font-size:14px;color:var(--muted);min-width:0}#duoview select,#duoview textarea {width:100%;min-width:0;max-width:100%;font-size:16px;min-height:48px}#duoview textarea {min-height:110px;resize:vertical}#duoview button {min-height:48px;touch-action:manipulation}#duoview .duo-check {display:flex;gap:10px;align-items:center;min-height:48px;white-space:normal}
+.duo-controls,.duo-pickers,.duo-roles,.duo-rosters {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:18px 0}.duo-controls {align-items:end}.duo-pickers {padding:18px;background:var(--soft);border-radius:12px}#duoselectionstatus {font-size:13px;color:var(--gold)}
+.duo-pairhead {padding:20px;border:1px solid var(--gold);border-radius:12px;background:var(--panel)}.duo-pairhead h2 {margin:8px 0}.duo-pairhead p {color:var(--muted)}.duo-coverage {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}.duo-coverage div {border:1px solid var(--line);padding:14px;border-radius:8px;background:var(--bg)}.duo-coverage b {display:block;color:var(--gold);margin-bottom:6px}.duo-coverage span {font-size:13px;color:var(--muted)}.duo-alert {padding:12px;border-left:3px solid var(--gold);background:var(--soft);font-size:14px}
+.duo-loadout,.duo-recipe,.duo-thieves article {border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--panel);min-width:0}.duo-loadout h3,.duo-recipe h3 {margin:8px 0}.duo-loadout p,.duo-loadout li,.duo-recipe p {color:var(--muted);font-size:14px}.duo-loadout li {margin:9px 0}.duo-loadout ul {padding-left:20px}.duo-loadout a {display:inline-block;padding:12px 0}.duo-confirm {color:var(--gold)!important}.duo-ownnote {white-space:pre-wrap;border-top:1px solid var(--line);padding-top:12px}.duo-recipes {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.duo-recipe {display:flex;flex-direction:column;align-items:start}.duo-recipe button {margin-top:auto}.duo-recipe small {color:var(--gold);display:block;margin-bottom:12px}.duo-editor>summary,.duo-sources>summary {font-weight:700;color:var(--green);min-height:48px;align-content:center}.duo-rosters h3 {color:var(--gold)}.duo-entry {border-top:1px solid var(--line);padding:8px 0}.duo-entry>summary {padding:12px 0;min-height:48px}.duo-entry>summary small {display:block;color:var(--muted);margin:5px 0}.duo-entry label {margin:14px 0}.duo-entry textarea {min-height:90px!important}.duo-add {margin-top:16px}.duo-add button {margin-top:10px}.duo-thieves {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.duo-thieves p {font-size:14px;color:var(--muted)}.duo-session li {margin:10px 0}.duo-session label {margin:18px 0}.duo-sources p,.duo-sources li {font-size:14px;color:var(--muted)}
+@media(max-width:900px){.duo-recipes,.duo-thieves {grid-template-columns:1fr 1fr}.duo-heading {grid-template-columns:1fr}.duo-heading .duo-snapshot {padding:16px}}
+@media(max-width:600px){.duo-controls,.duo-pickers,.duo-roles,.duo-rosters,.duo-recipes,.duo-thieves {grid-template-columns:1fr}.duo-coverage {grid-template-columns:1fr}.duo-pairhead,.duo-loadout,.duo-recipe,.duo-editor,.duo-session,.duo-sources {padding:16px}.duo-recipe button,.duo-thieves button {width:100%}.duo-notice {padding:14px}.duo-heading h1 {font-size:38px}}
+
+html.guide-boot #duoview {display:none!important}
+html.guide-boot[data-boot-view="duo"] #duoview {display:block!important}
+html.guide-boot[data-boot-view="duo"] :is(.hero,.journey,.plannerbar,.profilebar,#settings) {display:none!important}
+html.guide-boot[data-boot-view="duo"] [data-tab="duo"] {background:var(--soft);border-color:var(--line);color:var(--text)}
     </style>
   </head>
   <body>
@@ -1365,6 +1380,7 @@
       <nav class="tabs" aria-label="Guide view">
         <a class="tab active" href="#atlas" data-tab="atlas">Map atlas</a>
         <a class="tab" href="#specs" data-tab="specs">Elite spec bible</a>
+        <a class="tab" href="#duo" data-tab="duo" id="duonav">Matt &amp; Steve · duo</a>
         <a class="tab" href="#mastery" data-tab="mastery">PoF mastery points</a>
         <a class="tab" href="#route" data-tab="route">My route</a>
         <a class="tab" href="#help" data-tab="help">Dips, shortcuts &amp; help</a>
@@ -1729,6 +1745,573 @@
           <article id="detail" class="detail"></article>
         </div>
       </div>
+<section id="duoview" aria-labelledby="duotitle" hidden>
+  <div class="duo-heading"><div><div class="eyebrow">Your changing roster · Path of Fire champions · two players</div><h1 id="duotitle">Matt &amp; Steve.<br /><em>Better together.</em></h1><p>Your target: take down Path of Fire champions as a duo. Build complementary support around the characters you enjoy, then test it in real fights.</p></div><aside class="duo-snapshot" id="duosnapshot"><b>Current duo</b><p>Steve: power Reaper; power dagger/dagger Tempest.</p><p>Matt: Holosmith, Untamed, Druid, Virtuoso and Mirage.</p><small>Matt’s roles are suggested defaults. Exact gear, traits and utilities are not yet confirmed.</small></aside></div>
+  <div class="duo-notice"><b>Your roster, your choices.</b> This personal tab uses the spec names you supplied, including your planned unlocks. It does not reveal later maps or change the bible’s spoiler settings. Saves stay in this browser; Back up progress includes this notebook. It does not sync between Matt’s and Steve’s devices.</div>
+  <div class="duo-controls"><label>Tonight’s plan<select id="duogoal"><option value="events">Roaming &amp; quick event clears</option><option value="champions">Harder champions &amp; recovery</option><option value="cozy">Relaxed longer fights</option></select></label><label class="duo-check"><input type="checkbox" id="duopreview" />Preview planned &amp; possible specs</label></div>
+  <div class="duo-pickers"><label>Steve<select id="duosteve"></select></label><label>Matt<select id="duomatt"></select></label></div>
+  <p id="duoselectionstatus" role="status"></p><div id="duofirst"></div><div id="duopair"></div>
+  <section class="duo-session" aria-labelledby="duosynergytitle"><h2 id="duosynergytitle">What “ultimate synergy” means for two</h2><ol><li><b>Complement the actual build.</b> Quickness helps channel-heavy Tempest; Reaper already supplies some personal quickness. Alacrity plus shared might/fury can add more than duplicating a boon both already have.</li><li><b>Keep both players attacking.</b> Recovery, protection, stability and cleanse are valuable when they prevent downs or interrupted damage. A dedicated healer earns its slot when it solves the fight; two full damage builds can still be the better duo.</li><li><b>Plan one combined breakbar response.</b> Name a reliable control skill each, save it for an active bar, then exploit the opening. Do not expect blind, roots or pulls to disable a defiant champion as they do ordinary mobs.</li><li><b>Adapt to the champion.</b> Bounties can add randomized mechanics. Read the target’s effects and obey its positioning rules before blaming the class pairing. Pets are useful, but do not assume they hold aggro like a tank.</li></ol><p>No two builds are guaranteed to beat every champion or bounty. The best pair is the one that keeps its damage and support working through that fight’s mechanics.</p><p><a href="https://wiki.guildwars2.com/wiki/Defiance_bar" target="_blank" rel="noopener">Breakbar reference ↗</a> · <a href="https://wiki.guildwars2.com/wiki/Unstable_Magic_Abilities" target="_blank" rel="noopener">Bounty-effect reference · mechanic names ↗</a></p></section>
+  <section aria-labelledby="duorectitle"><h2 id="duorectitle">Pairings to try</h2><p>Editorial starting points for your roster, not simulated duo DPS. Applying a suggestion changes the two selected roles; it does not mark a spec unlocked or assume its equipment is owned.</p><div id="duorecipes" class="duo-recipes"></div></section>
+  <details class="duo-editor" id="duoeditor"><summary>Edit your current roster &amp; loadouts</summary><p>Available now means the spec is trained, not that every suggested support build is geared. Change status, choose a role, and record actual weapons, traits and gear. “Not in roster” removes a spec from pairing choices.</p><div id="duorosters" class="duo-rosters"></div><label class="duo-check"><input type="checkbox" id="duovisible" />Show this temporary tab in the navigation</label><p>You can reopen a hidden tab from Dips, shortcuts &amp; help, or with <code>#duo</code>.</p><button type="button" id="duoreset">Reset this duo notebook to the starting roster…</button></details>
+  <section class="duo-session" aria-labelledby="duoprogressiontitle"><h2 id="duoprogressiontitle">Where the next synergy comes from</h2><ul><li><b>First, optimize what is trained:</b> confirm Matt’s Untamed has the shared-boon setup. Steve can keep Reaper for reliability, or test the optional alacrity trait on his power D/D Tempest for complementary roles.</li><li><b>Steve’s biggest flexibility unlock:</b> Chronomancer can choose shared alacrity beside quickness Untamed, or shared quickness beside an alacrity Druid, Mirage or Specter variant. Pick one boon job per build.</li><li><b>Matt’s guardian choice:</b> Willbender adds mobile damage and a possible alacrity conversion. Firebrand is the more distinct pivot if Matt wants quickness plus active defensive utility. Neither is a required replacement for a working Untamed.</li><li><b>Vindicator:</b> a new power playstyle for Steve, rather than a missing dedicated boon role. Pair it with Matt’s support-capable options if he enjoys it.</li><li><b>Thief:</b> Daredevil for power gameplay; Specter for a deliberate condition/alacrity support route; pistol Deadeye for a different open-world loop. Do not train a second Specter solely to duplicate the same boon role.</li></ul><p>Choose a new spec for the role or feel it adds. Actual gear, execution and both players staying alive matter more than filling every theoretical boon slot.</p></section>
+  <section aria-labelledby="duothieftitle"><h2 id="duothieftitle">Matt’s thief decision</h2><div class="duo-thieves"><article><h3>Daredevil · first power experiment</h3><p>Start here for staff, active movement and a different power playstyle. Steve can stay on familiar Reaper while Matt learns initiative and dodge timing.</p><button type="button" data-duothief="daredevil">Put Daredevil on Matt’s shortlist</button></article><article><h3>Specter · deliberate support route</h3><p>More relevant if Matt wants condition damage and a future alacrity role. It overlaps Steve’s planned Specter; choose it for enjoyment or role flexibility, not because the duo must have two.</p><button type="button" data-duothief="specter">Put Specter on Matt’s shortlist</button></article><article><h3>Deadeye · pistol alternative</h3><p>Try the pistol/pistol open-world loop if that feel appeals more than staff. The damage preset here is separate from quickness Deadeye variants.</p><button type="button" data-duothief="deadeye">Put Deadeye on Matt’s shortlist</button></article></div></section>
+  <section class="duo-session" aria-labelledby="duosessiontitle"><h2 id="duosessiontitle">A small plan for the next session</h2><ol><li>Choose one shared target and stay within your support skills’ ranges.</li><li>Call one pull/control opener, then one burst window. Keep control for a breakbar.</li><li>Try the same type of fight twice. Watch each other’s boons, downs and time spent recovering.</li><li>Change one thing: a utility, a trait, or the pairing. Keep what feels better before buying a new gear set.</li></ol><label>Our notes &amp; next experiment<textarea id="duonotes" maxlength="2000" placeholder="What worked, what we actually wear, what we want to try next…"></textarea></label><p id="duosavestatus" role="status"></p><button type="button" id="duocopy">Copy tonight’s duo plan</button></section>
+  <details class="duo-sources"><summary>Sources, assumptions &amp; what to confirm</summary><p>Checked 17 October 2026. Build links inside each selected loadout are the mechanical references. Pairing choices and practice suggestions are editorial inferences for two players; no duo benchmark, automatic tank role, permanent boon uptime or gear ownership is claimed. Raid support sources establish role options, and must be adapted and tested for open world.</p><p>Steve’s dagger/dagger layout is retained. The open-world Fresh Air guide uses different weapons; its exact weapon opener is not substituted here. Confirm Steve’s trait lines, utilities, critical chance and defensive choices before treating this as a finished build.</p><ul><li><a href="https://metabattle.com/wiki/Build:Tempest_-_Fresh_Air" target="_blank" rel="noopener">Open-world Fresh Air principles ↗</a></li><li><a href="https://metabattle.com/wiki/Build:Tempest_-_Power_DPS" target="_blank" rel="noopener">Dagger/dagger power reference · group context ↗</a></li><li><a href="https://wiki.guildwars2.com/wiki/Ring_of_Fire_(elementalist_skill)" target="_blank" rel="noopener">Dagger fire field ↗</a> · <a href="https://wiki.guildwars2.com/wiki/Earthquake" target="_blank" rel="noopener">Dagger blast finisher ↗</a></li><li><a href="https://wiki.guildwars2.com/wiki/Lucid_Singularity" target="_blank" rel="noopener">Optional Tempest alacrity trait ↗</a></li></ul><p>External build pages may mention later expansion equipment, skills or encounters. The personalized roster includes only your named specs and Matt’s requested thief shortlist.</p></details>
+</section>
+
+<script type="application/json" id="duo-data">{
+  "checked": "17 October 2026",
+  "specs": {
+    "reaper": {
+      "name": "Reaper",
+      "id": "34",
+      "profession": "Necromancer",
+      "steve": "ready",
+      "matt": "off",
+      "summary": "Steve confirmed power. A forgiving melee damage anchor with strong cleave; keep its own life-force engine working.",
+      "steps": [
+        "Build life force between packs; enter shroud with a purpose, rather than using it to soak every avoidable hit.",
+        "Coordinate pulls and breakbar control, then commit your burst once enemies are together."
+      ],
+      "caution": "Personal quickness is not party quickness. Arrange a recovery window outside shroud when you need normal incoming healing.",
+      "modes": {
+        "power": {
+          "label": "Power damage",
+          "url": "https://metabattle.com/wiki/Build:Reaper_-_Power_Greatsword_Reaper",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Keep the power setup. Choose utility for the fight; do not replace it with a condition or healer template just to fill a theoretical role."
+        }
+      },
+      "cc": "Steve: save Executioner’s Scythe in shroud; Grasping Darkness is another option if a greatsword is equipped. Do not spend both before the active bar."
+    },
+    "tempest": {
+      "name": "Tempest",
+      "id": "48",
+      "profession": "Elementalist",
+      "steve": "ready",
+      "matt": "off",
+      "summary": "Steve confirmed power dagger / dagger. Play close enough for overloads and shared support, with a safe route out.",
+      "steps": [
+        "If using Fresh Air, use Overload Air, briefly leave Air to trigger a critical hit, then return; prioritize safe completed channels.",
+        "Dagger/dagger tools include a fire field from Ring of Fire and a blast from Earthquake. Coordinate a field + blast for nearby might when safe; do not delay every overload to chase combos.",
+        "Keep a stunbreak and use Water or defensive utilities when needed. Survival takes priority over finishing a channel."
+      ],
+      "caution": "The open-world Fresh Air source defaults to scepter/warhorn. Its weapon-specific opener is not Steve’s dagger/dagger rotation. The linked power-DPS reference confirms dagger/dagger, but assumes group support.",
+      "modes": {
+        "powerdd": {
+          "label": "Power · dagger / dagger",
+          "url": "https://metabattle.com/wiki/Build:Tempest_-_Fresh_Air",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Current weapon layout is retained. Fresh Air is a suggested trait direction; exact traits, gear and utilities still need confirming."
+        },
+        "alacdd": {
+          "label": "Power D/D · alacrity trait test",
+          "url": "https://wiki.guildwars2.com/wiki/Lucid_Singularity",
+          "quick": false,
+          "alac": true,
+          "heal": false,
+          "note": "Lucid Singularity is an optional damage-for-support trait change. Confirm boon duration, range and overload completion; this is not an audited full alacrity build template."
+        }
+      },
+      "cc": "Steve’s D/D control: Updraft (Air 5) and Earthquake (Earth 4). Choose a safe point in the overload loop to use them when the bar activates."
+    },
+    "vindicator": {
+      "name": "Vindicator",
+      "id": "69",
+      "profession": "Revenant",
+      "steve": "soon",
+      "matt": "off",
+      "summary": "Planned power damage option. Enjoy the mobile melee loop without treating damage dodges as free defensive resources.",
+      "steps": [
+        "Learn energy and legend management before adding every damage action.",
+        "Keep a dodge or another response for the next dangerous attack; line up cleave with your partner."
+      ],
+      "caution": "Power Vindicator is not a dedicated shared quickness or alacrity provider by default. Armour is heavy; Steve’s light Tempest set does not transfer.",
+      "modes": {
+        "power": {
+          "label": "Power damage",
+          "url": "https://metabattle.com/wiki/Build:Vindicator_-_Power_Vindicator",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "A power baseline, not a boon-support or healer conversion."
+        }
+      },
+      "cc": "Steve: identify the equipped weapon and legend control before the pull; a power label alone does not define your control buttons."
+    },
+    "specter": {
+      "name": "Specter",
+      "id": "71",
+      "profession": "Thief",
+      "steve": "soon",
+      "matt": "off",
+      "summary": "A condition-oriented thief route with ally support potential. Select its intended role before buying gear.",
+      "steps": [
+        "Learn initiative, shadow force and shroud as distinct resources.",
+        "For a support variant, stay in range and deliberately support your partner; test survival and boon coverage during movement."
+      ],
+      "caution": "Power Reaper/Tempest gear is not an automatic match for a condition or support Specter. A solo condition setup is not assumed to provide alacrity.",
+      "modes": {
+        "condi": {
+          "label": "Condition open world",
+          "url": "https://metabattle.com/wiki/Build:Specter_-_Condition_Specter",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Damage default; no shared alacrity credit is assumed."
+        },
+        "alac": {
+          "label": "Condition alacrity",
+          "url": "https://snowcrows.com/builds/raids/thief/condition-alacrity-specter-scepter-dagger-dagger",
+          "quick": false,
+          "alac": true,
+          "heal": false,
+          "note": "Use a complete alacrity variant with its traits and equipment. Raid role evidence is a conversion reference, not a two-player uptime guarantee."
+        }
+      },
+      "cc": "Reserve an equipped control skill and its initiative/resource cost. Confirm the selected Specter variant rather than assuming every weapon setup has the same control."
+    },
+    "chrono": {
+      "name": "Chronomancer",
+      "id": "40",
+      "profession": "Mesmer",
+      "steve": "soon",
+      "matt": "off",
+      "summary": "The most flexible planned boon partner in Steve’s list. Pick one shared boon to complement Matt.",
+      "steps": [
+        "Practise a small phantasm/shatter loop first, then add Continuum Split once recovery feels reliable.",
+        "Choose shared alacrity beside a quickness setup, or shared quickness beside an alacrity setup."
+      ],
+      "caution": "The self-sufficient solo build’s personal quickness/alacrity does not mean it gives both to Matt. Shared quickness and alacrity variants are separate choices.",
+      "modes": {
+        "power": {
+          "label": "Power solo / personal boons",
+          "url": "https://metabattle.com/wiki/Build:Chronomancer_-_Power_Chrono",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Self buffs are not counted as shared coverage."
+        },
+        "alac": {
+          "label": "Power boon · alacrity",
+          "url": "https://metabattle.com/wiki/Build:Chronomancer_-_Boon_Support_Power_DPS",
+          "quick": false,
+          "alac": true,
+          "heal": false,
+          "note": "Follow the boon build’s alacrity trait option and check the required gear/weapon unlocks."
+        },
+        "quick": {
+          "label": "Power boon · quickness",
+          "url": "https://metabattle.com/wiki/Build:Chronomancer_-_Boon_Support_Power_DPS",
+          "quick": true,
+          "alac": false,
+          "heal": false,
+          "note": "An alternative to the alacrity role, not both roles at once."
+        }
+      },
+      "cc": "Steve: reserve your control shatter or a control utility such as Gravity Well if slotted. Avoid using all of Continuum Split’s resources before the bar opens."
+    },
+    "holo": {
+      "name": "Holosmith",
+      "id": "57",
+      "profession": "Engineer",
+      "steve": "off",
+      "matt": "ready",
+      "summary": "Suggested Matt default: power open world. Strong burst and active melee gameplay beside either of Steve’s current characters.",
+      "steps": [
+        "Control heat and leave Photon Forge deliberately; do not overheat accidentally while chasing another skill.",
+        "Use weapon/utility control for the breakbar and keep an emergency response available."
+      ],
+      "caution": "Two aggressive close-range loops can fail together to the same attack. The suggested power Holo is not counted as a shared quickness/alacrity build.",
+      "modes": {
+        "power": {
+          "label": "Power open world",
+          "url": "https://metabattle.com/wiki/Build:Holosmith_-_Power_Holo",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Suggested default, not confirmed equipment or skill choices."
+        }
+      },
+      "cc": "Matt: Holographic Shockwave is a control option while in Photon Forge. Save a weapon/utility control option if the bar opens outside Forge."
+    },
+    "untamed": {
+      "name": "Untamed",
+      "id": "72",
+      "profession": "Ranger",
+      "steve": "off",
+      "matt": "ready",
+      "summary": "Suggested Matt default: power with Let Loose. A resilient damage partner with some shared quickness and might access.",
+      "steps": [
+        "Practise ambush and weapon-swap timing; keep the pet’s important control available for the breakbar.",
+        "Stay near Steve for shared boons. Test actual partner quickness rather than reading only your own boon bar."
+      ],
+      "caution": "Enhancing Impact’s personal quickness does not prove Steve has the same coverage. Maces need expanded weapon proficiency; use a documented hammer alternative if unavailable.",
+      "modes": {
+        "boon": {
+          "label": "Power · Let Loose boon access",
+          "url": "https://metabattle.com/wiki/Build:Untamed_-_Boon_DPS_Power_Untamed_Open_World",
+          "quick": true,
+          "alac": false,
+          "heal": false,
+          "note": "Shared quickness access, not a claim of permanent two-player uptime. Matt’s actual traits and weapons remain unconfirmed."
+        },
+        "damage": {
+          "label": "Power · no shared-boon assumption",
+          "url": "https://metabattle.com/wiki/Build:Untamed_-_Boon_DPS_Power_Untamed_Open_World",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Use this if the actual setup has not enabled the source’s shared-boon trait loop."
+        }
+      },
+      "cc": "Matt: reserve the control from the equipped pet, weapons or Storm Spirit. Confirm which buttons are on the actual bar before the pull."
+    },
+    "druid": {
+      "name": "Druid",
+      "id": "5",
+      "profession": "Ranger",
+      "steve": "off",
+      "matt": "ready",
+      "summary": "Suggested Matt default: condition damage. Keep the damaging setup for routine events; healer is an optional separate loadout.",
+      "steps": [
+        "Maintain the condition build’s damage loop and use its control and recovery deliberately.",
+        "If repeated deaths stop a champion kill, compare a real heal-alacrity loadout against simply bringing one defensive utility."
+      ],
+      "caution": "Druid’s name does not make a condition/Eclipse setup a dedicated healer. A heal conversion changes traits and equipment and can slow ordinary two-player kills.",
+      "modes": {
+        "condi": {
+          "label": "Condition open world",
+          "url": "https://metabattle.com/wiki/Build:Druid_-_Condition_Druid",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Damage default; neither full healing nor shared alacrity is assumed."
+        },
+        "healalac": {
+          "label": "Heal alacrity · separate loadout",
+          "url": "https://snowcrows.com/builds/raids/ranger/heal-alacrity-druid-staff-mace-warhorn",
+          "quick": false,
+          "alac": true,
+          "heal": true,
+          "note": "A separate support build. Use the full source setup and test whether the extra safety is worth losing one damage character."
+        }
+      },
+      "cc": "Matt: Celestial Avatar’s Lunar Impact is a control option. Plan resource availability rather than assuming Avatar is always ready."
+    },
+    "virtuoso": {
+      "name": "Virtuoso",
+      "id": "66",
+      "profession": "Mesmer",
+      "steve": "off",
+      "matt": "ready",
+      "summary": "Suggested Matt default: condition Virtuoso. Useful ranged pressure while Steve supplies close-range cleave.",
+      "steps": [
+        "Keep line of sight and attack uptime; ranged tools do not require standing at maximum distance.",
+        "Remain within your partner’s support range and save a defensive response for attacks that reach both of you."
+      ],
+      "caution": "Condition and power variants need different stat plans. Neither selected damage variant is counted as shared quickness or alacrity.",
+      "modes": {
+        "condi": {
+          "label": "Condition open world",
+          "url": "https://metabattle.com/wiki/Build:Virtuoso_-_Condition_Virtuoso",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Suggested default; verify Matt’s real gear before spending."
+        },
+        "power": {
+          "label": "Power open world",
+          "url": "https://metabattle.com/wiki/Build:Virtuoso_-_Power_Virtuoso",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "A distinct power option if that is what Matt already owns."
+        }
+      },
+      "cc": "Matt: Bladesong Dissonance is a control option; reserve the resource and avoid spending every bladesong just before a bar."
+    },
+    "mirage": {
+      "name": "Mirage",
+      "id": "59",
+      "profession": "Mesmer",
+      "steve": "off",
+      "matt": "ready",
+      "summary": "Suggested Matt default: staff condition Mirage. A sustained-fight option with a dodge/ambush rhythm.",
+      "steps": [
+        "Build and retain clones for staff ambushes, while reserving an answer to the next dangerous hit.",
+        "Compare on longer fights; short-lived packs can die before a condition loop pays off."
+      ],
+      "caution": "Do not credit a solo staff setup with guaranteed partner alacrity. Pick and follow an explicit alacrity variant if that is the job.",
+      "modes": {
+        "staff": {
+          "label": "Staff condition open world",
+          "url": "https://metabattle.com/wiki/Build:Mirage_-_Condi_Mirage",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Damage/survival default; no guaranteed shared-alacrity credit."
+        },
+        "alac": {
+          "label": "Staff alacrity · role conversion",
+          "url": "https://metabattle.com/wiki/Build:Mirage_-_Alacrity_Support_Condi_DPS",
+          "quick": false,
+          "alac": true,
+          "heal": false,
+          "note": "A separate variant whose clones, staff ambushes, positioning and equipment matter."
+        }
+      },
+      "cc": "Matt: reserve Diversion and enough clones for control. Do not spend every clone immediately before the bar appears."
+    },
+    "willbender": {
+      "name": "Willbender",
+      "id": "65",
+      "profession": "Guardian",
+      "steve": "off",
+      "matt": "soon",
+      "summary": "Matt’s current training project. Start with a power damage loop if it matches his owned gear and preferred feel.",
+      "steps": [
+        "Learn where movement skills end before using them during dangerous mechanics.",
+        "Try the damage version first; only add an alacrity role when both the weapon loop and the support setup are understood."
+      ],
+      "caution": "Alacrity Willbender is a deliberate build conversion. Unlocking Willbender alone does not add that role.",
+      "modes": {
+        "power": {
+          "label": "Power damage",
+          "url": "https://metabattle.com/wiki/Build:Willbender_-_Power_Willbender",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Suggested training default; check weapon ownership."
+        },
+        "alac": {
+          "label": "Power alacrity · role conversion",
+          "url": "https://metabattle.com/wiki/Build:Willbender_-_Alacrity_Support_Power_DPS",
+          "quick": false,
+          "alac": true,
+          "heal": false,
+          "note": "Follow the full source build, including its boon trait choices; test coverage in moving fights."
+        }
+      },
+      "cc": "Matt: choose and reserve an equipped weapon/utility control skill; keep enough mobility to avoid the next attack after the break."
+    },
+    "firebrand": {
+      "name": "Firebrand",
+      "id": "62",
+      "profession": "Guardian",
+      "steve": "off",
+      "matt": "pivot",
+      "summary": "Matt’s possible pivot. Particularly useful if he wants to actively support the duo while still doing damage.",
+      "steps": [
+        "Learn the damage loop and tome responses before adding more support buttons.",
+        "For a quickness variant, practise the boon loop while moving with Steve; bring stability/cleanse when the actual encounter needs it."
+      ],
+      "caution": "A condition damage Firebrand is not automatically a quickness healer. Quickness damage and heal-quickness need separate roles and gear plans.",
+      "modes": {
+        "condi": {
+          "label": "Condition damage",
+          "url": "https://metabattle.com/wiki/Build:Firebrand_-_Condi_Firebrand",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Default damage option; no shared quickness assumed."
+        },
+        "quick": {
+          "label": "Condition quickness · role conversion",
+          "url": "https://metabattle.com/wiki/Build:Firebrand_-_Quickness_Support_Condi_DPS",
+          "quick": true,
+          "alac": false,
+          "heal": false,
+          "note": "The most relevant pivot if Matt wants a new shared-boon role, rather than another damage character."
+        },
+        "healquick": {
+          "label": "Heal quickness · separate loadout",
+          "url": "https://metabattle.com/wiki/Build:Firebrand_-_Quickness_Support_Healer",
+          "quick": true,
+          "alac": false,
+          "heal": true,
+          "note": "Use for support practice or genuinely hard fights; ordinary events may be quicker with two damage builds."
+        }
+      },
+      "cc": "Matt: identify the equipped control and tome utility you will use. Keep the defensive tome response for the mechanic that actually needs it."
+    },
+    "daredevil": {
+      "name": "Daredevil",
+      "id": "7",
+      "profession": "Thief",
+      "steve": "off",
+      "matt": "pivot",
+      "summary": "Matt’s first thief recommendation for a direct, active power playstyle. This is a shortlist entry, not an unlocked character.",
+      "steps": [
+        "Start with staff, initiative and deliberate dodges rather than copying an advanced raid opener.",
+        "Practise returning to the fight after movement and keeping a defensive response available."
+      ],
+      "caution": "It adds a different playstyle, not the shared-boon role your roster most lacks. Medium armour may fit Matt’s classes, but stats, bindings and upgrades still need checking.",
+      "modes": {
+        "power": {
+          "label": "Power staff open world",
+          "url": "https://metabattle.com/wiki/Build:Daredevil_-_Power_Daredevil",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "Editorial first thief pick for learning active power gameplay; choose enjoyment over a theoretical roster score."
+        }
+      },
+      "cc": "Matt: check the staff/utility control you have equipped; keep a stun response and dodge for the follow-up rather than spending everything for damage."
+    },
+    "deadeye": {
+      "name": "Deadeye",
+      "id": "58",
+      "profession": "Thief",
+      "steve": "off",
+      "matt": "pivot",
+      "summary": "Matt’s alternative thief entry for a pistol/pistol open-world loop. Prefer it if that feel matters more than staff mobility.",
+      "steps": [
+        "Learn marking, initiative and target changes before adding more demanding variants.",
+        "Keep a movement/defence plan; do not assume a simple attack loop removes the need to react."
+      ],
+      "caution": "The listed pistol/pistol damage build is not a quickness Deadeye support build. Rifle and boon variants are separate choices.",
+      "modes": {
+        "pistols": {
+          "label": "Power pistol / pistol",
+          "url": "https://metabattle.com/wiki/Build:Deadeye_-_Pistol_Pistol_Payback_Deadeye",
+          "quick": false,
+          "alac": false,
+          "heal": false,
+          "note": "A lower-friction alternative to staff, not an AFK build."
+        }
+      },
+      "cc": "Matt: identify a reliable equipped control skill and its initiative cost; do not arrive at the breakbar with an empty resource pool."
+    }
+  },
+  "recipes": [
+    {
+      "title": "Most complementary current-spec experiment",
+      "steve": "tempest",
+      "matt": "untamed",
+      "sm": "alacdd",
+      "mm": "boon",
+      "goal": "champions",
+      "why": "Keep Steve’s power daggers, test the alacrity trait, and use Matt’s shared quickness-access Untamed. Both still contribute damage while filling different boon jobs.",
+      "trade": "Requires deliberate trait/role changes and real uptime checks. This D/D alacrity variant is an experiment, not a finished audited template. Fall back to Reaper + Untamed if channels or survival break down."
+    },
+    {
+      "title": "Easy first test",
+      "steve": "reaper",
+      "matt": "untamed",
+      "sm": "power",
+      "mm": "boon",
+      "goal": "events",
+      "why": "Start with two resilient power characters. Matt can practise shared-boon range while Steve handles close cleave.",
+      "trade": "Both want nearby targets. Shared quickness still needs testing; keep a defensive button each."
+    },
+    {
+      "title": "Make dagger/dagger feel smoother",
+      "steve": "tempest",
+      "matt": "untamed",
+      "sm": "powerdd",
+      "mm": "boon",
+      "goal": "events",
+      "why": "Matt’s quickness access can help Steve’s channel-heavy loop while both contribute damage. Keep Steve’s actual daggers.",
+      "trade": "Stay in support range. Quickness access is not permanent coverage; overloads still need safe timing."
+    },
+    {
+      "title": "Melee plus ranged pressure",
+      "steve": "reaper",
+      "matt": "virtuoso",
+      "sm": "power",
+      "mm": "condi",
+      "goal": "champions",
+      "why": "Steve anchors close pressure while Matt keeps damage flowing when the target moves.",
+      "trade": "No dedicated shared quickness/alacrity or healer is assumed. Stack closer when support is needed."
+    },
+    {
+      "title": "Burst through ordinary packs",
+      "steve": "reaper",
+      "matt": "holo",
+      "sm": "power",
+      "mm": "power",
+      "goal": "events",
+      "why": "Two power damage loops with useful control; minimal role conversion for a quick clear.",
+      "trade": "Both melee commitments can be punished together. Avoid spending every control skill before the breakbar."
+    },
+    {
+      "title": "Long-fight condition partner",
+      "steve": "reaper",
+      "matt": "mirage",
+      "sm": "power",
+      "mm": "staff",
+      "goal": "cozy",
+      "why": "Steve supplies immediate cleave while Matt develops sustained pressure with a forgiving ambush rhythm.",
+      "trade": "Condition ramp can be wasted on tiny packs; no guaranteed shared alacrity is assumed."
+    },
+    {
+      "title": "Champion recovery experiment",
+      "steve": "reaper",
+      "matt": "druid",
+      "sm": "power",
+      "mm": "healalac",
+      "goal": "champions",
+      "why": "A separate heal-alacrity Druid can help when repeat deaths, rather than damage, block the kill.",
+      "trade": "This changes Matt’s role and gear. Reaper still manages shroud/recovery windows; ordinary packs may become slower."
+    },
+    {
+      "title": "Future flexible boon pair",
+      "steve": "chrono",
+      "matt": "untamed",
+      "sm": "alac",
+      "mm": "boon",
+      "goal": "champions",
+      "why": "Steve takes the alacrity branch beside Matt’s quickness-access setup. This fills different support jobs.",
+      "trade": "Chronomancer training and actual boon uptime come first. Do not select quickness Chrono here merely to duplicate the same boon."
+    },
+    {
+      "title": "Future power roaming",
+      "steve": "vindicator",
+      "matt": "untamed",
+      "sm": "power",
+      "mm": "boon",
+      "goal": "events",
+      "why": "Two sturdy damage options, with Matt providing shared quickness access and Steve learning a different melee rhythm.",
+      "trade": "Power Vindicator is not an alacrity healer. Keep enough energy and defensive responses for real attacks."
+    },
+    {
+      "title": "Future support-and-damage pair",
+      "steve": "specter",
+      "matt": "firebrand",
+      "sm": "alac",
+      "mm": "quick",
+      "goal": "champions",
+      "why": "One deliberately configured alacrity role plus one quickness role is a useful long-term support practice pair.",
+      "trade": "Both are planned conversions. Gear, training, positioning and actual boon coverage must be verified; two condition loops can feel slow on tiny packs."
+    },
+    {
+      "title": "Keep Tempest; add a new support angle",
+      "steve": "tempest",
+      "matt": "firebrand",
+      "sm": "alacdd",
+      "mm": "quick",
+      "goal": "champions",
+      "why": "Steve can test the optional alacrity trait while Matt explores condition quickness Firebrand.",
+      "trade": "This is an experiment with Steve’s daggers, not a verified full D/D boon template. Check uptime and lost damage before investing."
+    },
+    {
+      "title": "Matt’s first thief outing",
+      "steve": "reaper",
+      "matt": "daredevil",
+      "sm": "power",
+      "mm": "power",
+      "goal": "events",
+      "why": "Steve’s familiar Reaper is a stable partner while Matt learns staff, initiative and dodges.",
+      "trade": "Both are damage builds; bring control and personal recovery rather than expecting a new boon role."
+    }
+  ]
+}</script>
 <section id="specview" aria-labelledby="spectitle" hidden>
   <div class="sp-heading"><div><div class="eyebrow">A living reference · PvE damage builds</div><h1 id="spectitle">The elite spec <em>bible.</em></h1><p>Find a playstyle you’ll want to learn. Compare power builds, source-rated picks and how they feel—with dedicated solo, group and cozy views.</p></div><div class="sp-snapshot"><b>36 specializations</b><span>4 expansions · 9 professions</span><small>Research snapshot · 17 October 2026<br />Version 2 · explore, learn &amp; relax</small></div></div>
   <div class="sp-reveals"><b>Your spoiler boundary</b><p>HoT and PoF specs are visible. Later spec names and their build links stay hidden until you reveal them here. These controls are separate from map spoilers.</p><div class="row"><label class="inline"><input type="checkbox" id="sprevealeod" /> Reveal EoD specializations</label><label class="inline"><input type="checkbox" id="sprevealvoe" /> Reveal newest expansion specializations</label></div><small>Build pages may mention later skills, equipment and expansion names. No story or map walkthroughs are included here.</small></div>
@@ -1801,7 +2384,7 @@
             routes have not been play-tested in game. External source pages may contain story spoilers.</p>
         </details>
       </section>
-      <div id="helpview" class="help" hidden>
+      <div id="helpview" class="help" hidden><p><a href="#duo" data-tab="duo">Open Matt &amp; Steve’s current duo notebook</a> · Re-enable its navigation link inside the roster editor.</p>
         <p class="muted">
           External references leave this guide’s spoiler controls and may contain later map names or
           story context.
@@ -30608,6 +31191,9 @@
             /[&<>"']/g,
             (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
           );
+      const DUO_DATA=JSON.parse(document.getElementById("duo-data").textContent);
+      function blankDuo(){const d={version:1,goal:"champions",preview:false,visible:true,selected:{steve:"reaper",matt:"untamed"},notes:""};for(const owner of ["steve","matt"])d[owner]=Object.fromEntries(Object.entries(DUO_DATA.specs).map(([key,s])=>[key,{status:s[owner],mode:Object.keys(s.modes)[0],notes:""}]));return d;}
+      function validateDuo(raw){const d=blankDuo();if(!raw||typeof raw!=="object")return d;d.goal=["events","champions","cozy"].includes(raw.goal)?raw.goal:d.goal;d.preview=raw.preview===true;d.visible=raw.visible!==false;d.notes=typeof raw.notes==="string"?raw.notes.slice(0,2000):"";for(const owner of ["steve","matt"]){for(const [key,s] of Object.entries(DUO_DATA.specs)){const r=raw[owner]?.[key];if(!r||typeof r!=="object")continue;d[owner][key]={status:["ready","soon","pivot","off"].includes(r.status)?r.status:d[owner][key].status,mode:Object.hasOwn(s.modes,r.mode)?r.mode:d[owner][key].mode,notes:typeof r.notes==="string"?r.notes.slice(0,800):""};}if(Object.hasOwn(DUO_DATA.specs,raw.selected?.[owner]))d.selected[owner]=raw.selected[owner];}return d;}
       const NAMES = {
         glider: "Glider Basics",
         updraft: "Updraft Use",
@@ -30699,7 +31285,7 @@
         eodScope: 0,
         mastery: {},
         specReveal: { eod: false, voe: false },
-        specPersonal: {}, specLearning: {},
+        specPersonal: {}, specLearning: {}, duo:blankDuo(),
         specKit: { source: "berserker", target: "52", weight: "Light", own: { hot: true, pof: true } },
         filters: defaults(),
       };
@@ -30769,6 +31355,7 @@
           version: 3,
           active: profiles.some((p) => p.id === s.active) ? s.active : profiles[0].id,
           profiles,
+          duo:validateDuo(s.duo),
           specReveal: { eod: s.specReveal?.eod === true, voe: s.specReveal?.voe === true },
           specPersonal: Object.fromEntries(Object.entries(s.specPersonal || {}).filter(([id,v])=>SPEC_IDS_EARLY.has(id)&&v&&typeof v==="object").map(([id,v])=>[id,{favorite:v.favorite===true,tried:v.tried===true,fun:clamp(v.fun,5),flow:clamp(v.flow,5),goal:typeof v.goal==="string"?v.goal.slice(0,200):"",notes:typeof v.notes==="string"?v.notes.slice(0,2000):""}])),
           specLearning: Object.fromEntries(Object.entries(s.specLearning || {}).filter(([key,v])=>/^(solo|group|cozy-relaxed|cozy-survival):[^:]+$/.test(key)&&SPEC_BUILD_IDS_EARLY.has(key.split(":")[1])&&typeof v==="number"&&Number.isFinite(v)).map(([key,v])=>[key,clamp(v,7)])),
@@ -30829,7 +31416,7 @@
         if ((e.key === STORE || e.key === null) && e.newValue !== persistence.raw) blockStaleSave();
       });
       const profile = () => state.profiles.find((p) => p.id === state.active) || state.profiles[0];
-      const APP_TABS = ["atlas", "route", "help", "mastery", "specs"];
+      const APP_TABS = ["atlas", "route", "help", "mastery", "specs", "duo"];
       function tabFromHash() { const key=location.hash.slice(1); return APP_TABS.includes(key)?key:"atlas"; }
       function updateViewURL(t, mode = "push") {
         const url=location.pathname+location.search+(t==="atlas"?"":"#"+t);
@@ -31320,9 +31907,12 @@
         $("atlasview").hidden=!["atlas","route"].includes(tab);
         $("masteryview").hidden=tab!=="mastery";
         $("specview").hidden=tab!=="specs";
+        $("duoview").hidden=tab!=="duo";
+        $("duonav").hidden=!state.duo.visible;
+        document.body.classList.toggle("duo-mode",tab==="duo");
         document.body.classList.toggle("spec-mode",tab==="specs");
         document.body.classList.toggle("mastery-mode",tab==="mastery");
-        $("print").textContent=tab==="specs"?"Print filtered specs":tab==="mastery"?"Print expanded groups":"Print route";
+        $("print").textContent=tab==="duo"?"Print duo plan":tab==="specs"?"Print filtered specs":tab==="mastery"?"Print expanded groups":"Print route";
         $("characterlabel").textContent=tab==="mastery"?"Character for map access":"Character";
         window.guideReady=true;
         document.documentElement.classList.remove("guide-boot");
@@ -31333,6 +31923,7 @@
         if(tab!=="specs")for(const id of ["spcards","spcompare","spquizresults","spjournalentries","spgearresults","spgearsource","spgeartarget"]) {
           const node=$(id);if(node)node.replaceChildren();
         }
+        if(tab==="duo") { renderDuo(); restoreFocus(focus); return; }
         if(tab==="specs") { renderSpecs(); restoreFocus(focus); return; }
         if(tab==="mastery") {
           $("setupsummary").textContent="Shared mount unlocks · character map access";
@@ -31464,7 +32055,7 @@
         $("eodscope").value = state.eodScope;
       }
       async function copy(text, kind = "waypoint") {
-        const labels = {waypoint:["Waypoint", "Paste into your GW2 chat box."],build:["Build template", "Paste the template code into Guild Wars 2."],gear:["Gear checklist", "Keep it with your gearing notes."]},
+        const labels = {waypoint:["Waypoint", "Paste into your GW2 chat box."],build:["Build template", "Paste the template code into Guild Wars 2."],gear:["Gear checklist", "Keep it with your gearing notes."],duo:["Duo plan", "Keep it with your session notes."]},
           [label, instruction] = labels[kind] || ["Text", "Paste it where you need it."];
         try {
           await navigator.clipboard.writeText(text);
@@ -31822,7 +32413,7 @@
           }
           confirmBox(
             "Restore " + incoming.profiles.length + " character(s)?",
-            "This replaces the current saved characters, account mastery checklist, spec journal, learning checkpoints, gear planner and settings. Back up current progress first if needed. Restored backups will open with HoT-only protection; you can reveal later maps again yourself.",
+            "This replaces the current saved characters, account mastery checklist, spec journal, learning checkpoints, gear planner, duo notebook and settings. Back up current progress first if needed. Restored backups will open with HoT-only protection; you can reveal later maps again yourself.",
             () => {
               state = incoming;
               state.scope = 0;
@@ -31851,6 +32442,8 @@
         e.target.value = "";
       };
       function populatePrint() {
+        if(tab==="duo"){$("printout").innerHTML='<h1>Matt &amp; Steve · PoF champion duo</h1>'+duoPairHTML()+'<h2>Our session notes</h2><p style="white-space:pre-wrap">'+esc(state.duo.notes)+'</p><p>Open-world role suggestions; no guaranteed boon uptime or champion clear. Checked '+DUO_DATA.checked+'.</p>';$("printout").querySelectorAll('select,label,button').forEach(n=>n.remove());return;}
+
         if (tab === "specs") {
           $("printout").innerHTML = `<h1>Elite spec bible · ${spView.context} · ${spView.context==="cozy"?spView.cozyLane:spView.lens}</h1><p>Research snapshot ${SPEC.snapshot}. Editorial scores /5. Overall = equal fantasy, ceiling, fun and combat power; higher ceiling is positive. Golem numbers are supported group benchmarks only. See the online rubric for limitations.</p>` + specShown().map(s => {const b=specBuild(s);return `<article><h2>${esc(s.name)} · ${esc(s.profession)}</h2><p>${esc(s.fantasy)}</p><p>${esc(s.loop)}</p>${b?`<h3>${esc(b.name)}</h3><p>${esc(b.weapons)}</p><p>${Object.entries(specLabels()).map(([k,v])=>v+": "+b.ratings[k]+"/5").join(" · ")}</p><p>${spView.context==="group"?b.avg+" average golem DPS; "+b.max+" maximum":esc(b.soloDamage)}</p><p>${esc(b.source)} ${esc(b.tier)} · revision ${esc(b.updated)} · ${esc(b.url)}</p>`:"<p>No verified recommended power build.</p>"}</article>`;}).join("");
           return;
@@ -32227,6 +32820,61 @@
       $("specview").addEventListener("input",updatePersonal);$("specview").addEventListener("change",updatePersonal);
       $("specview").addEventListener("change",e=>{const key=e.target.dataset.splearn;if(!key)return;const [ctx,id]=key.split(":"),b=SP_BUILDS[id];if(!b||!gearBuildAllowed(id)||!['solo','group','cozy-relaxed','cozy-survival'].includes(ctx))return;const bit=1<<Number(e.target.dataset.spstage);state.specLearning[key]=e.target.checked?(state.specLearning[key]||0)|bit:(state.specLearning[key]||0)&~bit;const ok=save();toast(ok?"Learning checkpoint saved.":"Checkpoint kept in this tab. Back up before closing.");const details=e.target.closest('details');details.querySelector('summary').textContent='Learning path · '+[0,1,2].filter(i=>(state.specLearning[key]||0)&(1<<i)).length+'/3 checkpoints';});
       $("spcards").addEventListener("toggle",e=>{if(!e.target.isConnected||!e.target.dataset.spdetail)return;const key=e.target.dataset.spdetail;if(e.target.open)spView.details.add(key);else spView.details.delete(key);},true);
+
+      const DUO_STATUS={ready:"Available now",soon:"Working on / soon",pivot:"Considering",off:"Not in roster"};
+      const duoUI={open:new Set()};
+      function duoAvailable(owner,key){const row=state.duo[owner][key];return row&&(row.status==="ready"||state.duo.preview&&["soon","pivot"].includes(row.status));}
+      function duoSelected(owner){const key=state.duo.selected[owner];return key&&duoAvailable(owner,key)?key:null;}
+      function duoOptions(owner){return Object.entries(DUO_DATA.specs).filter(([key])=>duoAvailable(owner,key)).map(([key,s])=>`<option value="${key}">${esc(s.name)} · ${esc(DUO_STATUS[state.duo[owner][key].status])}</option>`).join("");}
+      function duoMode(owner,key){return DUO_DATA.specs[key].modes[state.duo[owner][key].mode];}
+      function duoLoadout(owner,key){const s=DUO_DATA.specs[key],row=state.duo[owner][key],mode=duoMode(owner,key);return `<article class="duo-loadout"><div class="eyebrow">${owner==="steve"?"Steve":"Matt"} · ${esc(DUO_STATUS[row.status])}</div><h3>${esc(s.name)}</h3><p class="duo-confirm">${esc(mode.label)}</p><label>Role for this pairing<select id="duorole-${owner}" data-duoowner="${owner}" data-duokey="${key}" data-duofield="mode">${Object.entries(s.modes).map(([v,m])=>`<option value="${v}" ${v===row.mode?"selected":""}>${esc(m.label)}</option>`).join("")}</select></label><p>${esc(s.summary)}</p><ul>${s.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><p class="duo-alert">${esc(mode.note)}</p><p>${esc(s.caution)}</p><p class="duo-alert"><b>Breakbar job:</b> ${esc(s.cc)}</p>${row.notes?`<p class="duo-ownnote" id="duonotedisplay-${owner}"><b>Your recorded setup:</b><br />${esc(row.notes)}</p>`:`<p class="duo-ownnote" id="duonotedisplay-${owner}">Exact gear, traits and utilities not recorded yet. Add them in Edit your current roster &amp; loadouts.</p>`}<a href="${esc(mode.url)}" target="_blank" rel="noopener">${key==="tempest"&&row.mode==="powerdd"?"Fresh Air principles · source uses different weapons":"Build / role reference"} ↗</a>${key==="tempest"?'<br /><a href="https://metabattle.com/wiki/Build:Tempest_-_Power_DPS" target="_blank" rel="noopener">Dagger/dagger reference · group context ↗</a>':""}</article>`;}
+      function duoPairHTML(){const sk=duoSelected("steve"),mk=duoSelected("matt");if(!sk||!mk)return '<div class="empty">Choose one available character for each player. Edit the roster to mark a spec available, or enable planned-spec previews.</div>';
+        const a=DUO_DATA.specs[sk],b=DUO_DATA.specs[mk],am=duoMode("steve",sk),bm=duoMode("matt",mk),planned=["steve","matt"].filter(o=>state.duo[o][o==="steve"?sk:mk].status!=="ready");
+        const providers=field=>[["Steve",am],["Matt",bm]].filter(([n,m])=>m[field]).map(([n])=>n),q=providers("quick"),al=providers("alac"),h=providers("heal");
+        const alerts=[];
+        if(planned.length)alerts.push("Planning preview: at least one selected spec is not available now. No unlocks or owned equipment have been changed.");
+        if(!q.length&&!al.length)alerts.push("Two damage builds are fine for ordinary open world. Keep personal recovery and control; do not assume a full group-boon package.");
+        if(q.length>1||al.length>1)alerts.push("Both selected roles target the same major boon. Extra coverage may help, but consider swapping one role if you want complementary support.");
+        if(h.length===2)alerts.push("Two dedicated heal roles can make duo kills unnecessarily slow. Try keeping one damage role unless the fight really requires both.");
+        else if(h.length&&state.duo.goal==="events")alerts.push("For quick events, compare this healer setup with two self-sufficient damage builds. Healing is useful only if it solves a real problem.");
+        if(q.length&&al.length)alerts.push("You have complementary boon role options. Range, duration, gear and actual execution still determine coverage; no permanent uptime is assumed.");
+        const foundation=sk==="reaper"&&mk==="untamed"?"Check Fury on Steve as well as Matt. Preserve the sourced Untamed’s Storm Spirit if using that setup; Reaper’s personal quickness does not replace Fury, and Matt’s self boons are not proof of Steve’s coverage.":sk==="tempest"?"Check nearby might and fury during Steve’s Air-overload loop. Use Fire overload or a safe fire-field blast when might is missing; do not copy a group opener that skips might generation unless Matt actually covers it.":"Check might, fury, vulnerability and time spent attacking before adding more support roles. Keep close enough to share support, but move for the champion’s actual mechanics. A role badge alone does not prove the boons are reaching both players.";
+        return `<div class="duo-pairhead"><div class="eyebrow">${planned.length?"Future experiment":"Tonight’s available pair"}</div><h2>${esc(a.name)} + ${esc(b.name)}</h2><p>Steve: ${esc(am.label)}<br />Matt: ${esc(bm.label)}</p><div class="duo-coverage"><div><b>Shared quickness access</b><span>${q.length?esc(q.join(" + "))+" · test coverage":"Not assumed from these roles"}</span></div><div><b>Shared alacrity access</b><span>${al.length?esc(al.join(" + "))+" · test coverage":"Not assumed from these roles"}</span></div><div><b>Dedicated healing role</b><span>${h.length?esc(h.join(" + ")):"None · keep personal recovery"}</span></div></div><p><b>Damage foundation:</b> ${esc(foundation)}</p>${alerts.map(t=>`<p class="duo-alert">${esc(t)}</p>`).join("")}<p>${esc({events:"Prioritize quick engagement, cleave and getting back into the next fight. Do not buy a support set just to improve a paper checklist.",champions:"First identify what is stopping the kill: avoidable damage, control, recovery or low attack uptime. Change the smallest thing that solves it.",cozy:"Choose the loops you can repeat comfortably while reacting. A slightly slower kill with fewer downs can be the better session."}[state.duo.goal])}</p></div><div class="duo-roles">${duoLoadout("steve",sk)}${duoLoadout("matt",mk)}</div>`;
+      }
+      function duoRoster(owner){return `<section><h3>${owner==="steve"?"Steve":"Matt"}</h3>`+Object.entries(DUO_DATA.specs).filter(([key])=>state.duo[owner][key].status!=="off").map(([key,s])=>{const row=state.duo[owner][key],token=owner+"-"+key;return `<details class="duo-entry" data-duoentry="${token}" ${duoUI.open.has(token)?"open":""}><summary id="duoentry-${token}">${esc(s.name)}<small>${esc(DUO_STATUS[row.status])} · ${esc(s.modes[row.mode].label)}</small></summary><label>Availability<select id="duostatus-${token}" data-duoowner="${owner}" data-duokey="${key}" data-duofield="status">${Object.entries(DUO_STATUS).map(([v,l])=>`<option value="${v}" ${v===row.status?"selected":""}>${l}</option>`).join("")}</select></label><label>Build / intended role<select id="duomode-${token}" data-duoowner="${owner}" data-duokey="${key}" data-duofield="mode">${Object.entries(s.modes).map(([v,m])=>`<option value="${v}" ${v===row.mode?"selected":""}>${esc(m.label)}</option>`).join("")}</select></label><label>Actual setup &amp; adjustments<textarea id="duosetup-${token}" data-duoowner="${owner}" data-duokey="${key}" data-duofield="notes" maxlength="800" placeholder="Weapons, stats, traits, utilities; what still needs confirming">${esc(row.notes)}</textarea></label></details>`;}).join("")+`<div class="duo-add"><label>Add a roster / shortlist entry<select id="duoadd-${owner}"><option value="">Choose a spec…</option>${Object.entries(DUO_DATA.specs).filter(([key])=>state.duo[owner][key].status==="off").map(([key,s])=>`<option value="${key}">${esc(s.name)}</option>`).join("")}</select></label><button type="button" data-duoadd="${owner}">Add to ${owner==="steve"?"Steve":"Matt"}’s shortlist</button></div></section>`;}
+      function renderDuo(){
+        const d=state.duo;
+        for(const owner of ["steve","matt"]){if(!duoSelected(owner))d.selected[owner]=Object.keys(DUO_DATA.specs).find(key=>duoAvailable(owner,key))||"";const el=$("duo"+owner);el.innerHTML=duoOptions(owner)||'<option value="">No available specs</option>';el.value=d.selected[owner];el.disabled=!d.selected[owner];}
+        $("duosnapshot").innerHTML='<b>Available in your current roster</b>'+["steve","matt"].map(owner=>'<p>'+(owner==="steve"?"Steve":"Matt")+': '+esc(Object.entries(DUO_DATA.specs).filter(([key])=>d[owner][key].status==="ready").map(([key,s])=>s.name+(key==="tempest"?' (power D/D)':'')).join(', ')||'No specs marked available')+'</p>').join('')+'<small>Matt’s roles started as suggested defaults. Record actual gear, traits and utilities in the roster editor.</small>';
+        $("duogoal").value=d.goal;$("duopreview").checked=d.preview;$("duovisible").checked=d.visible;$("duonav").hidden=!d.visible;
+        $("duoselectionstatus").textContent=d.preview?"Planned specs are included as previews. Availability is shown beside each selection.":"Only specs marked Available now can be selected. Matt’s roles are suggested defaults until you edit them.";
+        $("duopair").innerHTML=duoPairHTML();
+        $("duocopy").disabled=!duoSelected("steve")||!duoSelected("matt");
+        const recipes=DUO_DATA.recipes.map((r,i)=>({...r,i})).filter(r=>duoAvailable("steve",r.steve)&&duoAvailable("matt",r.matt)).sort((a,b)=>(b.goal===d.goal)-(a.goal===d.goal)||a.i-b.i);
+        const first=recipes[0];
+        $("duofirst").innerHTML=first?`<aside class="duo-pairhead" style="margin:18px 0"><div class="eyebrow">${first.goal==="champions"?"Champion synergy · first experiment":"A pairing to try"}</div><h2>${esc(first.title)}</h2><p>${esc(first.why)}</p><p><b>Required change / trade-off:</b> ${esc(first.trade)}</p><button type="button" data-duorecipe="${first.i}">Try this pair &amp; suggested roles</button></aside>`:"";
+        $("duorecipes").innerHTML=recipes.length?recipes.map(r=>`<article class="duo-recipe"><div class="eyebrow">${state.duo.steve[r.steve].status==="ready"&&state.duo.matt[r.matt].status==="ready"?"Specs available now":"Planned-spec preview"}</div><h3>${esc(r.title)}</h3><small>Steve: ${esc(DUO_DATA.specs[r.steve].name)} · ${esc(DUO_DATA.specs[r.steve].modes[r.sm].label)}<br />Matt: ${esc(DUO_DATA.specs[r.matt].name)} · ${esc(DUO_DATA.specs[r.matt].modes[r.mm].label)}</small><p>${esc(r.why)}</p><p><b>Trade-off:</b> ${esc(r.trade)}</p><button type="button" data-duorecipe="${r.i}">Use pair &amp; suggested roles</button></article>`).join(""):'<p class="empty">No curated pairings match this roster yet. You can still choose a pair above, or add a suggested spec to the roster.</p>';
+        $("duorosters").innerHTML=duoRoster("steve")+duoRoster("matt");
+        if($("duonotes").value!==d.notes)$("duonotes").value=d.notes;
+      }
+      function saveDuo(){const ok=save();updateText("duosavestatus",ok?"Saved in this browser · included in Back up progress":"Kept in this tab only · back up before closing");return ok;}
+      function refreshDuo(){const f=captureFocus();for(const el of $("duorosters").querySelectorAll("[data-duoentry]")){if(el.open)duoUI.open.add(el.dataset.duoentry);else duoUI.open.delete(el.dataset.duoentry);}renderDuo();restoreFocus(f);if(f&&document.activeElement===document.body)$("duoeditor").querySelector('summary').focus({preventScroll:true});}
+      $("duorosters").addEventListener("toggle",e=>{const key=e.target.dataset.duoentry;if(!key||!e.target.isConnected)return;if(e.target.open)duoUI.open.add(key);else duoUI.open.delete(key);},true);
+      $("duoview").addEventListener("change",e=>{const el=e.target,owner=el.dataset.duoowner,key=el.dataset.duokey,field=el.dataset.duofield;
+        if(owner&&key&&["status","mode"].includes(field)){state.duo[owner][key][field]=el.value;refreshDuo();saveDuo();return;}
+        if(el.id==="duogoal")state.duo.goal=el.value;
+        else if(el.id==="duopreview")state.duo.preview=el.checked;
+        else if(el.id==="duovisible")state.duo.visible=el.checked;
+        else if(["duosteve","duomatt"].includes(el.id))state.duo.selected[el.id.slice(3)]=el.value;
+        else return;
+        refreshDuo();saveDuo();
+      });
+      $("duoview").addEventListener("input",e=>{const el=e.target;if(el.id==="duonotes")state.duo.notes=el.value.slice(0,2000);else if(el.dataset.duofield==="notes")state.duo[el.dataset.duoowner][el.dataset.duokey].notes=el.value.slice(0,800);else return;const owner=el.dataset.duoowner;if(owner&&duoSelected(owner)===el.dataset.duokey){const note=$("duonotedisplay-"+owner);if(note)note.textContent=el.value||"Exact setup not recorded yet.";}saveDuo();});
+      $("duoview").addEventListener("click",e=>{const recipe=e.target.closest('[data-duorecipe]');if(recipe){const r=DUO_DATA.recipes[Number(recipe.dataset.duorecipe)];if(!r||!duoAvailable("steve",r.steve)||!duoAvailable("matt",r.matt))return;state.duo.selected={steve:r.steve,matt:r.matt};state.duo.steve[r.steve].mode=r.sm;state.duo.matt[r.matt].mode=r.mm;renderDuo();saveDuo();$("duosteve").focus({preventScroll:true});$("duopair").scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});}
+        const add=e.target.closest('[data-duoadd],[data-duothief]');if(add){const owner=add.dataset.duoadd||"matt",key=add.dataset.duothief||$("duoadd-"+owner).value;if(!DUO_DATA.specs[key]){toast("Choose a spec to add first.");return;}if(state.duo[owner][key].status==="off")state.duo[owner][key].status="pivot";duoUI.open.add(owner+"-"+key);renderDuo();saveDuo();$("duoeditor").open=true;const el=$("duoentry-"+owner+"-"+key);el.focus({preventScroll:true});el.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});}
+      });
+      $("duoreset").onclick=()=>confirmBox("Reset the duo notebook?","This resets only Matt and Steve’s roster, selected roles and duo notes. Hero points, mastery, the spec journal and gear planner are kept.",()=>{state.duo=blankDuo();duoUI.open.clear();renderDuo();saveDuo();$("duoreset").focus({preventScroll:true});});
+      $("duocopy").onclick=()=>{const s=duoSelected("steve"),m=duoSelected("matt");if(!s||!m){toast("Choose a spec for both players first.");return;}copy("Matt & Steve · open-world duo\nGoal: "+({champions:"Path of Fire champion duo",events:"Quick event clears",cozy:"Relaxed longer fights"}[state.duo.goal])+"\nSteve: "+DUO_DATA.specs[s].name+" · "+duoMode("steve",s).label+" · "+DUO_STATUS[state.duo.steve[s].status]+"\nMatt: "+DUO_DATA.specs[m].name+" · "+duoMode("matt",m).label+" · "+DUO_STATUS[state.duo.matt[m].status]+"\nSteve setup: "+(state.duo.steve[s].notes||"Not recorded")+"\nMatt setup: "+(state.duo.matt[m].notes||"Not recorded")+"\nNotes: "+state.duo.notes+"\nRole suggestions are not verified gear or guaranteed boon uptime.\n"+duoMode("steve",s).url+"\n"+duoMode("matt",m).url,"duo");};
 
       controls();
       render(true);

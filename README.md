@@ -33,3 +33,5 @@ node tests/mobile-tools.cjs
 ```
 
 Set `ATLAS_URL` to check a deployed copy. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` selects an existing Chromium installation; `PW_BROWSER=webkit` runs the same flows in WebKit when that browser and its system dependencies are installed. Screenshots are written to a temporary directory printed by the test.
+
+The temporary **Matt & Steve · duo** tab (`#duo`) is an editable notebook for taking down Path of Fire champions as two players. It distinguishes trained specs from planned unlocks, suggested roles from confirmed equipment, personal boons from shared coverage, and damage setups from support conversions. It includes current/future pairing experiments, dagger/dagger Tempest notes, breakbar jobs, Matt’s thief shortlist, saved loadout/session notes, copy/print, and an option to hide the tab until needed. Duo data travels in progress backups; it does not sync between players automatically. See [the duo research and assumptions](DUO_RESEARCH.md). Run `node tests/duo.cjs` with the same Playwright/browser setup as the mobile checks above; `AXE_PATH` optionally points to an installed axe-core browser script.
