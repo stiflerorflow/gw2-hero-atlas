@@ -1,5 +1,7 @@
 # Elite specialization reference research
 
+The original damage-build edition is documented below. [Version 2 research](SPEC_TOOLS_RESEARCH.md) adds the two cozy lanes and practical tools; the original solo/group benchmark dataset and scoring formula remain available.
+
 Snapshot: 17 October 2026 UTC. This document contains all specialization names, including later expansions. The website gates EoD and newest-expansion spec names independently of map spoiler controls.
 
 ## Coverage and evidence
