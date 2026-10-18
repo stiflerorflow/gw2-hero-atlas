@@ -52,7 +52,7 @@ Default region blocks: Crystal Oasis4 → Desert Highlands4 → Elon Riverlands8
 
 ## Cold waypoints and map links
 
-A waypoint chat link locates a pin; it never unlocks travel. Arrival gates explicitly confirm that both characters reached the first waypoint. Later checkpoint gates confirm scouting before offering a return teleport. Contested waypoints are not treated as usable: the written approach remains a walking recovery reference, and the run does not ask players to wait for an outpost event. Individual imported waypoint availability is never inferred from the account API.
+A waypoint chat link locates a pin; it never unlocks travel. Arrival gates explicitly confirm that both characters reached the first waypoint. Later checkpoint gates confirm scouting before offering a return teleport. Contested waypoints are not treated as usable: the recorded map-entry waypoint is offered as a fallback when known on both characters. From there, use upper/surface paths back to the hub. The guide explicitly avoids treating a glider descent as a reversible climb, and does not ask players to wait for an outpost event. Individual imported waypoint availability is never inferred from the account API.
 
 The dependency graph is Crystal Oasis→Desert Highlands, Crystal Oasis→Elon Riverlands, and Verdant Brink→Auric Basin. A parent arrival gate still appears when its challenges were skipped as prior completions. Unknown Temple of Kormir / Treacherous Path returns display road recovery instructions; a prior completed challenge does not prove its waypoint was scouted.
 
