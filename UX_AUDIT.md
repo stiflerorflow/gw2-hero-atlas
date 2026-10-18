@@ -90,3 +90,17 @@ Checked115source equipment variants and restored a missing Dire Backpiece in one
 Optional daily/weekly/listing Vault scans keep old dates/data after failures. Objective/reward names are opt-in and reset across account/connection changes. API purchase counters are explicitly unreliable and never certify stock. The manual journal preserves the originally recorded pair during edits, escapes notes, survives reload/backups and has separate confirmation for destructive removal/clear; derived practice advice does not alter editorial scores.
 
 The new `tests/upgrades-vault-journal.cjs` covers catalogue fingerprints/quantities, set swaps, spare counts, non-tradable/rate-limited quotes, public/private request boundaries, wrong-account recipe isolation, ingredient/currency/discipline/unlock checks, Vault schema/failure/privacy behaviour, journal CRUD/persistence, populated workspace/journal axe and320/390/768reflow. Existing eight-view functional/mobile/accessibility, duo,115preset, data/spoiler and API regressions pass. Real public prices and a current Scholar-rune recipe were also read from the official API. Successful private account paths remain fixture-tested; physical Safari and combat performance are not claimed tested.
+
+## Fresh four-agent whole-tool sweep · 18 October 2026
+
+Audited revision `be3175b` across four independent scopes: functionality and persistence; mobile UX and accessibility; catalogue correctness and spoilers; API/privacy and asynchronous operations. Found and corrected three issues:
+
+- Partner-file import captured unrelated equipment snapshots before confirmation. An in-flight equipment save completing while the dialog was open could then be silently discarded. The confirmation now merges against current state and rechecks account capacity, snapshot capacity and ID conflicts before changing saved data.
+- Exact sigil comparison used weapon-name membership without physical quantities. Two daggers could satisfy a dagger/torch target and hide a missing sigil. Matching now consumes source weapon occurrences; legitimate dual daggers, two-handed weapons with two sigils and swapped weapon sets remain supported.
+- Editing a fight with zero deaths showed an empty death field. Explicit zero values now remain visible.
+
+Added focused `tests/audit2-{functional,data,api}.cjs` regressions. Fresh checks covered all eight tabs, browser history/reload/print, stale-tab and corrupt-save protection, account/Vault/journal backup round trips, journal escaping and pair preservation, account removal,115 source fingerprints and upgrade records,100HP/73mastery data,36specializations, spoiler suppression, API cancellation and secret boundaries. Existing deep mobile, source import, duo, account workspace and upgrade/market/Vault/journal suites also passed.
+
+Mobile coverage includes all eight tabs at320/390/768 CSS pixels with expanded disclosures, text spacing, landscape and automated WCAG2A/AA+2.1AA checks; deeper touch flows additionally cover360/375/430. Populated market, recipe, Vault and journal paths passed touch and accessibility checks. No new overflow, automated accessibility violation or browser exception was found in the tested paths.
+
+Limits: Chromium automation rather than physical-device/Safari certification; private API scenarios use synthetic fixtures without real account credentials; source snapshots and metadata do not substitute for gameplay validation. This audit does not certify the absence of all bugs.
