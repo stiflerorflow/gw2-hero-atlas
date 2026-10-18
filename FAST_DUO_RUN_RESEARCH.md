@@ -21,7 +21,7 @@ Default region blocks: Crystal Oasis4 → Desert Highlands4 → Elon Riverlands8
 | 7 | Veteran Yandra Stonetusk | Lommuld Kraal Waypoint | scout | Move north via the surface road and discover Lommuld Kraal; avoid the westward dwarven crossing. |
 | 8 | Eternal Fire | Lommuld Kraal Waypoint | walk | Continue east from the kraal on the Sunderlands approach, rather than returning to Makali. |
 | 9 | Forgotten Shrine | Augury's Shadow Waypoint | entry | After the cross-map transfer, use the nearby northern arrival hub for the shrine branch. |
-| 10 | Branded Relic | Augury's Shadow Waypoint | walk | Continue northeast from the shrine to the distant crystal statue; do not return to Augury between the two. |
+| 10 | Branded Relic | Augury's Shadow Waypoint | return | Return to confirmed Augury after the shrine descent, then take the separate northeast Raptor branch. A direct ledge exit is not assumed. |
 | 11 | General's Grave | Olishar's Oasis Camp Waypoint | scout | Return to the already discovered Augury hub, then ride southwest to discover Olishar’s Oasis Camp and start the western ground loop. |
 | 12 | Veteran Trunt | Olishar's Oasis Camp Waypoint | walk | Ride northwest from the grave to Trunt on firm ground; do not reload the camp between these neighbors. |
 | 13 | Fresh Meat | Olishar's Oasis Camp Waypoint | walk | Continue northwest from Trunt to Deadlock Sweep; this ends the western ground loop. |
@@ -91,3 +91,22 @@ Run counters track only HP explicitly awarded on this run. Positive awards also 
 - Each stop retains its individual Wiki challenge reference and GuildJen map movement guide. All31curated approaches were already marked source-checked in the underlying catalogue, and each default’s kit is covered by the stated mounts/basic gliding.
 - Fresh web checks corroborated PoF mount requirements; northern/southern desert connections; HoT account-entry rules; Nuhoch ledge gliding; the hog’s independent self-healing mechanic; and the basic-mount HoT tour. Several direct Wiki fetches returned403, so cached search excerpts, the existing source audit and alternative guide pages were used rather than claiming a fresh full-page fetch.
 - No in-game field traversal, actual champion kill, personal benchmark or successful real-key API operation is claimed. Connecting legs are conservative road/landmark instructions checked against map geometry and entry references; the optional source movement videos remain the recovery aid.
+
+
+## Four-agent pre-field route check · 18 October 2026
+
+Four independent reviews covered the16PoF defaults,9HoT defaults,6reserves, map gates, geometry and both rendered starting orders. Evidence: AUDIT_POF_FIELD_ROUTE.md, HOT_RUN_FIELD_AUDIT.md and ROUTE_SKEPTICAL_REVIEW.md. Individual sources, guide waypoints and compass bearings agree; this is three complementary checks (source requirements, map geometry, rendered continuity), not three actual in-game traversals.
+
+Corrections before field testing:
+
+- Use the **surface door behind Amber Sandfall** for Verdant Brink; do not descend into the post-Vinewrath labyrinth. Some Wiki zone wording names the encompassing area differently, so the physical door is the important instruction.
+- Return to confirmed Augury’s Shadow between Forgotten Shrine and Branded Relic rather than assume an undocumented exit from the shrine descent.
+- Supply shared cold-waypoint approach directions even when an earlier challenge introducing that hub was completed before. Ten reachable checkpoint states previously had empty instructions; all21non-entry-anchor states now have directions.
+- Coztic’s written route conservatively includes a short glide; Abyssal Depths explicitly warns about the recessed landing and is marked navigation-sensitive.
+- Optional cold-core transfer: PvP Lobby→Lion’s Arch gate→Rata Sum→Metrica Province→Brisban Wildlands→Fort Vandal→Silverwastes. Exit PvP Lobby is deliberately distinguished from the physical Lion’s Arch gate. This avoids assuming a discovered core waypoint, paid item or present partner. The initial story-access requirement still applies.
+
+Core-transfer references: [Map navigation](https://wiki.guildwars2.com/wiki/Map_navigation), [Heart of the Mists](https://wiki.guildwars2.com/wiki/Heart_of_the_Mists), [Asura gate](https://wiki.guildwars2.com/wiki/Asura_gate), [Metrica Province](https://wiki.guildwars2.com/wiki/Metrica_Province), [Brisban Wildlands](https://wiki.guildwars2.com/wiki/Brisban_Wildlands), [Silverwastes](https://wiki.guildwars2.com/wiki/The_Silverwastes), [Heart of Maguuma](https://wiki.guildwars2.com/wiki/Heart_of_Maguuma).
+
+`tests/audit-route-continuity.cjs` checks every cold checkpoint, both31-stop flows including all6replacement challenges, prior-completion parent gates, unknown-waypoint handling and backtracking recovery. Generic inter-hub surface paths and individual ledges remain source/landmark wayfinding rather than recorded tracks. The150-minute planning target is unchanged and remains unmeasured. Field testing should verify exact ledges, contested recovery, duo fights and actual duration.
+
+Additional source check: Lommuld scouting stays on the Auburn Hills/east side of Highjump Gap; the westward Canyon Jump leads toward Highjump Ranch and is an unnecessary detour for this hub. References: https://wiki.guildwars2.com/wiki/Salt_Flats , https://wiki.guildwars2.com/wiki/Auburn_Hills , https://wiki.guildwars2.com/wiki/Bahir , https://wiki.guildwars2.com/wiki/Stampede_Uplands .

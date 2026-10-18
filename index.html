@@ -3276,7 +3276,8 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
     </dialog>
     <input type="file" id="importfile" accept="application/json,.json" hidden />
     <div id="printout"></div>
-    <script id="fast-run-data" type="application/json">{
+    <script id="fast-run-data" type="application/json">
+{
   "version": 1,
   "checked": "2026-10-18",
   "nodes": [
@@ -3370,7 +3371,7 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
       "id": "2-11",
       "anchor": 2666,
       "toAnchor": [
-        "From the Salt Flats, regain the road and ride north via the Highjump Ranch side, then east into Lommuld Kraal. Do not climb the cliffs directly toward the icon.",
+        "From Makali Outpost, follow the northbound route through the Salt Flats into Auburn Hills. Keep to the east side of Highjump Gap rather than crossing west toward Highjump Ranch; continue toward Lommuld Kraal. Stay on the paths around cliffs.",
         "Discover Lommuld Kraal Waypoint before entering the kraal."
       ],
       "why": "A veteran beside a useful northern recovery waypoint.",
@@ -3415,17 +3416,14 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
       "id": "2-14",
       "anchor": 2643,
       "toAnchor": [],
-      "why": "Continue to the far northeastern veteran instead of returning to the hub between the two markers.",
-      "walk": [
-        "From the shrine, cross northeast through Ustulate Barrens using the raptor on the gaps.",
-        "The far northeastern marker is the statue inside the Branded crystal. This is a fight, unlike the shrine."
-      ],
-      "prev": "2-17",
+      "why": "Return to the confirmed hub after the shrine descent before taking the far northeastern veteran branch.",
+      "walk": [],
+      "prev": "",
       "hop": null,
       "map": "er",
       "requiresGlider": false,
-      "linkMode": "walk",
-      "linkWhy": "Continue northeast from the shrine to the distant crystal statue; do not return to Augury between the two."
+      "linkMode": "return",
+      "linkWhy": "Return to the confirmed Augury’s Shadow waypoint after the shrine descent, then take the northeast raptor approach to the relic. A direct exit from the shrine ledge is not assumed."
     },
     {
       "id": "2-18",
@@ -3615,7 +3613,7 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
       "prev": "",
       "hop": 2005,
       "map": "vb",
-      "requiresGlider": false,
+      "requiresGlider": true,
       "linkMode": "scout",
       "linkWhy": "Return to Mellaggan’s Valor after the alcove, then stay on upper paths south/southwest to Treacherous Path and the onward map exit.",
       "fightTip": "Clear the small shadowleapers first. Dodge the champion’s frontal combo and ranged shots; if repeated attempts are slow, use the Northwatch replacement."
@@ -3734,7 +3732,11 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
         "Both characters need Path of Fire access. If this character has never arrived, use the expansion’s opening story journey from Lion’s Arch, a Teleport to Friend to a party member already here, or an eligible owned lounge access item. A waypoint chat code alone cannot unlock travel.",
         "Once in Crystal Oasis, go to Amnoon and walk close enough to discover Amnoon Waypoint on BOTH characters."
       ],
-      "source": "https://wiki.guildwars2.com/wiki/Crystal_Oasis"
+      "source": "https://wiki.guildwars2.com/wiki/Crystal_Oasis",
+      "fallback": [
+        "Open the PvP panel and choose Enter PvP Lobby. In Heart of the Mists, walk through the asura gate to Lion’s Arch; do not use Exit PvP Lobby, which returns you to your previous location.",
+        "In Lion’s Arch, start Path of Fire’s opening chapter, Sparking the Flame, and follow its story journey to Crystal Oasis. An account’s mounts do not unlock Amnoon on a new character."
+      ]
     },
     "dh": {
       "entry": 2667,
@@ -3763,11 +3765,17 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
       "title": "Arrive at the jungle entrance",
       "steps": [
         "For the jungle leg, both accounts need Heart of Thorns. If either account has not opened its entrance, complete the expansion’s introductory story steps first.",
-        "On the account with the entrance open, travel to the Silverwastes: walk in from western Brisban Wildlands if this character lacks a local waypoint, or use a Teleport to Friend to your partner.",
-        "In the Silverwastes, use the Verdant Brink portal in Tangled Labyrinth, west of Amber Sandfall. On arrival, discover Shipwreck Peak Waypoint on both characters."
+        "Travel to the Silverwastes using an already-discovered core waypoint or your own travel item. If either character lacks nearby core waypoints, use the no-waypoint route below. Teleport to Friend is optional only if owned and the partner is already there.",
+        "In southwestern Silverwastes, use the surface door behind Amber Sandfall to enter Verdant Brink. Do not descend into the underground Tangled Labyrinth or wait for the Vinewrath event. On arrival, discover Shipwreck Peak Waypoint on both characters."
       ],
       "source": "https://wiki.guildwars2.com/wiki/Verdant_Brink",
-      "linkWhy": "Only one cross-region transfer is planned. Do all three desert legs together before entering the jungle, or reverse the two regional blocks at setup."
+      "linkWhy": "Only one cross-region transfer is planned. Do all three desert legs together before entering the jungle, or reverse the two regional blocks at setup.",
+      "fallback": [
+        "Open the PvP panel and choose Enter PvP Lobby. In Heart of the Mists, walk through the asura gate to Lion’s Arch; do not use Exit PvP Lobby, which returns you to your previous location.",
+        "In Lion’s Arch, use the Rata Sum city asura gate. In Rata Sum’s portal area, use the Metrica Province gate (the north gate).",
+        "Ride north through Metrica Province toward Muridian Uplands. The normal Brisban Wildlands portal is north of Muridian Waypoint; you do not need to have that waypoint unlocked.",
+        "In Brisban Wildlands, follow the surface roads northwest toward Fort Vandal in Vandal’s Claim. Use the Silverwastes portal northwest of Fort Vandal, not the southwestern Dry Top portal. Then follow the surface route behind Amber Sandfall."
+      ]
     },
     "ab": {
       "entry": 2006,
@@ -3830,16 +3838,21 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
     "2076": [
       "From the Verdant Brink entrance, follow the upper surface paths southwest through the Shrouded Ruins / central camp side, then west and southwest toward Noble Ledges. Avoid dropping to the ravine floor.",
       "Reach Treacherous Path near the southwest exit, discover the waypoint if you can, then use the normal southwest map connection to Auric Basin."
+    ],
+    "2666": [
+      "From Makali Outpost, follow the northbound route through the Salt Flats into Auburn Hills. Keep to the east side of Highjump Gap rather than crossing west toward Highjump Ranch; continue toward Lommuld Kraal. Stay on the paths around cliffs.",
+      "Discover Lommuld Kraal Waypoint before taking the kraal, Sunderlands or northern-cave branch."
     ]
   }
-}</script>
+}
+</script>
     <script id="guide-data" type="application/json">
       {
         "maps": {
           "vb": {
             "title": "Verdant Brink",
             "intro": "Use short down-glides for the easy communes. Canopy stops and vine walks have higher travel ratings.",
-            "entry": "With the Heart of Thorns introduction completed on your account, use the Silverwastes portal west of Amber Sandfall in Tangled Labyrinth. It brings you near Shipwreck Peak. Discover waypoints on this character as you travel.",
+            "entry": "With the Heart of Thorns introduction completed on your account, use the surface door behind Amber Sandfall in southwestern Silverwastes. Do not enter the underground Tangled Labyrinth or wait for Vinewrath. The portal brings you near Shipwreck Peak; discover waypoints on this character as you travel.",
             "rect": [
               [33408, 30976],
               [36608, 32512]
@@ -5558,13 +5571,13 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
               "Descend toward the roots with controlled glides. Near the bottom, look into the cliff wall for the small recessed ledge containing the glowing challenge."
             ],
             "action": "Land in the recess and commune.",
-            "caution": "The challenge is far below ground level. Aim for the ledge, not the empty abyss. If finding it becomes frustrating, use a backup stop.",
+            "caution": "Navigation-sensitive landing: the challenge is far below ground level in a small recess. Scout the wall while descending, land on roots or ledges to reset glider endurance, and use an updraft if available. If you miss it, return to a confirmed waypoint and retry from above; do not jump into the empty abyss.",
             "exit": "Once out of combat, use an unlocked, uncontested waypoint if you want to leave. Then follow your next selected stop.",
             "coord": [34818.6, 31959.5],
             "wiki": "https://wiki.guildwars2.com/wiki/Abyssal_Depths",
             "combat": 0,
             "travelLevel": 1,
-            "precision": false,
+            "precision": true,
             "event": false,
             "verified": true,
             "reqs": [["glider"]],
@@ -5737,15 +5750,15 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
             "area": "Noble Ledges · surface",
             "kind": "Group fight",
             "combat": 3,
-            "travelLevel": 0,
-            "travel": "Road / ground",
-            "reqs": [[]],
+            "travelLevel": 1,
+            "travel": "Ledges / short glide",
+            "reqs": [["glider"]],
             "steps": [
-              "From Treacherous Path, follow the nearby ledges northeast toward the hero icon. Stay above the map exit.",
+              "From Treacherous Path, follow the ledges northeast toward the hero icon, using a short controlled glide across the gap to the camp. Stay above the map exit.",
               "Find the belongings at the small Itzel camp and gather your group before interacting."
             ],
             "action": "Trigger and complete the homesteader fight.",
-            "caution": "An easy approach does not make this a gentle solo fight. Bring Matt or a train.",
+            "caution": "An easy approach does not make this a gentle solo fight. Bring your duo partner or ask map chat for help.",
             "exit": "Once out of combat, use an unlocked, uncontested waypoint if you want to leave. Then follow your next selected stop.",
             "precision": false,
             "event": false,
@@ -7791,7 +7804,7 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
             "travel": "Ride + raptor gaps",
             "area": "Ustulate Barrens · far northeast",
             "steps": [
-              "From Augury’s Shadow or the shrine, travel northeast across Ustulate Barrens to the far corner of the map.",
+              "From Augury’s Shadow Waypoint, travel northeast across Ustulate Barrens to the far corner of the map. After the shrine descent, return to the waypoint first; do not assume a direct climb out of the shrine.",
               "Cross gaps with the raptor and find a statue encased in a branded crystal."
             ],
             "action": "Examine the statue to summon and defeat the Veteran Branded Forgotten Priest.",
@@ -34336,6 +34349,7 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
       function runSave(){const ok=save();$("runstatus").textContent=ok?"Saved in this browser · included in Back up progress.":"Kept in this tab only. Back up before closing.";return ok;}
       function runFocus(){const heading=$("runcurrent").querySelector("h2");if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:"start"});}}
       function runHop(id){if(!id)return "";const w=runWP(id),mapKey=Object.keys(RUN_DATA.gates).find(k=>MAPS[k].waypoints.some(p=>p.id===id)),entry=mapKey&&RUN_DATA.gates[mapKey].entry,fallback=entry&&entry!==id&&runAllWP(entry)?runWP(entry):null;return runAllWP(id)?`<div class="run-anchor"><b>${esc(w.name)}</b> · confirmed on both. <button type="button" data-runcopy="${id}">Copy waypoint</button>${fallback?`<details><summary>Recovery help</summary><small>If contested, use your confirmed ${esc(fallback.name)} instead, then follow upper/surface paths back to this hub. <button type="button" data-runcopy="${fallback.id}">Copy fallback waypoint</button> Do not try to reverse a glider drop by climbing the cliff.</small></details>`:`<details><summary>Recovery help</summary><small>If unavailable, use another discovered safe waypoint or the normal map entrance. Do not try to reverse a glider drop by climbing the cliff.</small></details>`}</div>`:`<p class="hub-alert"><b>${esc(w.name)} is not confirmed on both characters.</b> Its code is only a map pin. Walk back along the surface route / normal map connection to reach this hub; do not assume a teleport is available.</p>${fallback?`<p>You may start from your confirmed ${esc(fallback.name)} instead, then walk to the unconfirmed hub. <button type="button" data-runcopy="${fallback.id}">Copy fallback waypoint</button></p>`:""}${(RUN_DATA.waypointReach?.[id]||RUN_DATA.nodes.concat(RUN_DATA.reserves).find(n=>n.anchor===id&&n.toAnchor.length)?.toAnchor||[]).length?"<ol>"+(RUN_DATA.waypointReach?.[id]||RUN_DATA.nodes.concat(RUN_DATA.reserves).find(n=>n.anchor===id&&n.toAnchor.length)?.toAnchor||[]).map(t=>"<li>"+esc(t)+"</li>").join("")+"</ol>":""}`;}
+      function runCheckpointRoute(node){const source=RUN_DATA.nodes.concat(RUN_DATA.reserves).find(n=>n.anchor===node.anchor&&n.toAnchor.length),entry=RUN_DATA.gates[node.map].entry;return {hop:node.hop||source?.hop||(node.anchor!==entry?entry:null),steps:node.toAnchor.length?node.toAnchor:RUN_DATA.waypointReach?.[node.anchor]||source?.toAnchor||["From the normal map entrance, follow the surface path to "+runWP(node.anchor).name+" and discover it on both characters. Do not descend toward a hero icon before scouting this recovery point."]};}
       function runMap(node){const s=BYID[node.id],m=MAPS[node.map],wp=runWP(node.anchor),scale=4,w=(m.rect[1][0]-m.rect[0][0])/scale,h=(m.rect[1][1]-m.rect[0][1])/scale,pos=c=>[(c[0]-m.rect[0][0])/scale,(c[1]-m.rect[0][1])/scale],a=pos(wp.coord),b=pos(s.coord);let pad=85,box=[Math.max(0,Math.min(a[0],b[0])-pad),Math.max(0,Math.min(a[1],b[1])-pad),Math.min(w,Math.abs(a[0]-b[0])+2*pad),Math.min(h,Math.abs(a[1]-b[1])+2*pad)];const radius=Math.max(box[2],box[3])/30;return `<details class="run-map"><summary>Show the local map</summary><p>◇ Recovery waypoint · ● Hero challenge. Pin positions show location, not a straight traversable path. Follow the written approach for height and caves.</p><svg viewBox="${box.join(" ")}" role="img" aria-label="${esc(m.title+": "+s.name+" and "+wp.name)}"><image href="${m.image}" width="${w}" height="${h}"/><path d="M ${a[0]} ${a[1]-radius} l ${radius} ${radius} l ${-radius} ${radius} l ${-radius} ${-radius} Z" fill="#122220" stroke="#fff" stroke-width="${radius/4}"/><circle cx="${b[0]}" cy="${b[1]}" r="${radius}" fill="#f1c486" stroke="#122220" stroke-width="${radius/3}"/><text x="${b[0]}" y="${b[1]+radius/3}" text-anchor="middle" font-size="${radius}" fill="#122220">HP</text></svg><small>Terrain and coordinates: official GW2 map API. Different vertical layers can overlap.</small></details>`;}
       function renderRunSetup(){
         const r=state.fastRun,profileOptions=state.profiles.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
@@ -34355,15 +34369,15 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
         else if(!node){$("runcurrent").innerHTML='<h2>No fresh planned stop remains</h2><p>Completed-before and skipped stops award no new points. Review a skipped stop, or use the full atlas for additional challenges; no extra HP is assumed.</p><a href="#atlas" data-tab="atlas">Open the full atlas →</a>';}
         else if(!r.entries.includes(node.map)){
           const key=runRequiredGate(node),g=RUN_DATA.gates[key],w=runWP(g.entry);
-          $("runcurrent").innerHTML=`<div class="eyebrow">Next map · ${esc(MAPS[key].title)}</div><h2>${esc(g.title)}</h2>${g.linkWhy?'<p class="run-reason">'+esc(g.linkWhy)+'</p>':""}${runHop(g.hop)}<ol>${g.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol><p><b>Arrival checkpoint:</b> ${esc(w.name)} <code>${esc(w.chat_link)}</code> <button type="button" data-runcopy="${w.id}">Copy map pin</button></p><small>A chat code locates a locked waypoint; it does not unlock it. Stay together and verify you are in the same map instance.</small><button type="button" class="primary" data-rungate="${key}">Both at this waypoint · continue →</button><p><a href="${esc(g.source)}" target="_blank" rel="noopener">Map-entry reference ↗</a></p>`;
+          $("runcurrent").innerHTML=`<div class="eyebrow">Next map · ${esc(MAPS[key].title)}</div><h2>${esc(g.title)}</h2>${g.linkWhy?'<p class="run-reason">'+esc(g.linkWhy)+'</p>':""}${runHop(g.hop)}<ol>${g.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>${g.fallback?.length?`<details><summary>No nearby core waypoints? Use this route</summary><ol>${g.fallback.map(t=>`<li>${esc(t)}</li>`).join("")}</ol><p><a href="https://wiki.guildwars2.com/wiki/Map_navigation" target="_blank" rel="noopener">Core travel reference ↗</a></p></details>`:""}<p><b>Arrival checkpoint:</b> ${esc(w.name)} <code>${esc(w.chat_link)}</code> <button type="button" data-runcopy="${w.id}">Copy map pin</button></p><small>A chat code locates a locked waypoint; it does not unlock it. Stay together and verify you are in the same map instance.</small><button type="button" class="primary" data-rungate="${key}">Both at this waypoint · continue →</button><p><a href="${esc(g.source)}" target="_blank" rel="noopener">Map-entry reference ↗</a></p>`;
         }else if(!runAllWP(node.anchor)){
-          const wp=runWP(node.anchor);
-          $("runcurrent").innerHTML=`<div class="eyebrow">Stop ${q.indexOf(node)+1} · ${esc(MAPS[node.map].title)}</div><h2>Discover ${esc(wp.name)}</h2><p>Scout this recovery point before the challenge. Neither character is assumed to have it.</p>${runHop(node.hop)}<ol>${node.toAnchor.map(t=>`<li>${esc(t)}</li>`).join("")}</ol><p><code>${esc(wp.chat_link)}</code> <button type="button" data-runcopy="${wp.id}">Copy map pin</button></p><button type="button" class="primary" data-runwaypoint="${wp.id}">Both discovered it · continue →</button><small>If the waypoint is contested, discovering it does not make it usable. If you can reach the hub on foot, continue with the written approach. After a descent, use another confirmed waypoint or the map entrance rather than trying to reverse the drop; do not wait for an outpost event.</small>${runMap(node)}`;
+          const wp=runWP(node.anchor),approach=runCheckpointRoute(node);
+          $("runcurrent").innerHTML=`<div class="eyebrow">Stop ${q.indexOf(node)+1} · ${esc(MAPS[node.map].title)}</div><h2>Discover ${esc(wp.name)}</h2><p>Scout this recovery point before the challenge. Neither character is assumed to have it.</p>${runHop(approach.hop)}<ol>${approach.steps.map(t=>`<li>${esc(t)}</li>`).join("")}</ol><p><code>${esc(wp.chat_link)}</code> <button type="button" data-runcopy="${wp.id}">Copy map pin</button></p><button type="button" class="primary" data-runwaypoint="${wp.id}">Both discovered it · continue →</button><small>If the waypoint is contested, discovering it does not make it usable. If you can reach the hub on foot, continue with the written approach. After a descent, use another confirmed waypoint or the map entrance rather than trying to reverse the drop; do not wait for an outpost event.</small>${runMap(node)}`;
         }else{
           const s=BYID[node.id],fight=s.combat>0||/fight/i.test(s.kind),wp=runWP(node.anchor),continuous=node.prev&&r.lastLocation===node.prev&&node.walk.length,eligible=r.players.filter(p=>runPending(p,node.id)),status=p=>p.status[node.id]==="earned"?"+10 HP recorded on this run":runPrior(p,node.id)||p.status[node.id]==="prior"?"Completed before · no new HP":p.status[node.id]==="skip"?"Skipped · no HP":runEarned(p)>=250?"250 HP goal reached":"Reward not recorded";
-          $("runcurrent").innerHTML=`<div class="eyebrow">Stop ${q.indexOf(node)+1} of ${q.length} · ${esc(MAPS[node.map].title)} · 10 HP each</div><h2>${esc(s.name)}</h2>${continuous?`<h3>From your last recorded stop</h3><p><small>Assuming you are still at ${esc(BYID[node.prev].name)}. Otherwise use the recovery approach below.</small></p><ol>${node.walk.map(t=>`<li>${esc(t)}</li>`).join("")}</ol><details><summary>Recovery approach from the waypoint</summary>${runHop(node.anchor)}<ol>${s.steps.map(t=>`<li>${esc(t)}</li>`).join("")}</ol></details>`:`<h3>Get there</h3>${runHop(node.anchor)}<ol>${s.steps.map(t=>`<li>${esc(t)}</li>`).join("")}</ol>`}<h3>${fight?"Win the fight":"Get the points"}</h3><p>${esc(s.action)}</p>${node.fightTip?'<p class="run-tip">'+esc(node.fightTip)+'</p>':""}<div class="run-rewards">${r.players.map(p=>`<p><b>${esc(runName(p))}</b><br />${status(p)}</p>`).join("")}</div>${eligible.length?`<button type="button" class="primary" id="runawardboth">${eligible.length===r.players.length?"Both received +10 HP":esc(runName(eligible[0]))+" received +10 HP"} · next →</button>`:'<button type="button" class="primary" data-runnext>Next uncompleted stop →</button>'}<details><summary>Notes &amp; route rationale</summary><p>${esc(node.why)}</p><p><b>Route link:</b> ${esc(node.linkWhy||node.why)}</p><p>${esc(s.caution.replace("Bring Matt or a train.","Bring your duo partner or ask map chat for help."))}</p>${fight?'<p>Duo: both tag the event and stay in range. Save crowd control for the active breakbar and kill dangerous adds. Repeated wipes are a reason to replace the point.</p>':'<p>Each character must complete their own commune or eating challenge. One player finishing does not confirm the other’s reward.</p>'}</details><details><summary>Only one received points, or already completed?</summary>${r.players.map(p=>`<div class="run-playeraction"><b>${esc(runName(p))}</b> ${runPending(p,node.id)?`<button type="button" data-runaward="${esc(p.profileId)}">Received +10 HP</button><button type="button" data-runprior="${esc(p.profileId)}">Already completed before</button>`:esc(status(p))}</div>`).join("")}<p>Individual awards stay on this stop so the other player can finish. Use Next after recording both results.</p><button type="button" data-runnext>Next uncompleted stop →</button></details><div class="source-actions"><button type="button" id="runskip">Skip &amp; add a replacement →</button>${r.players.some(p=>["skip","prior"].includes(p.status[node.id])&&!runPrior(p,node.id))?'<button type="button" id="runretry">Try this stop again</button>':""}</div>${runMap(node)}<details><summary>Challenge source &amp; movement video</summary><p><a href="${esc(s.wiki)}" target="_blank" rel="noopener">Wiki challenge / approach ↗</a> · <a href="${esc(MAPS[node.map].guide)}" target="_blank" rel="noopener">Map movement guide ↗</a></p><small>External pages may show additional map or equipment spoilers. Approach catalogue audited ${esc(s.audit?.date||"2026-10-09")}; run selection reviewed ${RUN_DATA.checked}. No in-game route timing is claimed.</small></details>`;
+          $("runcurrent").innerHTML=`<div class="eyebrow">Stop ${q.indexOf(node)+1} of ${q.length} · ${esc(MAPS[node.map].title)} · 10 HP each</div><h2>${esc(s.name)}</h2>${node.id==="1-5"?'<p class="run-caution">Careful landing: find the small recess near the roots. Use ledges to recover glider endurance; if you miss it, waypoint back and retry from above.</p>':""}${continuous?`<h3>From your last recorded stop</h3><p><small>Assuming you are still at ${esc(BYID[node.prev].name)}. Otherwise use the recovery approach below.</small></p><ol>${node.walk.map(t=>`<li>${esc(t)}</li>`).join("")}</ol><details><summary>Recovery approach from the waypoint</summary>${runHop(node.anchor)}<ol>${s.steps.map(t=>`<li>${esc(t)}</li>`).join("")}</ol></details>`:`<h3>Get there</h3>${runHop(node.anchor)}<ol>${s.steps.map(t=>`<li>${esc(t)}</li>`).join("")}</ol>`}<h3>${fight?"Win the fight":"Get the points"}</h3><p>${esc(s.action)}</p>${node.fightTip?'<p class="run-tip">'+esc(node.fightTip)+'</p>':""}<div class="run-rewards">${r.players.map(p=>`<p><b>${esc(runName(p))}</b><br />${status(p)}</p>`).join("")}</div>${eligible.length?`<button type="button" class="primary" id="runawardboth">${eligible.length===r.players.length?"Both received +10 HP":esc(runName(eligible[0]))+" received +10 HP"} · next →</button>`:'<button type="button" class="primary" data-runnext>Next uncompleted stop →</button>'}<details><summary>Notes &amp; route rationale</summary><p>${esc(node.why)}</p><p><b>Route link:</b> ${esc(node.linkWhy||node.why)}</p><p>${esc(s.caution.replace("Bring Matt or a train.","Bring your duo partner or ask map chat for help."))}</p>${fight?'<p>Duo: both tag the event and stay in range. Save crowd control for the active breakbar and kill dangerous adds. Repeated wipes are a reason to replace the point.</p>':'<p>Each character must complete their own commune or eating challenge. One player finishing does not confirm the other’s reward.</p>'}</details><details><summary>Only one received points, or already completed?</summary>${r.players.map(p=>`<div class="run-playeraction"><b>${esc(runName(p))}</b> ${runPending(p,node.id)?`<button type="button" data-runaward="${esc(p.profileId)}">Received +10 HP</button><button type="button" data-runprior="${esc(p.profileId)}">Already completed before</button>`:esc(status(p))}</div>`).join("")}<p>Individual awards stay on this stop so the other player can finish. Use Next after recording both results.</p><button type="button" data-runnext>Next uncompleted stop →</button></details><div class="source-actions"><button type="button" id="runskip">Skip &amp; add a replacement →</button>${r.players.some(p=>["skip","prior"].includes(p.status[node.id])&&!runPrior(p,node.id))?'<button type="button" id="runretry">Try this stop again</button>':""}</div>${runMap(node)}<details><summary>Challenge source &amp; movement video</summary><p><a href="${esc(s.wiki)}" target="_blank" rel="noopener">Wiki challenge / approach ↗</a> · <a href="${esc(MAPS[node.map].guide)}" target="_blank" rel="noopener">Map movement guide ↗</a></p><small>External pages may show additional map or equipment spoilers. Approach catalogue audited ${esc(s.audit?.date||"2026-10-09")}; run selection reviewed ${RUN_DATA.checked}. No in-game route timing is claimed.</small></details>`;
         }
-        $("runsupport").innerHTML=`${capacity.some(p=>p.hp<250)?'<p class="hub-alert">Fresh-point capacity: '+capacity.map(p=>esc(p.name)+" "+p.hp+"/250 HP").join(" · ")+". Prior completions/skips exceed the curated reserves; use the full atlas or revisit a skipped stop.</p>":""}<div class="source-actions">${node&&q.indexOf(node)>0?'<button type="button" id="runback">← Previous stop</button>':""}${r.undo?'<button type="button" id="runundo">Undo last HP award</button>':""}</div>${runOverview()}<details><summary>Run options · copy, custom routes &amp; start again</summary><div class="source-actions"><button type="button" id="runcopyplan">Copy this run</button><button type="button" id="runrestart">Start another run…</button><a href="#atlas" data-tab="atlas">Full atlas &amp; custom routes →</a></div></details><details><summary>Sources &amp; route limits</summary>${RUN_DATA.sources.map(s=>`<p><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)} ↗</a><br />${esc(s.use)}</p>`).join("")}<p>Check map access on each character. Road connections and recorded waypoints are separate from account-wide mounts. We do not use the API to guess waypoint unlocks. If the view and landmarks do not match, use the linked movement video rather than jumping straight at a map pin.</p></details>`;
+        $("runsupport").innerHTML=`${capacity.some(p=>p.hp<250)?'<p class="hub-alert">Fresh-point capacity: '+capacity.map(p=>esc(p.name)+" "+p.hp+"/250 HP").join(" · ")+". Prior completions/skips exceed the curated reserves; use the full atlas or revisit a skipped stop.</p>":""}<div class="source-actions">${node&&q.indexOf(node)>0?'<button type="button" id="runback">← Previous stop</button>':""}${r.undo?'<button type="button" id="runundo">Undo last HP award</button>':""}</div>${runOverview()}<details><summary>Run options · copy, custom routes &amp; start again</summary><div class="source-actions"><button type="button" id="runcopyplan">Copy this run</button><button type="button" id="runrestart">Start another run…</button><a href="#atlas" data-tab="atlas">Full atlas &amp; custom routes →</a></div></details><details><summary>Sources &amp; route limits</summary>${RUN_DATA.sources.map(s=>`<p><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)} ↗</a><br />${esc(s.use)}</p>`).join("")}<p>Check map access on each character. Connecting paths use source and landmark guidance, not a recorded in-game track; exact ledges and travel times still need a field run. Road connections and recorded waypoints are separate from account-wide mounts. We do not use the API to guess waypoint unlocks. If the view and landmarks do not match, use the linked movement video rather than jumping straight at a map pin.</p></details>`;
       }
       function runGoNext(){state.fastRun.current=runNext();runSave();renderFastRun();runFocus();}
       function runAward(profileIds,advance){const r=state.fastRun,node=runNode();if(!node||!r.reveal||!r.entries.includes(node.map)||!runAllWP(node.anchor))return;const changes=[];for(const p of r.players){if(!profileIds.includes(p.profileId)||!runPending(p,node.id))continue;const c=runProfile(p);if(!c)continue;changes.push({profileId:p.profileId,oldRun:p.status[node.id]||"none",oldLedger:c.status[node.id]||"none"});p.status[node.id]="earned";c.status[node.id]="earned";}if(changes.length){r.undo={nodeId:node.id,changes,previousCursor:node.id,lastLocation:r.lastLocation};r.lastLocation=node.id;}if(advance)r.current=runNext();finishRunTimer();runSave();renderFastRun();runFocus();}
@@ -34403,8 +34417,8 @@ html.guide-boot[data-boot-view="run"] :is(.hero,.journey,.plannerbar,.profilebar
       function runPlainText(){
         const r=state.fastRun;if(!r.started||!r.reveal)return "250 HP guided duo run · reveal run map names to export the itinerary.";
         const entered=new Set(),parts=["250 NEW HP EACH · guided duo run","Active time: "+runClock(runElapsed(r.timer))+" · planning target "+runDuration(r.timer.targetMinutes)+" (not field-timed)",...r.players.map(p=>runName(p)+": "+runEarned(p)+"/250 new HP"),"Basic Springer, Raptor Canyon Jumping, Skimmer and Glider Basics. No starting waypoints assumed. Pause timing for breaks and initial story access. Timer starts at the first arrival checkpoint."];
-        function addEntry(key){if(entered.has(key))return;const g=RUN_DATA.gates[key];if(g.parent)addEntry(g.parent);entered.add(key);parts.push("ENTER "+MAPS[key].title);if(g.hop)parts.push("Use "+runWP(g.hop).name+" only if you have discovered it; otherwise walk its road connection.");parts.push(...g.steps,"Both discover "+runWP(g.entry).name+" "+runWP(g.entry).chat_link+" before continuing.");}
-        runQueue().forEach((n,i)=>{addEntry(n.map);const s=BYID[n.id],w=runWP(n.anchor);parts.push((i+1)+". "+s.name+" · "+MAPS[n.map].title,"Route link: "+(n.linkWhy||n.why));if(n.prev&&n.walk.length)parts.push("Direct link from "+BYID[n.prev].name+" (if you are still there):",...n.walk,"Otherwise use the recovery approach below.");if(n.hop)parts.push("Recovery return: "+runWP(n.hop).name+" "+runWP(n.hop).chat_link+" · discovered and uncontested only.");parts.push("Discover "+w.name+" "+w.chat_link+" first; code alone cannot unlock it.",...n.toAnchor,...s.steps,s.action,s.caution.replace("Bring Matt or a train.","Bring your duo partner or ask map chat for help."),s.wiki,"");});
+        function addEntry(key){if(entered.has(key))return;const g=RUN_DATA.gates[key];if(g.parent)addEntry(g.parent);entered.add(key);parts.push("ENTER "+MAPS[key].title);if(g.hop)parts.push("Use "+runWP(g.hop).name+" only if you have discovered it; otherwise walk its road connection.");parts.push(...g.steps,...(g.fallback?.length?["If no suitable core waypoint is known:",...g.fallback]:[]),"Both discover "+runWP(g.entry).name+" "+runWP(g.entry).chat_link+" before continuing.");}
+        runQueue().forEach((n,i)=>{addEntry(n.map);const s=BYID[n.id],w=runWP(n.anchor);parts.push((i+1)+". "+s.name+" · "+MAPS[n.map].title,"Route link: "+(n.linkWhy||n.why));if(n.prev&&n.walk.length)parts.push("Direct link from "+BYID[n.prev].name+" (if you are still there):",...n.walk,"Otherwise use the recovery approach below.");if(n.hop)parts.push("Recovery return: "+runWP(n.hop).name+" "+runWP(n.hop).chat_link+" · discovered and uncontested only.");parts.push("Discover "+w.name+" "+w.chat_link+" first; code alone cannot unlock it.",...runCheckpointRoute(n).steps,...s.steps,s.action,s.caution.replace("Bring Matt or a train.","Bring your duo partner or ask map chat for help."),s.wiki,"");});
         parts.push("Curated route reviewed "+RUN_DATA.checked+"; not field-timed or guaranteed fastest. Confirm individual first-completion rewards.");return parts.join("\n");
       }
       function populateRunPrint(){const root=$("printout");root.innerHTML='<h1>250 HP guided duo run</h1><pre style="white-space:pre-wrap;overflow-wrap:anywhere">'+esc(runPlainText())+'</pre>';}
