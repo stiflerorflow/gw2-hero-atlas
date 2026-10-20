@@ -65,3 +65,7 @@ Options and question order are shuffled when an attempt starts and preserved acr
 `tests/revenue-study.cjs` checks content integrity and domain allocations; actual diagnostic answering and explanations; exact-set scoring; review/domain/mock modes; replacement confirmation; delayed mock feedback; answer/flag/reload persistence; deadline expiry; escaped notes; export/restore/cancel; invalid storage preservation; source filtering; browser history; and companion-state isolation.
 
 `tests/revenue-mobile.cjs` checks plan, study index, representative expanded lessons, bridge, source library, practice setup, question, feedback, results and confirmation dialog at320/390/768/1280px. Checks include touch interactions, text spacing, reflow, landscape and axe WCAG2A/AA+2.1AA when `AXE_PATH` is supplied. Screenshots are written to `/tmp/revenue-study-shots/`. Verification uses Chromium automation, not physical Safari testing or an authenticated Salesforce org.
+
+## Linked dictionary update
+
+The original24-term bridge glossary has been replaced in the interface by a separate237-entry dictionary, with its own versioned data file, source mapping, aliases, links and accessible previews. The quiz content/bank version is unchanged. See [dictionary research and verification](DICTIONARY_RESEARCH.md) for source scope and release cautions.
