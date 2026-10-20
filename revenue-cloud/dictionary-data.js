@@ -1,6 +1,6 @@
 /* Original definitions and CPQ distinctions. See DICTIONARY_RESEARCH.md for scope. */
 window.RC_DICTIONARY_DATA = {
-  "version": "2026-10-20.1",
+  "version": "2026-10-20.2",
   "checked": "20 October 2026",
   "categories": [
     {
@@ -170,9 +170,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "contracts-legal",
       "sources": [
-        "work-with-quotes",
-        "create-and-fulfill-orders",
-        "dive-into-salesforce-contracts-capabilities"
+        "agent"
       ],
       "related": [
         "product-configurator",
@@ -195,9 +193,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "apply-aggregate-pricing"
       ],
       "related": [
         "pricing-element",
@@ -493,9 +489,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "implement-attribute-based-pricing"
       ],
       "related": [
         "price-impacting-attribute",
@@ -790,9 +784,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "set-up-bundle-based-pricing"
       ],
       "related": [
         "product-bundle",
@@ -815,9 +807,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "catalog-api",
+        "get-to-know-context-service"
       ],
       "related": [
         "headless",
@@ -839,9 +830,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "get-to-know-context-service"
       ],
       "related": [
         "context-mapping",
@@ -913,9 +902,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "assets-history",
       "sources": [
-        "provide-post-sales-support",
-        "manage-customer-asset-amendments",
-        "manage-customer-asset-renewals-and-cancellations"
+        "manage-customer-asset-renewals-and-cancellations",
+        "navigate-the-full-billing-lifecycle"
       ],
       "related": [
         "effective-date",
@@ -1389,8 +1377,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
       "related": [
@@ -1413,7 +1399,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
         "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
@@ -1437,7 +1422,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
         "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
@@ -1461,8 +1445,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
       "related": [
@@ -1485,8 +1467,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
       "related": [
@@ -1509,7 +1489,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
         "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
@@ -1533,8 +1512,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
       "related": [
@@ -1557,9 +1534,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "explore-context-service-components-and-processes",
+        "create-a-pricing-procedure-with-the-list-price-element"
       ],
       "related": [
         "context-mapping",
@@ -1606,9 +1582,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "configure-contract-based-pricing",
+        "data-model"
       ],
       "related": [
         "contract-based-pricing",
@@ -1680,9 +1655,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "configure-contract-based-pricing"
       ],
       "related": [
         "contract-item-price",
@@ -2029,9 +2002,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-configure",
       "sources": [
-        "get-to-know-business-rules-engine",
-        "use-product-configurator-with-business-rules-engine",
-        "explore-product-configurator-with-constraint-rules-engine"
+        "get-to-know-business-rules-engine"
       ],
       "related": [
         "business-rules-engine",
@@ -2054,8 +2025,7 @@ window.RC_DICTIONARY_DATA = {
       "lesson": "cpq-configure",
       "sources": [
         "get-to-know-business-rules-engine",
-        "use-product-configurator-with-business-rules-engine",
-        "explore-product-configurator-with-constraint-rules-engine"
+        "build-decisions-with-lookup-tables"
       ],
       "related": [
         "decision-table",
@@ -2105,8 +2075,7 @@ window.RC_DICTIONARY_DATA = {
       "lesson": "cpq-configure",
       "sources": [
         "get-to-know-business-rules-engine",
-        "use-product-configurator-with-business-rules-engine",
-        "explore-product-configurator-with-constraint-rules-engine"
+        "build-decisions-with-lookup-tables"
       ],
       "related": [
         "decision-matrix",
@@ -2153,9 +2122,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "explore-derived-pricing-and-discovery-procedures",
+        "implement-derived-pricing"
       ],
       "related": [
         "pricing-discovery",
@@ -2402,9 +2370,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "explore-order-orchestration",
+        "agent"
       ],
       "related": [
         "permission-set",
@@ -2427,8 +2394,7 @@ window.RC_DICTIONARY_DATA = {
       "lesson": "cpq-configure",
       "sources": [
         "get-to-know-business-rules-engine",
-        "use-product-configurator-with-business-rules-engine",
-        "explore-product-configurator-with-constraint-rules-engine"
+        "orchestrate-rules-with-expression-sets"
       ],
       "related": [
         "business-rules-engine",
@@ -2476,9 +2442,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "licenses",
+        "product-identity"
       ],
       "related": [
         "permission-set-license",
@@ -2501,9 +2466,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "agent",
+        "licenses"
       ],
       "related": [
         "permission-set",
@@ -2730,9 +2694,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "differences",
+        "catalog-api"
       ],
       "related": [
         "business-api",
@@ -2755,7 +2718,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
         "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
@@ -3287,9 +3249,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "invoice-policy",
       "sources": [
-        "explore-billing-features-and-roles",
-        "navigate-the-full-billing-lifecycle",
-        "generate-invoices",
+        "get-started-with-billing-revenue-cloud",
         "glossary-billing"
       ],
       "related": [
@@ -3339,8 +3299,7 @@ window.RC_DICTIONARY_DATA = {
       "lesson": "cpq-configure",
       "sources": [
         "get-to-know-business-rules-engine",
-        "use-product-configurator-with-business-rules-engine",
-        "explore-product-configurator-with-constraint-rules-engine"
+        "create-and-configure-a-product-configurator-flow"
       ],
       "related": [
         "flow",
@@ -3639,9 +3598,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "agent",
+        "licenses"
       ],
       "related": [
         "permission-set-license",
@@ -3664,9 +3622,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "licenses",
+        "agent"
       ],
       "related": [
         "permission-set",
@@ -3689,7 +3646,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
         "get-to-know-context-service",
         "explore-context-service-components-and-processes"
       ],
@@ -3842,9 +3798,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "explore-derived-pricing-and-discovery-procedures"
       ],
       "related": [
         "derived-pricing",
@@ -4477,9 +4431,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "get-started-with-transaction-management",
+        "get-started-with-billing-revenue-cloud"
       ],
       "related": [
         "quote-to-cash",
@@ -4502,9 +4455,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "set-up-subscription-pricing-with-proration"
       ],
       "related": [
         "subscription-pricing",
@@ -4604,9 +4555,9 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "get-started-with-transaction-management",
+        "create-and-fulfill-orders",
+        "get-started-with-billing-revenue-cloud"
       ],
       "related": [
         "product-to-cash",
@@ -4629,9 +4580,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "glossary-transactions",
+        "navigate-the-full-billing-lifecycle"
       ],
       "related": [
         "effective-date",
@@ -4851,9 +4801,8 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "platform-context",
       "sources": [
-        "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "agent",
+        "licenses"
       ],
       "related": [
         "permission-set",
@@ -4901,8 +4850,6 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "assets-history",
       "sources": [
-        "provide-post-sales-support",
-        "manage-customer-asset-amendments",
         "manage-customer-asset-renewals-and-cancellations"
       ],
       "related": [
@@ -4980,8 +4927,7 @@ window.RC_DICTIONARY_DATA = {
       "lesson": "platform-context",
       "sources": [
         "product-identity",
-        "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "differences"
       ],
       "related": [
         "salesforce-cpq",
@@ -5334,9 +5280,7 @@ window.RC_DICTIONARY_DATA = {
       "kind": "Native concept",
       "lesson": "cpq-pricing",
       "sources": [
-        "create-a-pricing-procedure-with-the-list-price-element",
-        "add-volume-and-manual-discounts",
-        "configure-pricing-for-products"
+        "set-up-subscription-pricing-with-proration"
       ],
       "related": [
         "product-selling-model",
