@@ -53,3 +53,13 @@ Each build now has a hero-point training step, also available beside imported se
 **Guided250HP duo run** (`#run`) is now the primary Hero points destination; the full atlas remains under More tools. It selects25quick-access challenges across five HoT/PoF maps, scouts unknown waypoints, explains every incoming link and map connection, and tracks250newHP separately for two chosen character profiles. Individual rewards, prior completions, skips, six replacement candidates, undo, copy/print and backup/restore are supported. Confirmed awards update each character’s actual atlas completion without replacing their existing goal, notes or credits.
 
 The persistent active timer starts at the first arrival checkpoint, pauses/resumes, survives reloads and automatically stops at250each. The editable150-minute target is a provisional planning budget, not a measured result; it excludes initial story/access setup and paused breaks. [Route choices, linking rationale, estimate and verification limits](FAST_DUO_RUN_RESEARCH.md). Test: `node tests/guided-run.cjs` (`AXE_PATH` optional).
+
+## Revenue Cloud study room
+
+The same Pages deployment now includes a separate [Revenue Cloud study room](revenue-cloud/) at `revenue-cloud/`, linked from Start and More tools. It targets CPQ-certified Salesforce experts preparing for the current **Revenue Management Consultant** certification (also described as Agentforce Revenue Management / Revenue Cloud Consultant).
+
+Includes28guided lessons across all7weighted exam domains, a CPQ-to-native bridge,28manual exercises,24glossary terms,72official references and84original explained practice questions. Practice modes include a balanced14-question diagnostic, domain practice, missed-question review and a105-minute60-question approximate-blueprint mock. The current official guide’s Summer’25 alignment is disclosed alongside newer product-learning references; no later exam release or pass guarantee is assumed.
+
+Study progress, notes and attempts use independent local browser storage and separate backup/restore. No Salesforce login, API key, backend or new hosting is required. Editable content: `revenue-cloud/content.js`. [Research, scope, source limitations and data contracts](revenue-cloud/RESEARCH.md).
+
+Regression checks: `node tests/revenue-study.cjs` and `node tests/revenue-mobile.cjs`; the latter supports `AXE_PATH`. Both accept `REVENUE_URL` or the existing `ATLAS_URL`/browser environment variables.
