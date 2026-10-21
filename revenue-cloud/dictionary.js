@@ -34,7 +34,7 @@ function annotate(block){
  }
 }
 function enhance(view){
- const scopes=view==='study'?'.lesson .bridge-note,.lesson .concept p,.lesson .lab:not(.retrieval)>p,.lesson .lab>ol>li,.lesson>ul>li,.lesson>p,.lesson .instruction>p,.lesson .instruction>ol>li,.lesson .worked-trace>li,.lesson .rubric>li':view==='bridge'?'.compare-row>p':view==='practice'?'.feedback>p,.feedback>ul>li':'';
+ const scopes=view==='study'?'.lesson .bridge-note,.lesson .foundations .foundation-link-text,.lesson .concept p,.lesson .lab:not(.retrieval)>p,.lesson .lab>ol>li,.lesson>ul>li,.lesson>p,.lesson .instruction>p,.lesson .instruction>ol>li,.lesson .worked-trace>li,.lesson .rubric>li':view==='bridge'?'.compare-row>p':view==='practice'?'.feedback>p,.feedback>ul>li':'';
  if(scopes)document.querySelectorAll(scopes).forEach(annotate);
 }
 const tip=document.getElementById('term-tooltip');let owner=null,hideTimer=0;
@@ -48,7 +48,7 @@ document.addEventListener('focusin',e=>{const a=e.target.closest('[data-term]');
 document.addEventListener('focusout',e=>{if(e.target===owner)deferClose();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!tip.hidden){closeTooltip();e.preventDefault();}});
 document.addEventListener('pointerdown',e=>{if(owner&&!e.target.closest('[data-term]')&&!tip.contains(e.target))closeTooltip();});
-function viewportChange(){if(owner&&owner===document.activeElement&&owner.isConnected){const r=owner.getBoundingClientRect();if(r.bottom>0&&r.top<innerHeight){showTooltip(owner);return;}}closeTooltip();}
+function viewportChange(){if(owner&&owner.isConnected&&(owner===document.activeElement||owner.matches(':hover')||tip.matches(':hover'))){const r=owner.getBoundingClientRect();if(r.bottom>0&&r.top<innerHeight){showTooltip(owner);return;}}closeTooltip();}
 window.addEventListener('scroll',viewportChange,{passive:true});window.addEventListener('resize',viewportChange);
 document.addEventListener('input',e=>{if(e.target.id==='dictionary-search'){query=e.target.value;page=0;updateResults();}});
 document.addEventListener('change',e=>{if(e.target.id==='dictionary-category'){category=e.target.value;page=0;updateResults();}});

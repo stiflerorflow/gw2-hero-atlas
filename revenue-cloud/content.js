@@ -104,7 +104,8 @@ window.RC_CONTENT = {
         "product-identity",
         "data-model",
         "manage-orders",
-        "get-started-with-billing-revenue-cloud"
+        "get-started-with-billing-revenue-cloud",
+        "native-transaction-objects"
       ]
     },
     {
@@ -142,7 +143,10 @@ window.RC_CONTENT = {
       "recall": "How would you distinguish an input-mapping failure from a pricing-rule failure?",
       "sources": [
         "get-to-know-context-service",
-        "explore-context-service-components-and-processes"
+        "explore-context-service-components-and-processes",
+        "context-create",
+        "context-flow",
+        "context-bre"
       ]
     },
     {
@@ -182,7 +186,8 @@ window.RC_CONTENT = {
         "get-to-know-business-rules-engine",
         "build-decisions-with-lookup-tables",
         "orchestrate-rules-with-expression-sets",
-        "automate-business-processes"
+        "automate-business-processes",
+        "context-bre"
       ]
     },
     {
@@ -536,7 +541,8 @@ window.RC_CONTENT = {
       "sources": [
         "build-a-simple-product",
         "selling-models",
-        "set-up-and-sell-products"
+        "set-up-and-sell-products",
+        "native-selling-option"
       ]
     },
     {
@@ -658,7 +664,8 @@ window.RC_CONTENT = {
         "implement-derived-pricing",
         "set-up-subscription-pricing-with-proration",
         "apply-aggregate-pricing",
-        "configure-contract-based-pricing"
+        "configure-contract-based-pricing",
+        "native-transaction-objects"
       ]
     },
     {
@@ -891,7 +898,9 @@ window.RC_CONTENT = {
       "recall": "Which record concept answers what changed, and which answers what was true during a period?",
       "sources": [
         "provide-post-sales-support",
-        "build-loyalty-through-post-sale-engagement"
+        "build-loyalty-through-post-sale-engagement",
+        "native-asset-model",
+        "native-transaction-objects"
       ]
     },
     {
@@ -4822,6 +4831,48 @@ window.RC_CONTENT = {
       "kind": "Trailhead module",
       "checked": "2026-10-20",
       "status": "Official preparation trail reference"
+    },
+    "context-create": {
+      "title": "Create a context definition",
+      "url": "https://help.salesforce.com/s/articleView?id=ind.context_service_create_context_definitions.htm&language=en_US&type=5",
+      "kind": "Salesforce Help",
+      "checked": "21 October 2026",
+      "status": "Read"
+    },
+    "context-flow": {
+      "title": "Context Service invocable actions in Flow",
+      "url": "https://help.salesforce.com/s/articleView?id=ind.call_context_service_invocable_actions_from_flow.htm&language=en_US&type=5",
+      "kind": "Salesforce Help",
+      "checked": "21 October 2026",
+      "status": "Read"
+    },
+    "context-bre": {
+      "title": "How BRE and Context Service work together",
+      "url": "https://trailhead.salesforce.com/content/learn/modules/automated-compliance-with-business-rules-engine-and-context-service/get-to-know-business-rules-engine-and-context-service",
+      "kind": "Trailhead",
+      "checked": "21 October 2026",
+      "status": "Read"
+    },
+    "native-transaction-objects": {
+      "title": "Native transaction-management object reference",
+      "url": "https://developer.salesforce.com/docs/revenue/revenue-management/guide/quote-and-order-capture-standard-objects.html",
+      "kind": "Developer reference",
+      "checked": "21 October 2026",
+      "status": "Read"
+    },
+    "native-selling-option": {
+      "title": "ProductSellingModelOption object and relationships",
+      "url": "https://developer.salesforce.com/docs/revenue/revenue-management/guide/sforce-api-objects-productsellingmodeloption.html",
+      "kind": "Developer reference",
+      "checked": "21 October 2026",
+      "status": "Read"
+    },
+    "native-asset-model": {
+      "title": "Managed asset data-model diagram",
+      "url": "https://developer.salesforce.com/docs/platform/data-models/guide/transaction-management-asset.html",
+      "kind": "Developer data model",
+      "checked": "21 October 2026",
+      "status": "Read"
     }
   },
   "bridge": [
@@ -4987,5 +5038,5 @@ window.RC_CONTENT = {
     "assets": 10,
     "invoices": 4
   },
-  "contentRevision": "2026-10-21-depth-1"
+  "contentRevision": "2026-10-21-foundations-1"
 };

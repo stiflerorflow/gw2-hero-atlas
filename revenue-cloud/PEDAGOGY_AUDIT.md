@@ -1,5 +1,7 @@
 # Exam coverage and learning-depth audit
 
+**Follow-up:** user review identified that this revision still asked too much before explaining the native model. The subsequent [teaching-first correction](FOUNDATIONS_REVIEW.md) adds explanatory chapters to all 28 lessons. The findings below document the earlier revision, not proof that it was sufficient.
+
 Reviewed 21 October 2026 for Salesforce experts who know managed-package CPQ well and are new to native Revenue Management. This is an editorial audit, not an official Salesforce assessment or evidence of learner exam outcomes.
 
 ## Verdict

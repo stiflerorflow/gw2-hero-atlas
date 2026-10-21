@@ -26,7 +26,7 @@ Mock allocation totals60 and approximately follows blueprint percentages. It is 
 
 ## Source review
 
-The preparation trail was inspected and58 individual learning units across15 modules were fetched and reviewed for relevant concepts, including catalog modeling, configuration engines, pricing setup and advanced pricing, context definitions/mappings, BRE tools, contracts, simple/complex orchestration, usage, asset changes and Billing. The searchable library contains72 official references. Titles and URLs are stored alongside the content in `content.js`; each lesson and question maps to those source IDs.
+The preparation trail was inspected and58 individual learning units across15 modules were fetched and reviewed for relevant concepts, including catalog modeling, configuration engines, pricing setup and advanced pricing, context definitions/mappings, BRE tools, contracts, simple/complex orchestration, usage, asset changes and Billing. The searchable library contains 78 official references. Titles and URLs are stored alongside the content in `content.js`; each lesson and question maps to those source IDs.
 
 Primary references include:
 
@@ -54,7 +54,7 @@ The lessons are a structured companion to the official curriculum, not a claim t
 
 ## Technical and persistence contracts
 
-`index.html`, `styles.css`, `content.js`, `learning.js`, `learning-ui.js`, dictionary modules and `app.js` are static assets served at `/revenue-cloud/` under the same repository-root GitHub Pages deployment. `content.js` is the editable canonical lesson/quiz source; `learning.js` holds the expanded instruction and objective map; no build step, backend, Salesforce connection or runtime third-party asset is required. The existing companion links here from Start and More tools. Native browser hash history supports direct lesson, bridge, practice and source links.
+`index.html`, `styles.css`, `content.js`, `foundations.js`, `foundations-ui.js`, `learning.js`, `learning-ui.js`, dictionary modules and `app.js` are static assets served at `/revenue-cloud/` under the same repository-root GitHub Pages deployment. `content.js` is the editable canonical lesson/quiz source; `learning.js` holds the expanded instruction and objective map; no build step, backend, Salesforce connection or runtime third-party asset is required. The existing companion links here from Start and More tools. Native browser hash history supports direct lesson, bridge, practice and source links.
 
 Dedicated localStorage key `revenue-cloud-study-v1` stores lesson/exercise self-checks, escaped notes and retrieval drafts, latest question outcomes, up to12 completed attempts and one resumable current attempt. It does not read or write the companion’s state key. Study JSON backup/restore is separate from companion backups. Unknown lesson/question IDs and invalid answer indices are discarded; import is bounded to1MB and requires explicit replacement confirmation. Incompatible question-bank version changes preserve compatible lesson checks/notes/drafts but invalidate scored history/current attempts rather than grading old answers against a different bank. This additive revision retains the compatibility version and all original question keys.
 
@@ -77,3 +77,7 @@ All 19 published objective statements now have explicit lesson routes and accept
 The original 84 questions, option ordering, answer keys and bank compatibility version remain unchanged. `contentRevision` tracks this additive content release separately. Existing attempts, deadlines, notes and checks remain valid. New `retrieval` drafts are validated, escaped, locally persisted and included in separate study backups. Quiz stems/options and independent retrieval prompts are not dictionary-annotated.
 
 `tests/revenue-learning.cjs` validates objective/lesson/question references, all expanded lesson routes, legacy mock compatibility, hidden rubrics, saved drafts and backup round trips, transfer selection/feedback/resume, and expanded 320/390/768/1280 layouts with text spacing and optional axe.
+
+## Teaching-first follow-up, 21 October 2026
+
+The previous expansion still emphasized activities more than explanatory background. All 28 lessons now have plain-language and technical chapters before recap/practice, including typed object/component definitions and complete narrated examples. The Context Service lesson additionally has a source-to-consumer representation trace and illustrative populated data. See [FOUNDATIONS_REVIEW.md](FOUNDATIONS_REVIEW.md) for the correction, source additions, precision controls and verification. The six added official references bring the searchable library to 78. The 112-question bank and compatibility version are unchanged.
