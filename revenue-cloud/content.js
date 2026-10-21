@@ -1,14 +1,14 @@
 /* Original study material. Official references and review scope: RESEARCH.md. */
 window.RC_CONTENT = {
   "version": "2026-10-20.1",
-  "checked": "20 October 2026",
+  "checked": "21 October 2026",
   "exam": {
     "title": "Revenue Management Consultant",
     "aliases": [
       "Revenue Cloud Consultant",
       "Agentforce Revenue Management Consultant"
     ],
-    "release": "Summer ’25 (as stated in the official guide checked 20 October 2026)",
+    "release": "Summer ’25 (as stated in the official guide checked 21 October 2026)",
     "questions": 60,
     "unscored": "Up to 5 additional unscored questions",
     "minutes": 105,
@@ -3557,6 +3557,823 @@ window.RC_CONTENT = {
         "set-up-and-sell-products",
         "manage-wallets-and-track-consumption"
       ]
+    },
+    {
+      "id": "transfer-platform-map",
+      "lesson": "platform-map",
+      "domain": "platform",
+      "stem": "An analyst needs the committed amendment and the installed quantity effective two months ago. Which pair of evidence sources best answers the two different questions?",
+      "options": [
+        "Contract status and the account’s most recently modified asset.",
+        "The latest quote lines and the current Asset quantity.",
+        "The original order total and the latest invoice total.",
+        "Processed amendment order lines and the effective asset state/history."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Committed change and effective installed state require transaction lineage and dated lifecycle evidence.",
+      "reasons": [
+        "Status and last-modified ordering do not define effective historical quantity.",
+        "A proposed offer and today’s quantity do not establish a past committed position.",
+        "Financial totals do not establish seat quantities or the specific amendment.",
+        "Committed change and effective installed state require transaction lineage and dated lifecycle evidence."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "product-identity",
+        "data-model",
+        "manage-orders",
+        "get-started-with-billing-revenue-cloud"
+      ]
+    },
+    {
+      "id": "transfer-platform-context",
+      "lesson": "platform-context",
+      "domain": "platform",
+      "stem": "A pricing simulation returns the intended regional discount when Region is entered manually. A saved quote receives no discount although Account.Region is populated. What is the best next investigation?",
+      "options": [
+        "Compare live hydration/mapping/tag inputs and selected procedure with the simulation.",
+        "Add the same discount as a manual adjustment on every affected quote.",
+        "Refresh the discount table first because Account.Region exists.",
+        "Persist the manually simulated context directly into the Account record."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Typed simulation inputs bypass live hydration. Trace the actual definition, mappings, tags, access and consuming procedure.",
+      "reasons": [
+        "Typed simulation inputs bypass live hydration. Trace the actual definition, mappings, tags, access and consuming procedure.",
+        "This can hide the defect and duplicate discounts once the real mapping is fixed.",
+        "Existing source data does not prove it reaches the runtime decision; a refresh may be needed but is not established as the cause.",
+        "Runtime context and source persistence are separate concerns; overwriting Account does not repair the missing service input."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "get-to-know-context-service",
+        "explore-context-service-components-and-processes"
+      ]
+    },
+    {
+      "id": "transfer-platform-rules",
+      "lesson": "platform-rules",
+      "domain": "platform",
+      "stem": "A policy must apply consistently in guided sales and a partner API. Currently it exists only in a screen flow. Which design best meets the requirement?",
+      "options": [
+        "Add the screen flow to the seller Lightning page and leave the API unchanged.",
+        "Duplicate the screen’s formulas in the partner application and compare results quarterly.",
+        "Use an after-save Flow to correct every partner price after the API reports success.",
+        "Expose shared decision logic through supported transaction services and let the screen collect inputs."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Shared service-level decision behavior can be used by both channels, with UI guidance kept separate.",
+      "reasons": [
+        "Page assignment only addresses the UI channel.",
+        "Duplicated policy implementations can diverge between releases.",
+        "After-success correction leaves a period of invalid results and does not replace supported synchronous transaction validation.",
+        "Shared service-level decision behavior can be used by both channels, with UI guidance kept separate."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "get-to-know-business-rules-engine",
+        "build-decisions-with-lookup-tables",
+        "orchestrate-rules-with-expression-sets",
+        "automate-business-processes"
+      ]
+    },
+    {
+      "id": "transfer-platform-access",
+      "lesson": "platform-access",
+      "domain": "platform",
+      "stem": "A quote-to-lines report repeats header amounts three times, while a fixed-running-user dashboard exposes records sellers should not see. Choose two appropriate corrections.",
+      "options": [
+        "Review dashboard running-user/viewer behavior and verify seller visibility.",
+        "Hide line detail rows while continuing to sum repeated quote amounts.",
+        "Rebuild the revenue aggregation at the intended quote grain.",
+        "Remove QuoteLineItem field access from sellers to correct both issues."
+      ],
+      "correct": [
+        2,
+        0
+      ],
+      "explanation": "The aggregation must count each quote amount once at the intended grain.",
+      "reasons": [
+        "Dashboard security context must be tested with known visible and hidden records.",
+        "Hiding display rows does not necessarily change the aggregation grain.",
+        "The aggregation must count each quote amount once at the intended grain.",
+        "Removing line access can break sales work and does not correct the underlying aggregate or dashboard context."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "licenses",
+        "catalog-api",
+        "data-model",
+        "provide-post-sales-support",
+        "navigate-the-full-billing-lifecycle"
+      ]
+    },
+    {
+      "id": "transfer-readiness-org",
+      "lesson": "readiness-org",
+      "domain": "readiness",
+      "stem": "In the configurator badge’s new training org, products exist but discovery and eligibility are not ready. What is the most appropriate readiness action?",
+      "options": [
+        "Follow that badge’s index rebuild, pricing sync and qualification-table refresh prerequisites, checking completion.",
+        "Copy CPQ package permission sets into the new org and retry.",
+        "Clone all sample products so that the index detects new records.",
+        "Grant Modify All Data to sellers because the administrator can view Product2."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The badge identifies separate preparation steps for discovery, pricing and qualification data; product existence alone is insufficient.",
+      "reasons": [
+        "The badge identifies separate preparation steps for discovery, pricing and qualification data; product existence alone is insufficient.",
+        "Legacy package permissions do not establish native feature entitlement or setup.",
+        "Cloning valid products creates duplicate modeling rather than proving prerequisites.",
+        "Broad access neither builds the index nor refreshes decision data, and admin visibility is not runtime readiness."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "setup",
+        "licenses",
+        "manage-customer-asset-amendments",
+        "explore-salesforce-pricing"
+      ]
+    },
+    {
+      "id": "transfer-readiness-discovery",
+      "lesson": "readiness-discovery",
+      "domain": "readiness",
+      "stem": "Sales wants provisioning on quote acceptance; legal requires signature; finance bills only after service acceptance. What should discovery produce first?",
+      "options": [
+        "Separate decision gates with accountable business owners and cross-product acceptance tests.",
+        "One Flow owned by the sales admin, using quote acceptance for all downstream events.",
+        "Three independent departmental automations with no shared event contract.",
+        "An estimate based on the assumption that legal execution equals service acceptance."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The events have different business meanings. Agree ownership, dependencies and exceptions before implementing handoffs.",
+      "reasons": [
+        "The events have different business meanings. Agree ownership, dependencies and exceptions before implementing handoffs.",
+        "A single trigger cannot legitimately replace distinct policy requirements.",
+        "Uncoordinated automation can release work at incompatible times.",
+        "The assumption collapses two different acceptance events and creates delivery risk."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "setup",
+        "trail",
+        "collaborate-with-salesforce-contracts"
+      ]
+    },
+    {
+      "id": "transfer-readiness-delivery",
+      "lesson": "readiness-delivery",
+      "domain": "readiness",
+      "stem": "A deployment validates successfully, but production quoting finds no matching prices. Which next step best respects release readiness?",
+      "options": [
+        "Declare the issue an adoption problem because deployment tests passed.",
+        "Copy the net prices from UAT quotes into production quote lines.",
+        "Roll back every metadata change immediately without inspecting the failing service.",
+        "Check target-org reference data, mappings, selected versions and sync requirements, then reconcile affected transactions."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Metadata success does not prove all runtime dependencies. Diagnose the actual price lookup and recover through the agreed release process.",
+      "reasons": [
+        "A failed business transaction is not resolved by training attendance.",
+        "Copied outputs bypass the pricing model and mask configuration defects.",
+        "Rollback can be appropriate, but choosing it blindly may not restore missing reference data or reconcile affected quotes.",
+        "Metadata success does not prove all runtime dependencies. Diagnose the actual price lookup and recover through the agreed release process."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "uat",
+        "adoption",
+        "manage-customer-asset-renewals-and-cancellations",
+        "explore-order-orchestration"
+      ]
+    },
+    {
+      "id": "transfer-readiness-migration",
+      "lesson": "readiness-migration",
+      "domain": "readiness",
+      "stem": "A CPQ migration pilot displays correct current quantities but fails its first renewal. What does that show?",
+      "options": [
+        "Current quantity reconciliation did not prove native lifecycle readiness and relationships.",
+        "All data should be reimported using the same mapping with validation disabled.",
+        "Renewals are unrelated to migration scope and should be excluded from UAT.",
+        "The old subscription end date should be removed to force a new sale."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A valid installed base needs the supported state, dates, relationships and transaction readiness required for later servicing.",
+      "reasons": [
+        "A valid installed base needs the supported state, dates, relationships and transaction readiness required for later servicing.",
+        "Repeating an unproven mapping does not address the missing lifecycle behavior.",
+        "Future servicing is a key acceptance test if it is in migration scope.",
+        "Removing commercial history changes the business meaning rather than producing a valid renewal."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "migration",
+        "data-model",
+        "differences"
+      ]
+    },
+    {
+      "id": "transfer-catalog-structure",
+      "lesson": "catalog-structure",
+      "domain": "catalog",
+      "stem": "The same offer should appear under Software and Services, reuse support-level characteristics, and be sold only to eligible regions. Which design best separates responsibilities?",
+      "options": [
+        "Create a separate Product2 for each region and navigation path regardless of commercial identity.",
+        "Use attribute categories to grant catalog access and category labels to set support price.",
+        "Use catalog/category associations for discovery, classification/attributes for reuse and qualification for regional eligibility.",
+        "Create one classification per navigation category and use its label as the regional restriction."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Navigation, reusable characteristics and contextual eligibility are distinct responsibilities.",
+      "reasons": [
+        "Duplicating products is unnecessary unless the business actually has distinct offers and adds maintenance burden.",
+        "Attribute grouping and discovery labels do not by themselves provide access control or pricing logic.",
+        "Navigation, reusable characteristics and contextual eligibility are distinct responsibilities.",
+        "A classification label is not the same as a qualification rule or navigation hierarchy."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "get-started-with-product-catalog-management",
+        "create-product-categories-and-attributes"
+      ]
+    },
+    {
+      "id": "transfer-catalog-attributes",
+      "lesson": "catalog-attributes",
+      "domain": "catalog",
+      "stem": "A bundle component needs a different support-level default, while the standalone product should retain its existing default. What is the best approach?",
+      "options": [
+        "Create a new classification solely to hide the old default from the seller.",
+        "Apply a manual discount without changing the configured support-level value.",
+        "Change the shared attribute definition default and assume it applies only to the bundle.",
+        "Use the supported component-context attribute override and retest both contexts."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "A scoped override preserves reuse while representing the bundle-specific behavior; verify rules and pricing that consume it.",
+      "reasons": [
+        "Classification duplication does not automatically express the intended component override.",
+        "Changing price does not correct the product’s configured characteristic.",
+        "A shared definition change can affect other products/contexts.",
+        "A scoped override preserves reuse while representing the bundle-specific behavior; verify rules and pricing that consume it."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "work-with-product-classifications",
+        "create-product-categories-and-attributes",
+        "implement-attribute-based-pricing"
+      ]
+    },
+    {
+      "id": "transfer-catalog-bundles",
+      "lesson": "catalog-bundles",
+      "domain": "catalog",
+      "stem": "Support should start selected but remain removable; the base device must always be included with a fixed quantity. Which setup should be verified?",
+      "options": [
+        "Set the parent bundle quantity to one and leave all component properties at defaults.",
+        "Make both components required because they are initially selected.",
+        "Separate default inclusion, required inclusion and allowed quantity changes on component relationships.",
+        "Make support a technical product so it cannot be removed from the commercial bundle."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Initial selection, mandatory validity and quantity editability are independent behavior settings.",
+      "reasons": [
+        "A parent quantity alone does not prove required/default/editability behavior for children.",
+        "A required support component contradicts the removable requirement.",
+        "Initial selection, mandatory validity and quantity editability are independent behavior settings.",
+        "Technical fulfillment modeling does not express optional commercial selection."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "build-a-simple-product",
+        "create-a-product-bundle",
+        "discover-order-decomposition"
+      ]
+    },
+    {
+      "id": "transfer-catalog-selling",
+      "lesson": "catalog-selling",
+      "domain": "catalog",
+      "stem": "A customer commits for one year, receives monthly invoices and pays each within 45 days. Which interpretation is correct?",
+      "options": [
+        "A 45-day selling model with twelve renewals per year.",
+        "Twelve one-time products because there are twelve invoices.",
+        "Evergreen commitment because billing is monthly, with a 45-day subscription term.",
+        "Term-defined commitment, independent monthly billing cadence and net-45 payment terms."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Commitment duration, invoice timing and payment due terms answer separate questions.",
+      "reasons": [
+        "This conflates payment due dates with the service term and invents a renewal schedule.",
+        "An invoice count does not require separate one-time commercial products.",
+        "Monthly invoicing does not determine evergreen behavior, and payment terms do not define the subscription duration.",
+        "Commitment duration, invoice timing and payment due terms answer separate questions."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "build-a-simple-product",
+        "selling-models",
+        "set-up-and-sell-products"
+      ]
+    },
+    {
+      "id": "transfer-cpq-configure",
+      "lesson": "cpq-configure",
+      "domain": "cpq",
+      "stem": "A cloned configurator Flow previews correctly in Flow Builder, but the assigned product still opens the old UI. Choose two checks most directly related to the runtime assignment.",
+      "options": [
+        "Change the product’s price-book entry currency.",
+        "Verify the Product Configuration Flow identifier/status and its product/classification assignment.",
+        "Rebuild every bundle from scratch.",
+        "Verify the intended Flow version is active."
+      ],
+      "correct": [
+        3,
+        1
+      ],
+      "explanation": "An edited but inactive Flow version is not proof of the intended live experience.",
+      "reasons": [
+        "Currency can affect pricing but does not establish which configurator Flow is assigned.",
+        "The configuration-flow record and assignment connect the Flow definition to the runtime product.",
+        "Rebuilding the catalog does not address the unverified Flow-to-product linkage.",
+        "An edited but inactive Flow version is not proof of the intended live experience."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "get-started-with-product-configurator",
+        "create-and-configure-a-product-configurator-flow",
+        "use-product-configurator-with-business-rules-engine",
+        "explore-product-configurator-with-constraint-rules-engine"
+      ]
+    },
+    {
+      "id": "transfer-cpq-pricing",
+      "lesson": "cpq-pricing",
+      "domain": "cpq",
+      "stem": "A procedure applies a 10% unit discount to 240 and then a fixed 12 per-unit reduction. Quantity is 5. Ignore tax and proration. Which expected line total and test are correct?",
+      "options": [
+        "1026; fixed reductions must always execute before percentage discounts.",
+        "1080; the fixed reduction should only affect the header.",
+        "960; both reductions should be calculated against the original amount.",
+        "1020; reversing the adjustments should be tested as a separate policy producing 1026."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "240 × 0.9 − 12 = 204 per unit, then × 5 = 1020. Reversed order yields 205.20 × 5 = 1026.",
+      "reasons": [
+        "1026 is the reversed order, not the stated sequence; the commercial policy chooses ordering.",
+        "The stated fixed adjustment is per unit, so omitting it gives the wrong amount.",
+        "The arithmetic and adjustment basis do not match the specified procedure.",
+        "240 × 0.9 − 12 = 204 per unit, then × 5 = 1020. Reversed order yields 205.20 × 5 = 1026."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "create-a-pricing-procedure-with-the-list-price-element",
+        "configure-pricing-for-products",
+        "add-volume-and-manual-discounts"
+      ]
+    },
+    {
+      "id": "transfer-cpq-advanced",
+      "lesson": "cpq-advanced",
+      "domain": "cpq",
+      "stem": "A support product is normally derived as 15% of an eligible device price. A customer contract fixes support at 100 instead. What must be configured and tested?",
+      "options": [
+        "Only aggregate pricing because any dependent product amount is a rollup.",
+        "Only the 15% formula because selecting a contract always overrides all pricing automatically.",
+        "Source discovery, derived formula, contract context/eligibility and explicit replacement precedence.",
+        "A 100 manual discount after every derived calculation."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Each mechanism has different inputs, and the contract’s replacement policy must be explicit and verified across eligible/ineligible cases.",
+      "reasons": [
+        "Aggregation and discovering/calculating a dependent price are different responsibilities.",
+        "Automatic precedence is not established merely by selecting a contract.",
+        "Each mechanism has different inputs, and the contract’s replacement policy must be explicit and verified across eligible/ineligible cases.",
+        "A discount of 100 does not mean the final price is fixed at 100."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "implement-attribute-based-pricing",
+        "set-up-bundle-based-pricing",
+        "explore-derived-pricing-and-discovery-procedures",
+        "implement-derived-pricing",
+        "set-up-subscription-pricing-with-proration",
+        "apply-aggregate-pricing",
+        "configure-contract-based-pricing"
+      ]
+    },
+    {
+      "id": "transfer-cpq-transact",
+      "lesson": "cpq-transact",
+      "domain": "cpq",
+      "stem": "A quoting agent confidently says it created the usual renewal, but the request did not identify the existing asset or next term. What is the best validation approach?",
+      "options": [
+        "Accept the answer if the generated summary matches the customer’s terminology.",
+        "Grant admin privileges and retry the same incomplete request.",
+        "Create a new sale with the same product because all transaction types are interchangeable.",
+        "Resolve the intended asset/term and inspect persisted quote transaction type, dates, quantities and pricing."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Correct transaction intent and persisted commercial evidence are required; a fluent summary does not prove them.",
+      "reasons": [
+        "Language quality does not establish a valid saved transaction.",
+        "Broad privileges cannot supply missing business intent or dates.",
+        "A new sale can duplicate entitlements and does not preserve renewal semantics.",
+        "Correct transaction intent and persisted commercial evidence are required; a fluent summary does not prove them."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "work-with-quotes",
+        "discover-and-configure-products",
+        "agent"
+      ]
+    },
+    {
+      "id": "transfer-contracts-legal",
+      "lesson": "contracts-legal",
+      "domain": "contracts",
+      "stem": "Enterprise agreements require approved security clauses and approval of the final negotiated version before signature. Which solution most directly addresses this?",
+      "options": [
+        "Use an orchestration milestone named Legal Approved without controlling contract transitions.",
+        "Activate the contract first so approvals do not delay order creation.",
+        "Configure the applicable contract type/lifecycle and template/clause/version governance with approval/signature gates.",
+        "Place a note on the quote and allow signature whenever the quote is accepted."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "The requirements concern legal lifecycle and the exact document version that receives approval and signature.",
+      "reasons": [
+        "A delivery marker alone does not establish legal document governance.",
+        "Activating before required approvals bypasses the stated control.",
+        "The requirements concern legal lifecycle and the exact document version that receives approval and signature.",
+        "An informal note and quote acceptance do not enforce legal approval."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "meet-salesforce-contracts",
+        "dive-into-salesforce-contracts-capabilities",
+        "collaborate-with-salesforce-contracts"
+      ]
+    },
+    {
+      "id": "transfer-contracts-decompose",
+      "lesson": "contracts-decompose",
+      "domain": "contracts",
+      "stem": "An offer needs hardware shipping and network activation, while a separate training order needs one manual approval. Which architecture is best justified?",
+      "options": [
+        "Require technical products for every order even when no transformation is needed.",
+        "Avoid orchestration because decomposition itself guarantees execution order.",
+        "Use product option groups as the only representation of external provisioning work.",
+        "Use appropriate technical decomposition for distinct delivery outputs; orchestrate the simple training order directly if supported."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Decomposition identifies delivery work; simple orders need not introduce unnecessary transformation before orchestration.",
+      "reasons": [
+        "Uniform technical decomposition can add complexity without meeting a new requirement.",
+        "Decomposition defines outputs, not the entire sequence and completion behavior.",
+        "Commercial selection structure does not itself execute fulfillment work.",
+        "Decomposition identifies delivery work; simple orders need not introduce unnecessary transformation before orchestration."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "meet-dynamic-revenue-orchestrator",
+        "discover-order-decomposition",
+        "define-an-order-decomposition"
+      ]
+    },
+    {
+      "id": "transfer-contracts-orchestrate",
+      "lesson": "contracts-orchestrate",
+      "domain": "contracts",
+      "stem": "Three order lines need separate provisioning, followed by one completion email after all required provisioning succeeds. What should the design specify?",
+      "options": [
+        "Once-per-plan provisioning and per-line email notifications.",
+        "Appropriate per-line provisioning scope, once-per-plan notification scope and explicit dependencies.",
+        "Per-line provisioning with a notification triggered when the first line completes.",
+        "One lane per line and an email placed visually below them, with no dependency rules."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Execution counts and sequencing require both scope and dependency configuration; verify line-versus-quantity semantics.",
+      "reasons": [
+        "These scopes reverse the required cardinality.",
+        "Execution counts and sequencing require both scope and dependency configuration; verify line-versus-quantity semantics.",
+        "The first completed line is not evidence that all required work succeeded.",
+        "Visual layout alone does not enforce completion conditions."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "explore-order-orchestration",
+        "design-a-simple-order-orchestration",
+        "design-an-orchestration-plan",
+        "define-dependencies-and-fulfillment-scenarios"
+      ]
+    },
+    {
+      "id": "transfer-contracts-recovery",
+      "lesson": "contracts-recovery",
+      "domain": "contracts",
+      "stem": "A provisioning callout times out after the remote system may have accepted it. What should happen before retrying?",
+      "options": [
+        "Retry the whole order immediately because a timeout proves no external change occurred.",
+        "Reconcile remote state using correlation evidence and use the supported replay-safe recovery path.",
+        "Mark the step successful without checking the remote system.",
+        "Cancel all assets to prevent duplicated fulfillment."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "A timeout has an ambiguous outcome; reconciliation and designed idempotency/recovery prevent duplicate external effects.",
+      "reasons": [
+        "The response may have been lost after successful execution.",
+        "A timeout has an ambiguous outcome; reconciliation and designed idempotency/recovery prevent duplicate external effects.",
+        "Unverified success can release downstream work without actual fulfillment.",
+        "Canceling unrelated lifecycle state is not a proportionate or evidence-based recovery."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "explore-order-orchestration",
+        "execute-an-orchestration-plan"
+      ]
+    },
+    {
+      "id": "transfer-assets-history",
+      "lesson": "assets-history",
+      "domain": "assets",
+      "stem": "An asset had 10 seats, then +4 effective July 1 and −2 effective October 1. Today is in November. Which evidence should an August installed-base report use?",
+      "options": [
+        "The sum of state quantities 10 + 14 + 12.",
+        "The latest action delta of −2.",
+        "The effective state for August, expected to show 14 under the stated timeline.",
+        "The current quantity of 12 because it includes all completed actions."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "A historical report needs state effective on the requested date, reconciled to the source changes.",
+      "reasons": [
+        "State periods are interval balances, not additive movements.",
+        "A change delta is not an installed balance and is outside the requested period.",
+        "A historical report needs state effective on the requested date, reconciled to the source changes.",
+        "Today’s state answers a different date."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "provide-post-sales-support",
+        "build-loyalty-through-post-sale-engagement"
+      ]
+    },
+    {
+      "id": "transfer-assets-amend",
+      "lesson": "assets-amend",
+      "domain": "assets",
+      "stem": "The native amendment UI uses Quantity as a delta. Start Quantity is 10 and the customer wants 14 total effective July 1. What is correct?",
+      "options": [
+        "Enter 14, because Quantity always means the desired final installed base.",
+        "Enter +4 and mark the quote studied; no order processing is needed.",
+        "Edit Asset.Quantity to 14 and remove earlier state periods.",
+        "Enter +4, verify End Quantity 14 and complete the resulting order processing."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Start plus change equals end; the supported quote/order lifecycle and effective state must also be verified.",
+      "reasons": [
+        "Entering 14 as a delta requests 24 rather than 14.",
+        "A saved amendment quote is not evidence of processed installed-state change.",
+        "Directly overwriting quantity/history bypasses transaction lineage and historical accuracy.",
+        "Start plus change equals end; the supported quote/order lifecycle and effective state must also be verified."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "manage-customer-asset-amendments",
+        "provide-post-sales-support"
+      ]
+    },
+    {
+      "id": "transfer-assets-renew",
+      "lesson": "assets-renew",
+      "domain": "assets",
+      "stem": "A customer wants two more seats immediately and another year of service after the current term. What is the safest modeling approach?",
+      "options": [
+        "Use the amendment delta as the renewal’s final quantity without inspecting the UI.",
+        "Extend the original quote end date and assume it creates both transactions.",
+        "Generate two new sales and remove the original asset history.",
+        "Separate the in-term amendment from the future renewal and verify dates, quantities and supported sequencing."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "The requests affect different periods and transaction intents; verify each supported lifecycle outcome.",
+      "reasons": [
+        "Delta and total semantics must be checked in the relevant transaction UI.",
+        "Editing a historical offer is not equivalent to processing valid changes.",
+        "New sales can duplicate entitlement and deleting history destroys evidence.",
+        "The requests affect different periods and transaction intents; verify each supported lifecycle outcome."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "manage-customer-asset-renewals-and-cancellations",
+        "configure-contract-based-pricing"
+      ]
+    },
+    {
+      "id": "transfer-assets-cancel",
+      "lesson": "assets-cancel",
+      "domain": "assets",
+      "stem": "A canceled prepaid service qualifies for a credit. The customer expects money back. Which statement is most accurate?",
+      "options": [
+        "Delete the original invoice so no refund reconciliation is required.",
+        "A canceled asset is sufficient evidence that cash was refunded.",
+        "A credit memo necessarily transfers funds through the payment gateway.",
+        "Verify cancellation state, credit allocation and a separately authorized refund process."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Service state, financial adjustment and cash return are separate evidence paths.",
+      "reasons": [
+        "Deleting historical evidence does not legitimately settle or reconcile cash.",
+        "Ending service does not prove a payment reversal.",
+        "A credit changes the financial obligation; refund execution is a distinct process.",
+        "Service state, financial adjustment and cash return are separate evidence paths."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "manage-customer-asset-renewals-and-cancellations",
+        "navigate-the-full-billing-lifecycle"
+      ]
+    },
+    {
+      "id": "transfer-invoice-policy",
+      "lesson": "invoice-policy",
+      "domain": "invoices",
+      "stem": "A 12000 project bills 25% at kickoff and 75% at acceptance, net-30 after each invoice. Ignore tax. Which setup interpretation is correct?",
+      "options": [
+        "Preserve price 12000; allocate 3000/9000 through supported milestone treatment and apply payment terms separately.",
+        "Issue both invoices immediately because payment terms control milestone eligibility.",
+        "Change the product price to 3000 and let net-30 create the remaining 9000.",
+        "Use a three-month selling model because kickoff is 25% of the project."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Commercial amount, milestone invoice eligibility/allocation and due dates are separate concerns.",
+      "reasons": [
+        "Commercial amount, milestone invoice eligibility/allocation and due dates are separate concerns.",
+        "Net-30 defines due timing, not fulfillment or milestone completion.",
+        "Payment terms do not create missing commercial charges.",
+        "Allocation percentage does not define subscription duration."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "explore-billing-features-and-roles",
+        "generate-invoices"
+      ]
+    },
+    {
+      "id": "transfer-invoice-schedules",
+      "lesson": "invoice-schedules",
+      "domain": "invoices",
+      "stem": "An invoice preview includes June and July schedule amounts, but the run should invoice June only. What is the best next step?",
+      "options": [
+        "Shorten the service term to end in June.",
+        "Generate the invoice and delete the July line without investigating the schedules.",
+        "Treat the preview as proof that both months have already been invoiced.",
+        "Validate schedule eligibility and run cutoff/filter criteria before generating the invoice."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Preview exposes selection/configuration errors before actual invoicing; reconcile intended eligible and excluded items.",
+      "reasons": [
+        "Changing the service term alters the commercial agreement to fix a billing selection issue.",
+        "Manual output edits can mask a repeatable eligibility defect.",
+        "Preview is not the same as generated/posted financial evidence.",
+        "Preview exposes selection/configuration errors before actual invoicing; reconcile intended eligible and excluded items."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "get-started-with-billing-revenue-cloud",
+        "generate-invoices",
+        "explore-billing-features-and-roles"
+      ]
+    },
+    {
+      "id": "transfer-invoice-usage",
+      "lesson": "invoice-usage",
+      "domain": "invoices",
+      "stem": "An allowance includes 1000 calls, eligible usage is 1250 calls and overage is 0.02 per call. A retry sends the same batch again. What should validation prove?",
+      "options": [
+        "The wallet balance proves revenue recognition and no billing reconciliation is needed.",
+        "Liability is 25 because the allowance affects only invoice due dates.",
+        "Liability is 30 because all received batches must be counted independently.",
+        "Liability is 5 before other charges, and the designed ingestion/reprocessing prevents duplicate consumption."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Only 250 calls exceed the allowance: 250 × 0.02 = 5. Replay handling must be reconciled using the supported design.",
+      "reasons": [
+        "Wallet/usage state is distinct from recognition and invoiced liability.",
+        "An allowance affects charge eligibility, not payment due timing.",
+        "A duplicate transport batch is not automatically new business consumption.",
+        "Only 250 calls exceed the allowance: 250 × 0.02 = 5. Replay handling must be reconciled using the supported design."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "get-to-know-usage-management",
+        "set-up-and-sell-products",
+        "manage-wallets-and-track-consumption"
+      ]
+    },
+    {
+      "id": "transfer-invoice-finance",
+      "lesson": "invoice-finance",
+      "domain": "invoices",
+      "stem": "An invoice is 500, an applied credit is 80 and an applied payment is 300. Ignore tax and prior balances. Which statement is correct?",
+      "options": [
+        "Collected cash is 380 because a credit is a payment.",
+        "Open receivable is 120; the credit and payment represent different events.",
+        "Open receivable is 200 because credits do not affect obligations.",
+        "Recognized revenue must be 120 because it equals the outstanding balance."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "500 − 80 − 300 = 120. A credit reduces obligation; a payment settles it.",
+      "reasons": [
+        "A credit is not collected cash.",
+        "500 − 80 − 300 = 120. A credit reduces obligation; a payment settles it.",
+        "An applied valid credit reduces the amount owed.",
+        "Open receivable does not establish recognized revenue."
+      ],
+      "difficulty": "Transfer",
+      "assessment": "transfer",
+      "sources": [
+        "navigate-the-full-billing-lifecycle",
+        "explore-billing-features-and-roles"
+      ]
     }
   ],
   "sources": {
@@ -3642,7 +4459,7 @@ window.RC_CONTENT = {
       "title": "Work with Product Classifications",
       "url": "https://trailhead.salesforce.com/content/learn/modules/product-catalog-management-with-revenue-cloud/work-with-product-classifications",
       "kind": "Trailhead unit",
-      "checked": "2026-10-20"
+      "checked": "21 October 2026"
     },
     "build-a-simple-product": {
       "title": "Build a Simple Product",
@@ -3696,7 +4513,7 @@ window.RC_CONTENT = {
       "title": "Add Volume and Manual Discounts",
       "url": "https://trailhead.salesforce.com/content/learn/modules/price-management-with-revenue-cloud/add-volume-and-manual-discounts",
       "kind": "Trailhead unit",
-      "checked": "2026-10-20"
+      "checked": "21 October 2026"
     },
     "implement-attribute-based-pricing": {
       "title": "Implement Attribute-Based Pricing",
@@ -3726,7 +4543,7 @@ window.RC_CONTENT = {
       "title": "Set Up Subscription Pricing with Proration",
       "url": "https://trailhead.salesforce.com/content/learn/modules/advanced-price-management-with-revenue-cloud/set-up-subscription-pricing-with-proration",
       "kind": "Trailhead unit",
-      "checked": "2026-10-20"
+      "checked": "21 October 2026"
     },
     "apply-aggregate-pricing": {
       "title": "Apply Aggregate Pricing",
@@ -3804,7 +4621,7 @@ window.RC_CONTENT = {
       "title": "Manage Customer Asset Amendments",
       "url": "https://trailhead.salesforce.com/content/learn/modules/asset-lifecycle-management-with-revenue-cloud/manage-customer-asset-amendments",
       "kind": "Trailhead unit",
-      "checked": "2026-10-20"
+      "checked": "21 October 2026"
     },
     "manage-customer-asset-renewals-and-cancellations": {
       "title": "Manage Customer Asset Renewals and Cancellations",
@@ -3822,7 +4639,7 @@ window.RC_CONTENT = {
       "title": "Explore Billing Features and Roles",
       "url": "https://trailhead.salesforce.com/content/learn/modules/billing-basics-in-revenue-cloud/explore-billing-features-and-roles",
       "kind": "Trailhead unit",
-      "checked": "2026-10-20"
+      "checked": "21 October 2026"
     },
     "navigate-the-full-billing-lifecycle": {
       "title": "Navigate the Full Billing Lifecycle",
@@ -3912,7 +4729,7 @@ window.RC_CONTENT = {
       "title": "Official certification exam guide",
       "url": "https://help.salesforce.com/s/articleView?id=005298978&language=en_US&type=1",
       "kind": "Salesforce Help",
-      "checked": "2026-10-20",
+      "checked": "21 October 2026",
       "status": "Read"
     },
     "trail": {
@@ -4169,5 +4986,6 @@ window.RC_CONTENT = {
     "contracts": 6,
     "assets": 10,
     "invoices": 4
-  }
+  },
+  "contentRevision": "2026-10-21-depth-1"
 };

@@ -34,7 +34,7 @@ function annotate(block){
  }
 }
 function enhance(view){
- const scopes=view==='study'?'.lesson .bridge-note,.lesson .concept p,.lesson .lab>p,.lesson .lab>ol>li,.lesson>ul>li,.lesson>p':view==='bridge'?'.compare-row>p':view==='practice'?'.feedback>p,.feedback>ul>li':'';
+ const scopes=view==='study'?'.lesson .bridge-note,.lesson .concept p,.lesson .lab:not(.retrieval)>p,.lesson .lab>ol>li,.lesson>ul>li,.lesson>p,.lesson .instruction>p,.lesson .instruction>ol>li,.lesson .worked-trace>li,.lesson .rubric>li':view==='bridge'?'.compare-row>p':view==='practice'?'.feedback>p,.feedback>ul>li':'';
  if(scopes)document.querySelectorAll(scopes).forEach(annotate);
 }
 const tip=document.getElementById('term-tooltip');let owner=null,hideTimer=0;

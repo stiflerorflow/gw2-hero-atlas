@@ -1,6 +1,6 @@
 # Revenue Cloud study room: scope and evidence
 
-Reviewed **20 October 2026**. Built for Salesforce experts with the CPQ certificate and strong managed-package CPQ experience, but little native Revenue Cloud experience. This is an independent study aid, not an official Salesforce course, exam dump, endorsed practice test or pass guarantee.
+Reviewed **20–21 October 2026**. Depth and pedagogy findings are documented in [PEDAGOGY_AUDIT.md](PEDAGOGY_AUDIT.md). Built for Salesforce experts with the CPQ certificate and strong managed-package CPQ experience, but little native Revenue Cloud experience. This is an independent study aid, not an official Salesforce course, exam dump, endorsed practice test or pass guarantee.
 
 ## Credential identity and release
 
@@ -14,13 +14,13 @@ Seven domain weights are transcribed as structured metadata. The objectives belo
 
 | Domain | Weight | Lesson focus | Bank questions | Mock allocation |
 |---|---:|---|---:|---:|
-| Platform concepts |18%| Product identity/data relationships; Context Service; BRE/Flow/Omnistudio; access/APIs/reporting |15|11|
-| Implementation readiness |14%| Org/entitlement readiness; discovery/scope/owners; testing/adoption; CPQ migration |12|8|
-| Catalog management |16%| Catalog/category structure; attributes/classifications; bundles; selling models |14|10|
-| Configure, price, quote |18%| Configurator engines; pricing procedure; advanced pricing; transactions/Agentforce |15|11|
-| Contracts and orders |11%| Legal lifecycle; decomposition; orchestration dependencies/scope; fallout/recovery |9|6|
-| Asset management |16%| Actions/state periods; amendments; renewals; cancellations and finance |13|10|
-| Invoice management |7%| Policies/profiles/treatments; schedules/invoices; usage; credits/payments |6|4|
+| Platform concepts |18%| Product identity/data relationships; Context Service; BRE/Flow/Omnistudio; access/APIs/reporting |19|11|
+| Implementation readiness |14%| Org/entitlement readiness; discovery/scope/owners; testing/adoption; CPQ migration |16|8|
+| Catalog management |16%| Catalog/category structure; attributes/classifications; bundles; selling models |18|10|
+| Configure, price, quote |18%| Configurator engines; pricing procedure; advanced pricing; transactions/Agentforce |19|11|
+| Contracts and orders |11%| Legal lifecycle; decomposition; orchestration dependencies/scope; fallout/recovery |13|6|
+| Asset management |16%| Actions/state periods; amendments; renewals; cancellations and finance |17|10|
+| Invoice management |7%| Policies/profiles/treatments; schedules/invoices; usage; credits/payments |10|4|
 
 Mock allocation totals60 and approximately follows blueprint percentages. It is not a forecast of exact live exam question counts. All60 mock items are scored; no unscored items are simulated. A balanced14-question diagnostic deliberately uses two per domain rather than exam weighting. Domain practice samples up to10; missed review samples up to20 based on each question’s latest attempted outcome.
 
@@ -44,7 +44,7 @@ Primary references include:
 - [Quoting agent project](https://trailhead.salesforce.com/content/learn/projects/quick-start-build-an-agent-to-create-quotes-fast/build-your-first-agentforce-quoting-agent)
 - [Catalog business API reference](https://developer.salesforce.com/docs/revenue/revenue-management/guide/product-catalog-management-api-resources.html)
 
-Two Salesforce Help references (feature-license availability and implementation setup) were linked by the official trail but their bodies did not render in the research tool. Their source-library entries say so. They are retained as official follow-up references; no exact entitlement matrix is claimed from an unread body. Adoption and UAT modules were verified as official trail references. No paid exam-bank material or purported live questions was used. All84 practice stems, choices, distractor explanations and worked scenarios are original.
+Two Salesforce Help references (feature-license availability and implementation setup) were linked by the official trail but their bodies did not render in the research tool. Their source-library entries say so. They are retained as official follow-up references; no exact entitlement matrix is claimed from an unread body. Adoption and UAT modules were verified as official trail references. No paid exam-bank material or purported live questions was used. All 112 practice stems, choices, distractor explanations and worked scenarios are original.
 
 ## Educational depth and limitations
 
@@ -54,9 +54,9 @@ The lessons are a structured companion to the official curriculum, not a claim t
 
 ## Technical and persistence contracts
 
-`index.html`, `styles.css`, `content.js` and `app.js` are static assets served at `/revenue-cloud/` under the same repository-root GitHub Pages deployment. `content.js` is the editable canonical content source; no build step, backend, Salesforce connection or runtime third-party asset is required. The existing companion links here from Start and More tools. Native browser hash history supports direct lesson, bridge, practice and source links.
+`index.html`, `styles.css`, `content.js`, `learning.js`, `learning-ui.js`, dictionary modules and `app.js` are static assets served at `/revenue-cloud/` under the same repository-root GitHub Pages deployment. `content.js` is the editable canonical lesson/quiz source; `learning.js` holds the expanded instruction and objective map; no build step, backend, Salesforce connection or runtime third-party asset is required. The existing companion links here from Start and More tools. Native browser hash history supports direct lesson, bridge, practice and source links.
 
-Dedicated localStorage key `revenue-cloud-study-v1` stores lesson/exercise self-checks, escaped notes, latest question outcomes, up to12 completed attempts and one resumable current attempt. It does not read or write the companion’s state key. Study JSON backup/restore is separate from companion backups. Unknown lesson/question IDs and invalid answer indices are discarded; import is bounded to1MB and requires explicit replacement confirmation. Question-bank changes preserve compatible lesson checks/notes but invalidate scored history/current attempts rather than grading old answers against a different bank.
+Dedicated localStorage key `revenue-cloud-study-v1` stores lesson/exercise self-checks, escaped notes and retrieval drafts, latest question outcomes, up to12 completed attempts and one resumable current attempt. It does not read or write the companion’s state key. Study JSON backup/restore is separate from companion backups. Unknown lesson/question IDs and invalid answer indices are discarded; import is bounded to1MB and requires explicit replacement confirmation. Incompatible question-bank version changes preserve compatible lesson checks/notes/drafts but invalidate scored history/current attempts rather than grading old answers against a different bank. This additive revision retains the compatibility version and all original question keys.
 
 Options and question order are shuffled when an attempt starts and preserved across reload. Multi-select scoring requires exactly the correct set, without partial credit. Learning answers are locked after checking; mock answers remain editable until submission. Mock timing is wall-clock105minutes from the persisted start and continues across closed tabs. Expiry submits automatically, counting unanswered/invalid selections incorrect. A mock backup retains the original start time, so restoring cannot imply a paused exam. Restore/reset affects only study data. Unreadable stored data is preserved and automatic overwrites blocked; storage failure is disclosed, and stale tabs do not overwrite newer data.
 
@@ -69,3 +69,11 @@ Options and question order are shuffled when an attempt starts and preserved acr
 ## Linked dictionary update
 
 The original24-term bridge glossary has been replaced in the interface by a separate237-entry dictionary, with its own versioned data file, source mapping, aliases, links and accessible previews. The quiz content/bank version is unchanged. See [dictionary research and verification](DICTIONARY_RESEARCH.md) for source scope and release cautions.
+
+## Depth revision: 21 October 2026
+
+All 19 published objective statements now have explicit lesson routes and acceptance evidence in `learning.js` / `#coverage`. All 28 lessons have additional instruction, implementation sequences, worked reasoning, a different transfer case, a self-assessment rubric and practical acceptance evidence. Eight responsibility/comparison references and an eight-stage product-to-cash capstone reinforce native-model transfer. The practice bank adds 28 harder original scenarios; the transfer mode draws two per domain from these additions. This is coverage traceability, not independent proof of exhaustive exam sufficiency.
+
+The original 84 questions, option ordering, answer keys and bank compatibility version remain unchanged. `contentRevision` tracks this additive content release separately. Existing attempts, deadlines, notes and checks remain valid. New `retrieval` drafts are validated, escaped, locally persisted and included in separate study backups. Quiz stems/options and independent retrieval prompts are not dictionary-annotated.
+
+`tests/revenue-learning.cjs` validates objective/lesson/question references, all expanded lesson routes, legacy mock compatibility, hidden rubrics, saved drafts and backup round trips, transfer selection/feedback/resume, and expanded 320/390/768/1280 layouts with text spacing and optional axe.
