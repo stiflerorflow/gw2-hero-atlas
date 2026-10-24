@@ -65,3 +65,11 @@ Study progress, notes and attempts use independent local browser storage and sep
 Regression checks: `node tests/revenue-study.cjs`, `node tests/revenue-mobile.cjs`, `node tests/revenue-dictionary.cjs`, `node tests/revenue-learning.cjs` and `node tests/revenue-foundations.cjs`; mobile, dictionary, learning and foundation checks support `AXE_PATH`. All accept `REVENUE_URL` or the existing `ATLAS_URL`/browser environment variables.
 
 The study room now has a **[Revenue Cloud dictionary](revenue-cloud/#dictionary)** with237sourced definitions across12areas, acronym/alias search, category and A–Z filters, permanent entry links, CPQ distinctions and related concepts. Dotted-underlined terms in lessons and revealed quiz explanations show accessible hover/focus previews; tapping opens the full definition. Question stems/options stay unannotated, and visiting definitions preserves the current attempt. Current versus legacy terminology and release-sensitive concepts are identified. [Dictionary source/review notes](revenue-cloud/DICTIONARY_RESEARCH.md). Regression: `node tests/revenue-dictionary.cjs` (`AXE_PATH` optional).
+
+## Skyscale unlock tasks
+
+Open **More tools → Skyscale unlock**, or use `#skyscale`. A mandatory acknowledgement keeps later names, locations and references out of the rendered guide until you choose to reveal them. Reloading locks it again; saved progress remains.
+
+Choose either acquisition route, keep separate progress for two accounts, follow one stage at a time, reserve resources, and use manual collection-transition reminders. Shopping notes identify avoidable crafting delays, current token limits, parallel mastery work and optional versus required costs. Skyscale JSON backup/restore is separate from the companion backup. For a local copy, keep the `skyscale/` asset folder alongside `index.html`. [Source and spoiler contracts](skyscale/RESEARCH.md).
+
+Verification: `node tests/skyscale.cjs` (`ATLAS_URL`, `AXE_PATH` and `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` supported).
