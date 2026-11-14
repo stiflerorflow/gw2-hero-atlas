@@ -51,3 +51,21 @@ it("rejects out-of-range inventory keys and transfers that would be lost on relo
     "valid item",
   );
 });
+
+it("preserves chosen profession slot order through backups and ignores unknown professions", () => {
+  const state: any = defaults();
+  state.characters[0].skills = {
+    Alchemy: { level: 130, cap: 150, target: 150 },
+    Enchanting: { level: 100, cap: 150, target: 150 },
+    FakeProfession: { level: 300, cap: 300, target: 300 },
+  };
+  const restored = validateState(JSON.parse(JSON.stringify(state)));
+  expect(Object.keys(restored.characters[0].skills)).toEqual([
+    "Alchemy",
+    "Enchanting",
+  ]);
+  expect(Object.keys(validateState(defaults()).characters[1].skills)).toEqual([
+    "Herbalism",
+    "Alchemy",
+  ]);
+});

@@ -1465,6 +1465,75 @@ main:focus {
   line-height: 1.3;
   min-height: 2.6em;
 }
+/* Character setup leads to a few independent, fundable next steps. */
+.character-plan > section {
+  margin-bottom: 24px;
+}
+.character-plan .form-grid {
+  margin-top: 0;
+}
+.character-plan fieldset {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px;
+  gap: 12px;
+  align-items: end;
+}
+.character-plan fieldset label + label {
+  margin-top: 0;
+}
+.character-plan > .panel > .form-grid {
+  align-items: start;
+}
+.character-plan > .panel > details {
+  border-top: 1px solid var(--line);
+}
+.character-plan .section-title {
+  flex-wrap: wrap;
+}
+.plan-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.plan-choice {
+  min-width: 0;
+  margin: 0;
+}
+.plan-goal {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 650;
+}
+.plan-choice h3 {
+  font-size: 20px;
+}
+.plan-choice .mini-stats {
+  gap: 12px;
+}
+.plan-choice dd {
+  font-variant-numeric: tabular-nums;
+}
+.plan-choice .row-actions {
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.plan-choice details {
+  border-top: 1px solid var(--line);
+}
+.plan-choice li {
+  overflow-wrap: anywhere;
+}
+.all-crafting {
+  margin-top: 20px;
+}
+.all-crafting > summary {
+  font-size: 16px;
+}
+.all-crafting[open] > summary {
+  margin-bottom: 20px;
+}
+
 @media (max-width: 1050px) {
   .flip-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1499,6 +1568,9 @@ main:focus {
   }
 }
 @media (max-width: 800px) {
+  .plan-choices {
+    grid-template-columns: 1fr;
+  }
   .desktop-table {
     display: none;
   }
@@ -1544,6 +1616,16 @@ main:focus {
   }
 }
 @media (max-width: 600px) {
+  .all-crafting {
+    padding: 14px;
+  }
+  .plan-choice .mini-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .character-plan .section-title {
+    align-items: start;
+    gap: 6px;
+  }
   .app-shell {
     padding: 0 19px;
   }

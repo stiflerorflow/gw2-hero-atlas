@@ -45,6 +45,7 @@ import { FlipScanner } from "./components/FlipScanner";
 import { loadScanner, DEFAULT_SCAN } from "./market/scanner";
 import type { ScanFilters } from "./market/scanner";
 import { MoneyInput } from "./components/MoneyInput";
+import { CharacterPlan } from "./components/CharacterPlan";
 const uid = () => crypto.randomUUID(),
   time = (s: string | null) =>
     s
@@ -482,7 +483,7 @@ function App() {
       ({
         scanner: "Flip scanner",
         sell: "Sell or vendor",
-        opportunities: "Crafting",
+        opportunities: "Character plan",
         leveling: "Leveling",
         batch: "Batch planner",
         watchlist: "Watchlist",
@@ -987,7 +988,7 @@ function App() {
         {[
           ["scanner", "Flip scanner", "00"],
           ["sell", "Sell or vendor", "05"],
-          ["opportunities", "Crafting", "01"],
+          ["opportunities", "Character plan", "01"],
           ["leveling", "Leveling", "02"],
           ["batch", "Batch planner", "03"],
           ["watchlist", "Watchlist", "04"],
@@ -1035,236 +1036,253 @@ function App() {
         </div>
         {page === "opportunities" && (
           <>
-            <section className="intro">
-              <div>
-                <h1>Crafting opportunities</h1>
-                <p>
-                  {loading
-                    ? "Loading prices for this character’s professions."
-                    : c.cash === null
-                      ? "Enter cash to check affordability."
-                      : `${affordable} positive scenarios fit the inputs budget.`}{" "}
-                  Compare the cost and requirements before adding a batch.
-                </p>
-              </div>
-              <aside className="wallet">
-                <span>Cash on hand</span>
-                <strong>{money(c.cash)}</strong>
-                <small>
-                  {Object.entries(c.skills)
-                    .map(([name, s]) => name + " " + s.level)
-                    .join(" · ")}
-                </small>
-                <button onClick={() => setModal(true)}>
-                  Update cash & supplies →
-                </button>
-              </aside>
-            </section>
-            <section className="summary-strip">
-              <div>
-                <b>{money(usable)}</b>
-                <span>Available after reserve</span>
-              </div>
-              <div>
-                <b>{affordable}</b>
-                <span>Positive scenarios within inputs budget</span>
-              </div>
-              <div>
-                <b>5%</b>
-                <span>Faction AH cut</span>
-              </div>
-              <div>
-                <b>Deposits</b>
-                <span>Enter the in-game quote</span>
-              </div>
-            </section>
-            <div className="section-title">
-              <div>
-                <h2>Compare craft costs</h2>
-              </div>
-              <Credit />
-            </div>
-            <div className="filters">
-              <label>
-                Action
-                <select
-                  value={kind}
-                  onChange={(e) => {
-                    setKind(e.target.value);
-                    setShowAll(false);
-                  }}
-                >
-                  <option value="all">All opportunities</option>
-                  {Object.entries(kindLabel).map(([k, v]) => (
-                    <option key={k} value={k}>
-                      {v}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Find an item
-                <input
-                  type="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Cloth, hood, shard…"
-                />
-              </label>
-              <label>
-                Sort
-                <select
-                  value={sort}
-                  onChange={(e) =>
-                    setSort(e.target.value as "profit" | "cost" | "yield")
-                  }
-                >
-                  <option value="profit">
-                    Net profit · requirements first
-                  </option>
-                  <option value="cost">Lowest upfront inputs</option>
-                  <option value="yield">Guaranteed yields first</option>
-                </select>
-              </label>
-            </div>
-            {market.errors.length > 0 && (
-              <details className="alert">
-                <summary>Some live data is unavailable</summary>
-                <ul>
-                  {market.errors.map((e, i) => (
-                    <li key={i}>{e}</li>
-                  ))}
-                </ul>
-                <p>
-                  Use timestamped manual quotes. Unpriced actions stay unknown
-                  and are not counted as profitable. Provider answers are held
-                  only for their cache lifetime.
-                </p>
-              </details>
-            )}
-            {!evaluations.length ? (
-              <section className="empty">
-                <h3>
-                  {loading ? "Checking the market…" : "No matching candidates"}
-                </h3>
-                <p>
-                  Try another filter, add manual quotes, or confirm your
-                  character’s professions.
-                </p>
-              </section>
-            ) : (
-              <>
-                <div className="mobile-cards">
-                  {evaluations.slice(0, showAll ? 50 : 3).map(card)}
-                  {evaluations.length > 3 && !showAll && (
-                    <button className="wide" onClick={() => setShowAll(true)}>
-                      Show more candidates ({Math.min(50, evaluations.length)})
-                    </button>
-                  )}
+            <CharacterPlan
+              c={c}
+              market={market}
+              loading={loading}
+              update={update}
+              add={add}
+              settings={() => setModal(true)}
+            />
+            <details className="panel all-crafting">
+              <summary>Browse all crafting options</summary>
+              <section className="intro">
+                <div>
+                  <h2>Crafting opportunities</h2>
+                  <p>
+                    {loading
+                      ? "Loading prices for this character’s professions."
+                      : c.cash === null
+                        ? "Enter cash to check affordability."
+                        : `${affordable} positive scenarios fit the inputs budget.`}{" "}
+                    Compare the cost and requirements before adding a batch.
+                  </p>
                 </div>
-                <div className="desktop-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Item / action</th>
-                        <th>Inputs</th>
-                        <th>Net profit</th>
-                        <th>Demand evidence</th>
-                        <th>Actions / calculation</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {evaluations.map((e) => (
-                        <Fragment key={e.action.id}>
-                          <tr>
-                            <td>
-                              <b>{e.name}</b>
-                              <small>
-                                {kindLabel[e.action.kind]} ·{" "}
-                                {!e.eligible
-                                  ? "Requirements pending"
-                                  : e.de?.guaranteed
-                                    ? "Guaranteed yield"
-                                    : e.de
-                                      ? "Random outcome"
-                                      : "Scenario"}
-                              </small>
-                              <small>{quoteAge(e.quote)}</small>
-                            </td>
-                            <td>{money(e.cost.cash)}</td>
-                            <td
-                              className={
-                                e.profit !== null && e.profit > 0
-                                  ? "positive"
-                                  : ""
-                              }
-                            >
-                              {money(e.profit)}
-                              <small>
-                                {e.cost.cash && e.profit !== null
-                                  ? ((100 * e.profit) / e.cost.cash).toFixed(
-                                      1,
-                                    ) + "%"
-                                  : "Unknown margin"}
-                              </small>
-                            </td>
-                            <td>
-                              <Demand q={e.quote} />
-                            </td>
-                            <td>
-                              <div className="row-actions">
-                                <button onClick={() => add(e.action)}>
-                                  ＋ Batch
-                                </button>
-                                <button onClick={() => watch(e.action.itemId)}>
-                                  ☆ Watch
-                                </button>
-                                <button onClick={() => void copy(e.name)}>
-                                  Copy name
-                                </button>
-                              </div>
-                              <button
-                                aria-expanded={inspect === e.action.id}
-                                onClick={() =>
-                                  setInspect(
-                                    inspect === e.action.id
-                                      ? null
-                                      : e.action.id,
-                                  )
+                <aside className="wallet">
+                  <span>Cash on hand</span>
+                  <strong>{money(c.cash)}</strong>
+                  <small>
+                    {Object.entries(c.skills)
+                      .map(([name, s]) => name + " " + s.level)
+                      .join(" · ")}
+                  </small>
+                  <button onClick={() => setModal(true)}>
+                    Update cash & supplies →
+                  </button>
+                </aside>
+              </section>
+              <section className="summary-strip">
+                <div>
+                  <b>{money(usable)}</b>
+                  <span>Available after reserve</span>
+                </div>
+                <div>
+                  <b>{affordable}</b>
+                  <span>Positive scenarios within inputs budget</span>
+                </div>
+                <div>
+                  <b>5%</b>
+                  <span>Faction AH cut</span>
+                </div>
+                <div>
+                  <b>Deposits</b>
+                  <span>Enter the in-game quote</span>
+                </div>
+              </section>
+              <div className="section-title">
+                <div>
+                  <h2>Compare craft costs</h2>
+                </div>
+                <Credit />
+              </div>
+              <div className="filters">
+                <label>
+                  Action
+                  <select
+                    value={kind}
+                    onChange={(e) => {
+                      setKind(e.target.value);
+                      setShowAll(false);
+                    }}
+                  >
+                    <option value="all">All opportunities</option>
+                    {Object.entries(kindLabel).map(([k, v]) => (
+                      <option key={k} value={k}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Find an item
+                  <input
+                    type="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Cloth, hood, shard…"
+                  />
+                </label>
+                <label>
+                  Sort
+                  <select
+                    value={sort}
+                    onChange={(e) =>
+                      setSort(e.target.value as "profit" | "cost" | "yield")
+                    }
+                  >
+                    <option value="profit">
+                      Net profit · requirements first
+                    </option>
+                    <option value="cost">Lowest upfront inputs</option>
+                    <option value="yield">Guaranteed yields first</option>
+                  </select>
+                </label>
+              </div>
+              {market.errors.length > 0 && (
+                <details className="alert">
+                  <summary>Some live data is unavailable</summary>
+                  <ul>
+                    {market.errors.map((e, i) => (
+                      <li key={i}>{e}</li>
+                    ))}
+                  </ul>
+                  <p>
+                    Use timestamped manual quotes. Unpriced actions stay unknown
+                    and are not counted as profitable. Provider answers are held
+                    only for their cache lifetime.
+                  </p>
+                </details>
+              )}
+              {!evaluations.length ? (
+                <section className="empty">
+                  <h3>
+                    {loading
+                      ? "Checking the market…"
+                      : "No matching candidates"}
+                  </h3>
+                  <p>
+                    Try another filter, add manual quotes, or confirm your
+                    character’s professions.
+                  </p>
+                </section>
+              ) : (
+                <>
+                  <div className="mobile-cards">
+                    {evaluations.slice(0, showAll ? 50 : 3).map(card)}
+                    {evaluations.length > 3 && !showAll && (
+                      <button className="wide" onClick={() => setShowAll(true)}>
+                        Show more candidates ({Math.min(50, evaluations.length)}
+                        )
+                      </button>
+                    )}
+                  </div>
+                  <div className="desktop-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Item / action</th>
+                          <th>Inputs</th>
+                          <th>Net profit</th>
+                          <th>Demand evidence</th>
+                          <th>Actions / calculation</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {evaluations.map((e) => (
+                          <Fragment key={e.action.id}>
+                            <tr>
+                              <td>
+                                <b>{e.name}</b>
+                                <small>
+                                  {kindLabel[e.action.kind]} ·{" "}
+                                  {!e.eligible
+                                    ? "Requirements pending"
+                                    : e.de?.guaranteed
+                                      ? "Guaranteed yield"
+                                      : e.de
+                                        ? "Random outcome"
+                                        : "Scenario"}
+                                </small>
+                                <small>{quoteAge(e.quote)}</small>
+                              </td>
+                              <td>{money(e.cost.cash)}</td>
+                              <td
+                                className={
+                                  e.profit !== null && e.profit > 0
+                                    ? "positive"
+                                    : ""
                                 }
                               >
-                                Calculation & quotes
-                              </button>
-                            </td>
-                          </tr>
-                          {inspect === e.action.id && (
-                            <tr>
-                              <td colSpan={5}>{calculation(e)}</td>
+                                {money(e.profit)}
+                                <small>
+                                  {e.cost.cash && e.profit !== null
+                                    ? ((100 * e.profit) / e.cost.cash).toFixed(
+                                        1,
+                                      ) + "%"
+                                    : "Unknown margin"}
+                                </small>
+                              </td>
+                              <td>
+                                <Demand q={e.quote} />
+                              </td>
+                              <td>
+                                <div className="row-actions">
+                                  <button onClick={() => add(e.action)}>
+                                    ＋ Batch
+                                  </button>
+                                  <button
+                                    onClick={() => watch(e.action.itemId)}
+                                  >
+                                    ☆ Watch
+                                  </button>
+                                  <button onClick={() => void copy(e.name)}>
+                                    Copy name
+                                  </button>
+                                </div>
+                                <button
+                                  aria-expanded={inspect === e.action.id}
+                                  onClick={() =>
+                                    setInspect(
+                                      inspect === e.action.id
+                                        ? null
+                                        : e.action.id,
+                                    )
+                                  }
+                                >
+                                  Calculation & quotes
+                                </button>
+                              </td>
                             </tr>
-                          )}
-                        </Fragment>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            )}
-            <details className="panel method">
-              <summary>What these numbers mean</summary>
-              <p>
-                Results compare gross exit scenarios after one 5% cut with cash
-                inputs. They are not realized profits. Lowest asks are not
-                confirmed sales and do not describe listing depth. Deposits
-                remain unknown until you enter the in-game amount. Test one or
-                two appearance items; estimated demand belongs to the whole
-                market. Changing layers cannot change this market’s listings.
-              </p>
-              <p>
-                Manual prices are scoped to this character and {MARKET}. Vendor
-                quotes are editable references, not live AH observations.
-                Craft/DE outcomes have separate metadata and exceptions. No
-                in-game actions are automated.
-              </p>
+                            {inspect === e.action.id && (
+                              <tr>
+                                <td colSpan={5}>{calculation(e)}</td>
+                              </tr>
+                            )}
+                          </Fragment>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+              <details className="panel method">
+                <summary>What these numbers mean</summary>
+                <p>
+                  Results compare gross exit scenarios after one 5% cut with
+                  cash inputs. They are not realized profits. Lowest asks are
+                  not confirmed sales and do not describe listing depth.
+                  Deposits remain unknown until you enter the in-game amount.
+                  Test one or two appearance items; estimated demand belongs to
+                  the whole market. Changing layers cannot change this market’s
+                  listings.
+                </p>
+                <p>
+                  Manual prices are scoped to this character and {MARKET}.
+                  Vendor quotes are editable references, not live AH
+                  observations. Craft/DE outcomes have separate metadata and
+                  exceptions. No in-game actions are automated.
+                </p>
+              </details>
             </details>
           </>
         )}
@@ -1827,7 +1845,7 @@ function Batch({
       </section>
       <p className={"batch-status " + (plan.ready ? "good" : "warning")}>
         {!c.batch.length
-          ? "Add a small test batch from Crafting or Leveling."
+          ? "Add a small test batch from Character plan or Leveling."
           : plan.spendable === null
             ? "Enter this character’s cash to check whether the batch fits."
             : plan.ready
@@ -2583,6 +2601,27 @@ function ProfileEditor({
             maxLength={60}
             value={c.name}
             onChange={(e) => update((c) => ({ ...c, name: e.target.value }))}
+          />
+        </label>
+        <label>
+          Current character level
+          <input
+            type="number"
+            min="1"
+            max="60"
+            placeholder="Not entered"
+            value={c.characterLevel ?? ""}
+            onChange={(e) => {
+              const characterLevel =
+                e.target.value === "" ? null : +e.target.value;
+              if (
+                characterLevel === null ||
+                (Number.isInteger(characterLevel) &&
+                  characterLevel >= 1 &&
+                  characterLevel <= 60)
+              )
+                update((c) => ({ ...c, characterLevel }));
+            }}
           />
         </label>
         <label>

@@ -13,6 +13,7 @@ const char = (
   id,
   name,
   className,
+  characterLevel: null,
   cash,
   budget: cash,
   reserve: 0,
@@ -127,6 +128,9 @@ export function validateState(x: unknown): SavedState {
       isCopper(old.cash) ? old.cash : null,
       typeof old.className === "string" ? old.className.slice(0, 30) : "",
     );
+    c.characterLevel = integer(old.characterLevel, 1, 60)
+      ? old.characterLevel
+      : null;
     c.budget = isCopper(old.budget) ? old.budget : null;
     c.reserve = isCopper(old.reserve) ? old.reserve : 0;
     c.known = [
@@ -139,7 +143,8 @@ export function validateState(x: unknown): SavedState {
     c.tools = (Array.isArray(old.tools) ? old.tools : [])
       .filter((v) => integer(v, 1, 2_000_000))
       .slice(0, 100);
-    for (const p of PROFESSIONS) {
+    for (const p of Object.keys(old.skills || {}) as Profession[]) {
+      if (!PROFESSIONS.includes(p)) continue;
       const s = old.skills?.[p];
       if (s && integer(s.level) && integer(s.cap, 1) && integer(s.target))
         c.skills[p] = {

@@ -102,6 +102,7 @@ test("a rejected stale-tab action never reports success", async ({ page }) => {
   await fixture(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("#opportunities");
+  await page.locator(".all-crafting > summary").click();
   await page.evaluate(() =>
     window.dispatchEvent(
       new StorageEvent("storage", {
@@ -151,7 +152,7 @@ test("scanner calculator drafts survive navigation without storing provider pric
     .getByRole("textbox", { name: /Override gross resale/ })
     .fill("150c");
   await card.getByRole("spinbutton", { name: "Test quantity" }).fill("3");
-  await page.getByRole("link", { name: "Crafting", exact: true }).click();
+  await page.getByRole("link", { name: "Character plan", exact: true }).click();
   await page.getByRole("link", { name: "Flip scanner", exact: true }).click();
   const again = page.locator(".flip-card").first();
   await again.getByText("Price history & calculator", { exact: true }).click();
@@ -188,6 +189,7 @@ test("cross-tab conflict closes profile editing so the warning is actionable", a
 }) => {
   await fixture(page);
   await page.goto("#opportunities");
+  await page.locator(".all-crafting > summary").click();
   await page.getByRole("button", { name: "Edit profile", exact: true }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.evaluate(() =>

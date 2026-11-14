@@ -104,6 +104,7 @@ export type Character = {
   id: string;
   name: string;
   className: string;
+  characterLevel: number | null;
   cash: number | null;
   budget: number | null;
   reserve: number;

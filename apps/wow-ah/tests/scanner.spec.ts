@@ -127,9 +127,9 @@ test("scanner handles missing data without phantom flips and preserves crafting 
   await page.goto("");
   await expect(page.getByRole("alert")).toContainText(/fetch|network|failed/i);
   await expect(page.locator(".flip-card")).toHaveCount(0);
-  await page.getByRole("link", { name: "Crafting", exact: true }).click();
+  await page.getByRole("link", { name: "Character plan", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Crafting opportunities" }),
+    page.getByRole("heading", { name: "Character plan" }),
   ).toBeVisible();
   await expect(
     page.getByRole("combobox", { name: "Character", exact: true }),
