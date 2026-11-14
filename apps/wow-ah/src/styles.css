@@ -256,7 +256,7 @@ h1 em {
   min-width: 164px;
   padding: 8px 30px 8px 10px;
   font-size: 13px;
-  min-height: 42px;
+  min-height: 44px;
 }
 .profile-switch button {
   font-size: 12px;
@@ -670,6 +670,9 @@ h1 em {
   padding: 0;
   min-width: 44px;
 }
+.toast button:focus-visible {
+  outline-color: var(--paper);
+}
 .mini-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -791,7 +794,7 @@ h1 em {
 }
 .route-steps li > div > span {
   font-size: 12px;
-  color: #8b7a59;
+  color: #795f3e;
   letter-spacing: 0.08em;
 }
 .route-steps h3 {
@@ -1084,7 +1087,7 @@ main:focus {
   font-size: 12px;
 }
 .pill.muted {
-  color: #876b48;
+  color: #795f3e;
   background: #f7efdf;
 }
 .opportunity h3 {

@@ -329,6 +329,17 @@ function Comparison({
     [vendorOverride, setVendorOverride] = useState<number | null>(null),
     [lost, setLost] = useState<number | null>(0),
     [soulbound, setSoulbound] = useState(false);
+  const [, refreshQuoteAge] = useState(0);
+  useEffect(() => {
+    if (!quote?.observedAt) return;
+    // Cache TTL and observation age are different deadlines. The age verdict
+    // must change even when no user interaction or price refresh causes a render.
+    const boundary = Date.parse(quote.observedAt) + 3600000 + 1;
+    const delay = boundary - Date.now();
+    if (delay <= 0 || boundary >= quote.expiresAt) return;
+    const timer = setTimeout(() => refreshQuoteAge((n) => n + 1), delay);
+    return () => clearTimeout(timer);
+  }, [quote?.observedAt, quote?.expiresAt]);
   const automaticBound = isAuctionBound(item.binding),
     bound = automaticBound || soulbound,
     factsReady =

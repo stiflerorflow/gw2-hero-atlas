@@ -13,6 +13,7 @@ export function CharacterPlan({
   update,
   add,
   settings,
+  revision = 0,
 }: {
   c: Character;
   market: MarketData;
@@ -20,6 +21,7 @@ export function CharacterPlan({
   update: (f: (c: Character) => Character) => boolean;
   add: (a: Action) => void;
   settings: () => void;
+  revision?: number;
 }) {
   const plan = useMemo(() => characterPlan(c, market), [c, market]),
     supplies = keySupplies(c);
@@ -47,6 +49,7 @@ export function CharacterPlan({
             />
           </label>
           <MoneyInput
+            key={c.id + "-" + revision}
             label="Current gold on this character"
             value={c.cash}
             onChange={(cash) =>

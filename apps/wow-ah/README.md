@@ -81,3 +81,5 @@ Tests cover handoff acceptance values, finite donations, mixed essence purchases
 [Multi-round product, UX, design and engineering audit](MULTI_ROUND_AUDIT.md) documents the findings, independent follow-through and layout measurements.
 
 [Whole-tool bug sweep](GENERAL_AUDIT.md) covers calculation edge cases, persistence, cache ordering, all six workflows, expanded mobile accessibility and large-batch performance.
+
+[Independent four-reviewer follow-up sweep](FOUR_AGENT_SWEEP.md) adds nested stock and pattern fixes, identity/override/navigation corrections, quote-age and binding checks, and expanded accessibility cross-reviews.

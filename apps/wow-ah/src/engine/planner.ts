@@ -23,6 +23,7 @@ export type Line = {
   economic: number | null;
   source: string;
   observedAt: string | null;
+  fromMarket?: boolean;
 };
 export type Cost = {
   cash: number | null;
@@ -151,6 +152,23 @@ const poolFor = (c: Character) =>
   Object.fromEntries(
     Object.entries(c.inventory).map(([id, v]) => [+id, v.qty]),
   );
+function remainingMarket(m: MarketData, lines: Line[]): MarketData {
+  const used: Record<number, number> = {};
+  for (const line of lines)
+    if (line.fromMarket) used[line.id] = (used[line.id] || 0) + line.qty;
+  if (!Object.keys(used).length) return m;
+  return {
+    ...m,
+    quotes: Object.fromEntries(
+      Object.entries(m.quotes).map(([id, q]) => [
+        id,
+        q.quantity === null || !used[+id]
+          ? q
+          : { ...q, quantity: Math.max(0, q.quantity - used[+id]) },
+      ]),
+    ),
+  };
+}
 function rawAcquire(
   id: number,
   qty: number,
@@ -171,6 +189,7 @@ function rawAcquire(
       economic: out.economic,
       source: q?.source || "Unpriced",
       observedAt: q?.observedAt ?? null,
+      fromMarket: q !== undefined && q === m.quotes[id],
     },
   ];
   if (price === null)
@@ -216,7 +235,10 @@ export function acquire(
         (r) => r.output === id && r.name.startsWith("Bolt of "),
       ),
       ...CONVERSIONS.filter((r) => r.output === id),
-    ].filter((r) => !access(r, c));
+    ].filter(
+      (r) =>
+        !access(r, c) && !r.reagents.some((input) => path.includes(input.id)),
+    );
     for (const r of candidates) {
       const maxCrafts = Math.ceil(qty / r.count);
       const available = r.reagents.map((input) => {
@@ -232,6 +254,13 @@ export function acquire(
         maxCrafts,
         Math.floor(qty / r.count),
         Math.min(maxCrafts, ...available),
+        Math.ceil(
+          (qty -
+            (quoteFor(id, c, m)?.ask != null
+              ? (quoteFor(id, c, m)?.quantity ?? Infinity)
+              : 0)) /
+            r.count,
+        ),
       ]);
       for (const input of r.reagents) {
         const ownedCrafts = (result.pool[input.id] || 0) / input.qty;
@@ -243,17 +272,27 @@ export function acquire(
         for (const reagent of r.reagents)
           attempt = combine(
             attempt,
-            acquire(reagent.id, reagent.qty * crafts, c, m, attempt.pool, [
-              ...path,
-              id,
-            ]),
+            acquire(
+              reagent.id,
+              reagent.qty * crafts,
+              c,
+              remainingMarket(m, attempt.lines),
+              attempt.pool,
+              [...path, id],
+            ),
           );
         const surplus = Math.max(0, crafts * r.count - qty),
           remainder = Math.max(0, qty - crafts * r.count);
         if (remainder)
           attempt = combine(
             attempt,
-            rawAcquire(id, remainder, c, m, attempt.pool),
+            rawAcquire(
+              id,
+              remainder,
+              c,
+              remainingMarket(m, attempt.lines),
+              attempt.pool,
+            ),
           );
         if (surplus) attempt.pool[id] = (attempt.pool[id] || 0) + surplus;
         attempt.steps.push(
@@ -281,13 +320,39 @@ export function craftCost(
   for (const input of r.reagents)
     out = combine(
       out,
-      acquire(input.id, input.qty * Math.ceil(crafts), c, m, out.pool, [
-        r.output,
-      ]),
+      acquire(
+        input.id,
+        input.qty * Math.ceil(crafts),
+        c,
+        remainingMarket(m, out.lines),
+        out.pool,
+        [r.output],
+      ),
     );
-  const fee = chargeUnlock ? unlockCost(r, c, m) : 0;
-  out.cash = plus(out.cash, fee);
-  out.economic = plus(out.economic, fee);
+  let fee: number | null;
+  if (
+    chargeUnlock &&
+    !c.known.includes(r.id) &&
+    r.pattern &&
+    ((out.pool[r.pattern] || 0) > 0 || c.unlockCosts[r.id] === undefined)
+  ) {
+    const pattern = acquire(
+      r.pattern,
+      1,
+      c,
+      remainingMarket(m, out.lines),
+      out.pool,
+    );
+    fee = pattern.cash;
+    pattern.steps.push(
+      `Learn ${r.name} using one ${itemName(r.pattern)}; its acquisition is included once.`,
+    );
+    out = combine(out, pattern);
+  } else {
+    fee = chargeUnlock ? unlockCost(r, c, m) : 0;
+    out.cash = plus(out.cash, fee);
+    out.economic = plus(out.economic, fee);
+  }
   out.fees = fee;
   if (fee === null)
     out.missing.push(
@@ -597,8 +662,7 @@ export function batchPlan(actions: Action[], c: Character, m: MarketData) {
       skillStates.set(r.profession, after);
     }
     for (const l of e.cost.lines)
-      if (l.cash !== null && l.cash > 0 && l.source.startsWith("AHledger"))
-        marketUsed[l.id] = (marketUsed[l.id] || 0) + l.qty;
+      if (l.fromMarket) marketUsed[l.id] = (marketUsed[l.id] || 0) + l.qty;
     pool = e.cost.pool;
     cash = plus(cash, e.cost.cash);
     economic = plus(economic, e.cost.economic);

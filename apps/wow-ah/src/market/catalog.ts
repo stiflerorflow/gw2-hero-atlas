@@ -1,5 +1,6 @@
 import { ExpiryCache } from "./expiryCache";
 import { isCopper } from "../engine/money";
+import { isAuctionBound } from "../engine/binding";
 import { VENDOR_CORRECTIONS } from "../catalog/vendorCorrections";
 import type { VendorReference } from "../catalog/vendorCorrections";
 export type CatalogItem = {
@@ -132,6 +133,26 @@ export function normalizeCatalog(raw: unknown): CatalogPage {
         : null,
   };
 }
+function bindingValue(raw: unknown): string | null | undefined {
+  if (raw === null) return null;
+  if (typeof raw !== "string") return undefined;
+  const key = raw.toLowerCase().replace(/[^a-z]/g, "");
+  const tradeable = [
+    "boe",
+    "bindonequip",
+    "bindsonequip",
+    "bindswhenequipped",
+    "bindsonequipped",
+    "bou",
+    "bindonuse",
+    "bindsonuse",
+    "bindswhenused",
+    "none",
+    "unbound",
+    "nobinding",
+  ];
+  return isAuctionBound(raw) || tradeable.includes(key) ? raw : undefined;
+}
 export function normalizeCatalogItem(raw: unknown, id: number): CatalogItem {
   const x = raw as any,
     v = item(x);
@@ -145,12 +166,7 @@ export function normalizeCatalogItem(raw: unknown, id: number): CatalogItem {
     ...(VENDOR_CORRECTIONS[id]
       ? { vendorReference: VENDOR_CORRECTIONS[id] }
       : {}),
-    binding:
-      x.binding === null
-        ? null
-        : typeof x.binding === "string"
-          ? x.binding
-          : undefined,
+    binding: bindingValue(x.binding),
     build: typeof x.build === "string" ? x.build : "",
   };
 }

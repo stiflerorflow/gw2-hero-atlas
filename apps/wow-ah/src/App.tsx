@@ -530,6 +530,14 @@ function App() {
     window.addEventListener("hashchange", fn);
     return () => window.removeEventListener("hashchange", fn);
   }, []);
+  const explicitRoute = useRef<string | null>(null);
+  useEffect(() => {
+    setModal(false);
+    if (explicitRoute.current !== page) return;
+    explicitRoute.current = null;
+    document.getElementById("main-content")?.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }, [page]);
   useEffect(() => {
     document.title =
       ({
@@ -984,7 +992,37 @@ function App() {
     );
   }
   return (
-    <div className="app-shell">
+    <div
+      className="app-shell"
+      onClickCapture={(e) => {
+        if (
+          e.button !== 0 ||
+          e.metaKey ||
+          e.ctrlKey ||
+          e.shiftKey ||
+          e.altKey ||
+          !(e.target instanceof Element)
+        )
+          return;
+        const destination = e.target
+          .closest('a[href^="#"]')
+          ?.getAttribute("href")
+          ?.slice(1);
+        if (
+          destination &&
+          destination !== page &&
+          [
+            "scanner",
+            "sell",
+            "opportunities",
+            "leveling",
+            "batch",
+            "watchlist",
+          ].includes(destination)
+        )
+          explicitRoute.current = destination;
+      }}
+    >
       <a
         className="skip"
         href="#main-content"
@@ -1101,6 +1139,7 @@ function App() {
         {page === "opportunities" && (
           <>
             <CharacterPlan
+              revision={restoreRevision}
               c={c}
               market={market}
               loading={loading}
@@ -1776,14 +1815,23 @@ function Leveling({
                   <MoneyInput
                     label="Actual unlock quote · once"
                     value={c.unlockCosts[r.id] ?? r.unlock}
-                    onChange={(n) => {
-                      if (n === null) return;
-                      update((c) => ({
-                        ...c,
-                        unlockCosts: { ...c.unlockCosts, [r.id]: n },
-                      }));
-                    }}
+                    onChange={(n) =>
+                      update((c) => {
+                        const unlockCosts = { ...c.unlockCosts };
+                        if (n === null || n === r.unlock)
+                          delete unlockCosts[r.id];
+                        else unlockCosts[r.id] = n;
+                        return { ...c, unlockCosts };
+                      })
+                    }
                   />
+                )}
+                {!c.known.includes(r.id) && (
+                  <small>
+                    {r.pattern
+                      ? "Blank removes the fee override. Recorded pattern ownership and current market availability are checked in the calculation."
+                      : `Blank uses the recipe reference: ${money(r.unlock)}.`}
+                  </small>
                 )}
                 <a href={r.source} target="_blank" rel="noreferrer">
                   Requirements source ↗
@@ -2666,7 +2714,7 @@ function ProfileEditor({
     node?.showModal();
     return () => {
       node?.close();
-      opener?.focus();
+      opener?.focus({ preventScroll: true });
     };
   }, []);
   useEffect(() => {
@@ -3030,15 +3078,21 @@ function ProfileEditor({
             key={vendorId}
             label="Actual vendor price per unit"
             value={c.vendor[vendorId] ?? ITEMS[vendorId]?.vendor ?? null}
-            onChange={(n) => {
-              if (n !== null)
-                update((c) => ({
-                  ...c,
-                  vendor: { ...c.vendor, [vendorId]: n },
-                }));
-            }}
+            onChange={(n) =>
+              update((c) => {
+                const vendor = { ...c.vendor };
+                if (n === null || n === ITEMS[vendorId]?.vendor)
+                  delete vendor[vendorId];
+                else vendor[vendorId] = n;
+                return { ...c, vendor };
+              })
+            }
           />
         </div>
+        <p className="note">
+          Blank restores this item's catalogue purchase reference:{" "}
+          {money(ITEMS[vendorId]?.vendor)}.
+        </p>
         {relevantTools(c).map((id) => (
           <label className="inline" key={id}>
             <input
