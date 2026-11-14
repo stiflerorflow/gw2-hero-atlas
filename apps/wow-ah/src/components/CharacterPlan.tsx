@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { Action, Character, MarketData, Profession } from "../types";
 import { PROFESSIONS } from "../types";
 import { ITEMS, itemName } from "../catalog/items";
-import { RECIPES, recipeTools, relevantTools } from "../catalog/recipes";
+import { recipeById, recipeTools, relevantTools } from "../catalog/recipes";
 import { characterPlan, keySupplies } from "../engine/characterPlan";
 import { MoneyInput } from "./MoneyInput";
 import { money } from "../engine/money";
@@ -57,6 +57,30 @@ export function CharacterPlan({
               }))
             }
           />
+          {Object.keys(c.skills).length < 2 && (
+            <label>
+              Add profession
+              <select
+                value=""
+                onChange={(e) => {
+                  const profession = e.target.value as Profession;
+                  if (profession)
+                    update((c) => ({
+                      ...c,
+                      skills: {
+                        ...c.skills,
+                        [profession]: { level: 1, cap: 75, target: 150 },
+                      },
+                    }));
+                }}
+              >
+                <option value="">Choose a profession…</option>
+                {PROFESSIONS.filter((p) => !c.skills[p]).map((p) => (
+                  <option key={p}>{p}</option>
+                ))}
+              </select>
+            </label>
+          )}
           {Object.entries(c.skills).map(([p, s], i) => (
             <fieldset key={p}>
               <legend>Profession {i + 1}</legend>
@@ -222,7 +246,7 @@ export function CharacterPlan({
           <>
             <div className="plan-choices">
               {plan.choices.map(({ evaluation: e, goals, reason }) => {
-                const r = RECIPES.find((r) => r.id === e.action.recipeId);
+                const r = recipeById(e.action.recipeId ?? 0);
                 const deItem = ITEMS[e.action.itemId]?.de
                   ? ITEMS[e.action.itemId]
                   : market.deItems.find((i) => i.id === e.action.itemId);
@@ -300,28 +324,32 @@ export function CharacterPlan({
                         them toward your Enchanting target.
                       </p>
                     )}
-                    {r && !c.known.includes(r.id) && (
-                      <p className="note">
-                        <b>Learn the {r.acquisition} recipe first.</b> The shown
-                        cash cost includes its saved unlock fee; confirm the
-                        quote in game.
-                      </p>
-                    )}
-                    {r && !c.known.includes(r.id) && (
-                      <label className="inline">
-                        <input
-                          type="checkbox"
-                          checked={false}
-                          onChange={() =>
-                            update((c) => ({
-                              ...c,
-                              known: [...new Set([...c.known, r.id])],
-                            }))
-                          }
-                        />
-                        I already know this recipe
-                      </label>
-                    )}
+                    {r &&
+                      r.acquisition !== "conversion" &&
+                      !c.known.includes(r.id) && (
+                        <p className="note">
+                          <b>Learn the {r.acquisition} recipe first.</b> The
+                          shown cash cost includes its saved unlock fee; confirm
+                          the quote in game.
+                        </p>
+                      )}
+                    {r &&
+                      r.acquisition !== "conversion" &&
+                      !c.known.includes(r.id) && (
+                        <label className="inline">
+                          <input
+                            type="checkbox"
+                            checked={false}
+                            onChange={() =>
+                              update((c) => ({
+                                ...c,
+                                known: [...new Set([...c.known, r.id])],
+                              }))
+                            }
+                          />
+                          I already know this recipe
+                        </label>
+                      )}
                     <p className="note">{reason}</p>
                     <div className="row-actions">
                       <button className="primary" onClick={() => add(e.action)}>
@@ -380,7 +408,9 @@ export function CharacterPlan({
                       )}
                       {r && (
                         <p className="note">
-                          {r.profession} {r.min} · {r.acquisition} · {r.binding}{" "}
+                          {r.acquisition === "conversion"
+                            ? `Makes ${r.count} units · no profession or recipe unlock required`
+                            : `${r.profession} ${r.min} · ${r.acquisition} · ${r.binding}`}{" "}
                           ·{" "}
                           <a href={r.source} target="_blank" rel="noreferrer">
                             Recipe source ↗

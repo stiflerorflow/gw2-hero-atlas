@@ -209,7 +209,11 @@ export function validateState(x: unknown): SavedState {
         id: uniqueId(a.id, "batch", i, batchIds),
         kind: a.kind,
         itemId: a.itemId,
-        recipeId: Number.isInteger(a.recipeId) ? a.recipeId : undefined,
+        recipeId:
+          ["craft", "craft-de", "convert"].includes(a.kind) &&
+          Number.isSafeInteger(a.recipeId)
+            ? a.recipeId
+            : undefined,
         quantity: a.quantity,
         exit: isCopper(a.exit) ? a.exit : null,
         deposit: isCopper(a.deposit) ? a.deposit : null,

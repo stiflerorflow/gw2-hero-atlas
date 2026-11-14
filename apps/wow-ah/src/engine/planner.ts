@@ -15,6 +15,7 @@ import {
   recipeTools,
 } from "../catalog/recipes";
 import { net } from "./money";
+import { isAuctionBound } from "./binding";
 export type Line = {
   id: number;
   qty: number;
@@ -430,8 +431,10 @@ export function evaluate(
   m: MarketData,
   pool = poolFor(c),
   charged = new Set<number>(),
+  computeSkill = true,
 ): Evaluation {
   const r =
+      ["craft", "craft-de", "convert"].includes(a.kind) &&
       a.recipeId !== undefined
         ? [...RECIPES, ...CONVERSIONS].find((r) => r.id === a.recipeId)
         : undefined,
@@ -463,12 +466,13 @@ export function evaluate(
         );
       cost = craftCost(r, a.quantity, c, m, pool, !charged.has(r.id));
       charged.add(r.id);
-      skill = expectedSkillGains(
-        r,
-        c.skills[r.profession]?.level || 0,
-        a.quantity,
-        c.skills[r.profession]?.cap || 300,
-      );
+      if (computeSkill)
+        skill = expectedSkillGains(
+          r,
+          c.skills[r.profession]?.level || 0,
+          a.quantity,
+          c.skills[r.profession]?.cap || 300,
+        );
       if (duplicateTool) skill = 0;
     }
   } else if (a.kind === "buy-de")
@@ -491,6 +495,9 @@ export function evaluate(
   } else if (r?.binding === "BoP") {
     proceeds = 0;
     reasons.push("Soulbound output: keep as a tool; no AH resale.");
+  } else if (isAuctionBound(item.binding)) {
+    proceeds = null;
+    reasons.push("Known soulbound item cannot be bought or resold at auction.");
   } else proceeds = exit === null ? null : net(exit) * units;
   const q = m.quotes[a.itemId],
     dates = cost.lines.map((l) => l.observedAt).filter((v): v is string => !!v);
@@ -574,7 +581,9 @@ export function batchPlan(actions: Action[], c: Character, m: MarketData) {
         ]),
       ),
     };
-    const e = evaluate(a, effective, availableMarket, pool, charged);
+    // The batch rolls its shared skill distribution below; do not also roll
+    // every row from the original character skill.
+    const e = evaluate(a, effective, availableMarket, pool, charged, false);
     const r =
       a.kind === "craft" || a.kind === "craft-de" || a.kind === "convert"
         ? [...RECIPES, ...CONVERSIONS].find((r) => r.id === a.recipeId)
@@ -781,12 +790,16 @@ function rollSkillStates(
   let states = initial;
   for (let n = 0; n < Math.min(1000, crafts); n++) {
     const next = new Map<number, number>();
+    let canGain = false;
     for (const [s, chance] of states) {
+      if (chance === 0) continue;
       const p = s >= cap ? 0 : skillChance(r, s);
+      if (p > 0) canGain = true;
       next.set(s, (next.get(s) || 0) + chance * (1 - p));
       if (p) next.set(s + 1, (next.get(s + 1) || 0) + chance * p);
     }
     states = next;
+    if (!canGain) break;
   }
   return states;
 }

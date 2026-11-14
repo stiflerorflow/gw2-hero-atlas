@@ -105,9 +105,6 @@ test("manual quotes remain useful without provider and batch survives refresh", 
   await card
     .getByRole("textbox", { name: /Purchase price per unit/ })
     .fill("10s");
-  await card
-    .getByRole("textbox", { name: /Your proposed gross exit per unit/ })
-    .fill("15s");
   await card.getByRole("button", { name: "Save manual quote" }).click();
   await expect(card).toContainText("Saved for this character");
   await card.getByRole("button", { name: "Add to batch" }).click();

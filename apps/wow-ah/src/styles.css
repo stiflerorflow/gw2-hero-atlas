@@ -668,7 +668,7 @@ h1 em {
   border: 0;
   color: white;
   padding: 0;
-  min-width: 30px;
+  min-width: 44px;
 }
 .mini-stats {
   display: grid;
@@ -1616,6 +1616,10 @@ main:focus {
   }
 }
 @media (max-width: 600px) {
+  .character-plan fieldset {
+    grid-template-columns: minmax(0, 1fr) 72px;
+    padding: 12px;
+  }
   .all-crafting {
     padding: 14px;
   }

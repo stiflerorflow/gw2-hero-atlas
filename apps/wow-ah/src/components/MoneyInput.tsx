@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 import { money, copper, isCopper } from "../engine/money";
 export function MoneyInput({
   value,
@@ -11,7 +11,8 @@ export function MoneyInput({
   label: string;
   allowUnknown?: boolean;
 }) {
-  const input = useRef<HTMLInputElement>(null);
+  const input = useRef<HTMLInputElement>(null),
+    id = useId();
   const [text, setText] = useState(value === null ? "" : money(value));
   const [error, setError] = useState("");
   useEffect(() => {
@@ -33,7 +34,7 @@ export function MoneyInput({
   };
   return (
     <label className="field">
-      {label}
+      <span id={id + "-label"}>{label}</span>
       <input
         ref={input}
         value={text}
@@ -59,8 +60,14 @@ export function MoneyInput({
           }
         }}
         aria-invalid={!!error}
+        aria-labelledby={id + "-label"}
+        aria-describedby={id + "-help"}
       />
-      <small className={error ? "error" : ""}>
+      <small
+        id={id + "-help"}
+        role={error ? "alert" : undefined}
+        className={error ? "error" : ""}
+      >
         {error || "Units: g / s / c. A plain number means copper."}
       </small>
     </label>

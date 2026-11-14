@@ -4,6 +4,7 @@ import type { CatalogItem, CatalogPage } from "../market/catalog";
 import { loadHistory } from "../market/ahledger";
 import type { Quote } from "../types";
 import { money } from "../engine/money";
+import { isAuctionBound } from "../engine/binding";
 import { sellDecision } from "../engine/sell";
 import { MoneyInput } from "./MoneyInput";
 export function SellOrVendor({ active = true }: { active?: boolean }) {
@@ -328,13 +329,11 @@ function Comparison({
     [vendorOverride, setVendorOverride] = useState<number | null>(null),
     [lost, setLost] = useState<number | null>(0),
     [soulbound, setSoulbound] = useState(false);
-  const automaticBound =
-      /binds when picked up|soulbound|quest item|account bound/i.test(
-        item.binding || "",
-      ),
+  const automaticBound = isAuctionBound(item.binding),
     bound = automaticBound || soulbound,
     factsReady =
       item.vendorSell !== undefined &&
+      item.binding !== undefined &&
       (item.expiresAt === undefined || item.expiresAt > Date.now()),
     eligibilityUnknown = !factsReady && !bound,
     validQuote = quote && quote.expiresAt > Date.now() ? quote : null,

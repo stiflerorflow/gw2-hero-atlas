@@ -127,3 +127,34 @@ it("keeps valid provider rows when other rows are null and canonicalizes timesta
     }),
   ).toHaveLength(1);
 });
+
+it("late responses cannot replace a newer same-path response in the provider cache", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-11-18T10:00:00Z"));
+  let finishOld: (r: Response) => void = () => {};
+  const fetcher = vi
+    .fn()
+    .mockImplementationOnce(
+      () =>
+        new Promise<Response>((resolve) => {
+          finishOld = resolve;
+        }),
+    )
+    .mockResolvedValue(
+      new Response('{"version":"new"}', {
+        headers: { "Cache-Control": "max-age=60" },
+      }),
+    );
+  vi.stubGlobal("fetch", fetcher);
+  const old = request("/audit-cache-race");
+  const newer = await request("/audit-cache-race");
+  expect(newer.data).toEqual({ version: "new" });
+  finishOld(
+    new Response('{"version":"old"}', {
+      headers: { "Cache-Control": "max-age=60" },
+    }),
+  );
+  await old;
+  expect((await request("/audit-cache-race")).data).toEqual({ version: "new" });
+  expect(fetcher).toHaveBeenCalledTimes(2);
+});

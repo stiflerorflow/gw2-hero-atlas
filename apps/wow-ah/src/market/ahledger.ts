@@ -44,6 +44,7 @@ export const safeURL = (x: unknown): string => {
     return "https://ahledger.com";
   }
 };
+const pending = new Map<string, symbol>();
 export async function request(
   path: string,
   signal?: AbortSignal,
@@ -54,48 +55,54 @@ export async function request(
     throw Error(
       `AHledger requested a pause. Try again after ${new Date(backoffUntil).toLocaleTimeString()}.`,
     );
-  const response = await fetch(BASE + path, {
-    signal: signal
-      ? AbortSignal.any([signal, AbortSignal.timeout(20000)])
-      : AbortSignal.timeout(20000),
-  });
-  if (response.status === 429 || response.status === 503) {
-    const h = response.headers.get("Retry-After") || "60",
-      seconds = Number(h),
-      until = Number.isFinite(seconds)
-        ? Date.now() + Math.max(1, seconds) * 1000
-        : Date.parse(h);
-    backoffUntil = Number.isFinite(until) ? until : Date.now() + 60000;
-    throw Error(
-      `Provider busy (${response.status}); retry after ${new Date(backoffUntil).toLocaleTimeString()}.`,
-    );
-  }
-  if (!response.ok)
-    throw Error(`AHledger ${response.status}: ${path.split("?")[0]}`);
-  const data: unknown = await response.json(),
-    responseAge = Math.max(0, Number(response.headers.get("Age")) || 0),
-    maxAge = response.headers
-      .get("Cache-Control")
-      ?.match(/(?:^|,)\s*max-age=(\d+)/)?.[1],
-    expires =
-      Date.now() +
-      Math.min(
-        300,
-        Math.max(
-          0,
-          Number(
-            /no-store|no-cache/i.test(
-              response.headers.get("Cache-Control") || "",
-            )
-              ? 0
-              : Math.max(0, Number(maxAge ?? 60) - responseAge),
+  const ticket = Symbol(path);
+  pending.set(path, ticket);
+  try {
+    const response = await fetch(BASE + path, {
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(20000)])
+        : AbortSignal.timeout(20000),
+    });
+    if (response.status === 429 || response.status === 503) {
+      const h = response.headers.get("Retry-After") || "60",
+        seconds = Number(h),
+        until = Number.isFinite(seconds)
+          ? Date.now() + Math.max(1, seconds) * 1000
+          : Date.parse(h);
+      backoffUntil = Number.isFinite(until) ? until : Date.now() + 60000;
+      throw Error(
+        `Provider busy (${response.status}); retry after ${new Date(backoffUntil).toLocaleTimeString()}.`,
+      );
+    }
+    if (!response.ok)
+      throw Error(`AHledger ${response.status}: ${path.split("?")[0]}`);
+    const data: unknown = await response.json(),
+      responseAge = Math.max(0, Number(response.headers.get("Age")) || 0),
+      maxAge = response.headers
+        .get("Cache-Control")
+        ?.match(/(?:^|,)\s*max-age=(\d+)/)?.[1],
+      expires =
+        Date.now() +
+        Math.min(
+          300,
+          Math.max(
+            0,
+            Number(
+              /no-store|no-cache/i.test(
+                response.headers.get("Cache-Control") || "",
+              )
+                ? 0
+                : Math.max(0, Number(maxAge ?? 60) - responseAge),
+            ),
           ),
-        ),
-      ) *
-        1000;
-  const result = { data, expires };
-  cache.set(path, result);
-  return result;
+        ) *
+          1000;
+    const result = { data, expires };
+    if (pending.get(path) === ticket) cache.set(path, result);
+    return result;
+  } finally {
+    if (pending.get(path) === ticket) pending.delete(path);
+  }
 }
 function assertMarket(x: Record<string, any>) {
   const value =
@@ -390,6 +397,16 @@ export async function loadHistory(
   };
 }
 export function purgeExpired(m: MarketData): MarketData {
+  const now = Date.now();
+  const hasExpiredQuote = Object.values(m.quotes).some(
+    (q) =>
+      q.expiresAt <= now ||
+      (q.historyExpiresAt !== undefined && q.historyExpiresAt <= now),
+  );
+  const hasExpiredCatalog =
+    m.expiresAt <= now &&
+    (m.imported.length || m.deItems.length || m.deals?.length);
+  if (!hasExpiredQuote && !hasExpiredCatalog) return m;
   return {
     ...m,
     quotes: Object.fromEntries(

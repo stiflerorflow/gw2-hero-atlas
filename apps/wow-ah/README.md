@@ -79,3 +79,5 @@ Manual vendor prices account for actual reputation discounts. Reference Fine Thr
 Tests cover handoff acceptance values, finite donations, mixed essence purchases/whole lots, skill gates/caps, recipe fees once, missing/stale quotes, restricted market identity, shared market stock, retained outputs, budget and deposits, import/transfer isolation, mobile widths320–1280, all-screen accessibility, provider failure, synthetic endpoint shapes and a separate live-browser smoke check.
 
 [Multi-round product, UX, design and engineering audit](MULTI_ROUND_AUDIT.md) documents the findings, independent follow-through and layout measurements.
+
+[Whole-tool bug sweep](GENERAL_AUDIT.md) covers calculation edge cases, persistence, cache ordering, all six workflows, expanded mobile accessibility and large-batch performance.

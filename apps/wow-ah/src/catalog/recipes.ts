@@ -355,7 +355,8 @@ for (const recipe of RECIPES) {
       binding: recipe.binding,
     };
 }
-export const recipeById = (id: number) => RECIPES.find((r) => r.id === id);
+export const recipeById = (id: number) =>
+  [...RECIPES, ...CONVERSIONS].find((r) => r.id === id);
 export const CONVERSIONS: Recipe[] = [
   r(
     -1,
@@ -364,7 +365,14 @@ export const CONVERSIONS: Recipe[] = [
     10938,
     [0, 0, 0, 0],
     [[10939, 1]],
-    { count: 3, acquisition: "conversion", unlock: 0, binding: "none" },
+    {
+      count: 3,
+      acquisition: "conversion",
+      source:
+        "https://www.wowhead.com/forever/item=10939/greater-magic-essence",
+      unlock: 0,
+      binding: "none",
+    },
   ),
   r(
     -2,
@@ -373,7 +381,12 @@ export const CONVERSIONS: Recipe[] = [
     10939,
     [0, 0, 0, 0],
     [[10938, 3]],
-    { acquisition: "conversion", unlock: 0, binding: "none" },
+    {
+      acquisition: "conversion",
+      source: "https://www.wowhead.com/forever/item=10938/lesser-magic-essence",
+      unlock: 0,
+      binding: "none",
+    },
   ),
   r(
     -3,
@@ -382,7 +395,14 @@ export const CONVERSIONS: Recipe[] = [
     10998,
     [0, 0, 0, 0],
     [[11082, 1]],
-    { count: 3, acquisition: "conversion", unlock: 0, binding: "none" },
+    {
+      count: 3,
+      acquisition: "conversion",
+      source:
+        "https://www.wowhead.com/forever/item=11082/greater-astral-essence",
+      unlock: 0,
+      binding: "none",
+    },
   ),
   r(
     -4,
@@ -391,7 +411,13 @@ export const CONVERSIONS: Recipe[] = [
     11082,
     [0, 0, 0, 0],
     [[10998, 3]],
-    { acquisition: "conversion", unlock: 0, binding: "none" },
+    {
+      acquisition: "conversion",
+      source:
+        "https://www.wowhead.com/forever/item=10998/lesser-astral-essence",
+      unlock: 0,
+      binding: "none",
+    },
   ),
 ];
 for (const [id, name] of [

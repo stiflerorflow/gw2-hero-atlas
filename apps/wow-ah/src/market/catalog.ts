@@ -33,6 +33,7 @@ export function catalogURL(value: unknown) {
     return "https://thewowdb.com";
   }
 }
+const pending = new Map<string, symbol>();
 async function read(path: string, signal?: AbortSignal) {
   const previous = cache.get(path);
   if (previous && previous.expires > Date.now()) return previous;
@@ -42,37 +43,43 @@ async function read(path: string, signal?: AbortSignal) {
         new Date(pauseUntil).toLocaleTimeString() +
         ".",
     );
-  const r = await fetch(BASE + path, {
-    signal: signal
-      ? AbortSignal.any([signal, AbortSignal.timeout(20000)])
-      : AbortSignal.timeout(20000),
-    credentials: "omit",
-  });
-  if (r.status === 429 || r.status === 503) {
-    const retry = r.headers.get("Retry-After") || "60",
-      n = Number(retry);
-    pauseUntil = Number.isFinite(n)
-      ? Date.now() + Math.max(1, n) * 1000
-      : Date.parse(retry);
-    if (!Number.isFinite(pauseUntil)) pauseUntil = Date.now() + 60000;
-    throw Error("Catalogue is busy. Please retry later.");
+  const ticket = Symbol(path);
+  pending.set(path, ticket);
+  try {
+    const r = await fetch(BASE + path, {
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(20000)])
+        : AbortSignal.timeout(20000),
+      credentials: "omit",
+    });
+    if (r.status === 429 || r.status === 503) {
+      const retry = r.headers.get("Retry-After") || "60",
+        n = Number(retry);
+      pauseUntil = Number.isFinite(n)
+        ? Date.now() + Math.max(1, n) * 1000
+        : Date.parse(retry);
+      if (!Number.isFinite(pauseUntil)) pauseUntil = Date.now() + 60000;
+      throw Error("Catalogue is busy. Please retry later.");
+    }
+    if (!r.ok) throw Error("Catalogue request failed (" + r.status + ").");
+    const data: unknown = await r.json(),
+      cc = r.headers.get("Cache-Control") || "",
+      age = Math.max(0, Number(r.headers.get("Age")) || 0),
+      ttl = /no-store|no-cache/i.test(cc)
+        ? 0
+        : Math.max(
+            0,
+            Math.min(
+              3600,
+              Number(cc.match(/(?:^|,)\s*max-age=(\d+)/)?.[1] ?? 60) - age,
+            ),
+          );
+    const result = { data, expires: Date.now() + ttl * 1000 };
+    if (pending.get(path) === ticket) cache.set(path, result);
+    return result;
+  } finally {
+    if (pending.get(path) === ticket) pending.delete(path);
   }
-  if (!r.ok) throw Error("Catalogue request failed (" + r.status + ").");
-  const data: unknown = await r.json(),
-    cc = r.headers.get("Cache-Control") || "",
-    age = Math.max(0, Number(r.headers.get("Age")) || 0),
-    ttl = /no-store|no-cache/i.test(cc)
-      ? 0
-      : Math.max(
-          0,
-          Math.min(
-            3600,
-            Number(cc.match(/(?:^|,)\s*max-age=(\d+)/)?.[1] ?? 60) - age,
-          ),
-        );
-  const result = { data, expires: Date.now() + ttl * 1000 };
-  cache.set(path, result);
-  return result;
 }
 function item(x: any): CatalogItem | null {
   if (
@@ -138,7 +145,12 @@ export function normalizeCatalogItem(raw: unknown, id: number): CatalogItem {
     ...(VENDOR_CORRECTIONS[id]
       ? { vendorReference: VENDOR_CORRECTIONS[id] }
       : {}),
-    binding: typeof x.binding === "string" ? x.binding : null,
+    binding:
+      x.binding === null
+        ? null
+        : typeof x.binding === "string"
+          ? x.binding
+          : undefined,
     build: typeof x.build === "string" ? x.build : "",
   };
 }
@@ -147,8 +159,14 @@ export function itemIdFrom(value: string): number | null {
     hit = /^\d+$/.test(clean)
       ? clean
       : clean.match(/(?:item[:=]|\/item\/)(\d+)/i)?.[1];
-  const n = Number(hit);
-  return hit && Number.isSafeInteger(n) && n > 0 && n <= 2_000_000 ? n : null;
+  const slugId = /^https?:\/\//i.test(clean)
+    ? clean.match(/\/item\/(?:[^/?#]*-)?(\d+)\/?(?:[?#].*)?$/i)?.[1]
+    : undefined;
+  const resolved = hit || slugId;
+  const n = Number(resolved);
+  return resolved && Number.isSafeInteger(n) && n > 0 && n <= 2_000_000
+    ? n
+    : null;
 }
 export async function searchCatalog(
   query: string,

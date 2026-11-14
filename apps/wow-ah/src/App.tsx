@@ -172,16 +172,23 @@ function CostLines({ e }: { e: Evaluation }) {
     </>
   );
 }
-function DEExplanation({ e }: { e: Evaluation }) {
+function DEExplanation({
+  e,
+  headingLevel = 4,
+}: {
+  e: Evaluation;
+  headingLevel?: 3 | 4;
+}) {
   if (!e.de) return null;
   const d = e.de;
+  const Heading = headingLevel === 3 ? "h3" : "h4";
   return (
     <section className="risk-box">
-      <h4>
+      <Heading>
         {d.guaranteed
           ? "Guaranteed material yield"
           : "Random outcomes · expected value is not one-roll profit"}
-      </h4>
+      </Heading>
       <ul>
         {d.outcomes.map((o, i) => (
           <li key={i}>
@@ -225,8 +232,10 @@ function QuoteEditor({
   onUpdate,
   expanded = false,
   title = "Enter your in-game quote / exit scenario",
+  purchaseOnly = false,
 }: {
   title?: string;
+  purchaseOnly?: boolean;
   expanded?: boolean;
   id: number;
   c: Character;
@@ -258,7 +267,7 @@ function QuoteEditor({
               [id]: {
                 market: MARKET,
                 ask,
-                exit,
+                exit: purchaseOnly ? (c.manual[id]?.exit ?? null) : exit,
                 observedAt: new Date().toISOString(),
                 note: "Player-entered unit quote",
               },
@@ -275,13 +284,21 @@ function QuoteEditor({
           <MoneyInput
             label="Purchase price per unit"
             value={ask}
-            onChange={setAsk}
+            onChange={(value) => {
+              setAsk(value);
+              setMessage("");
+            }}
           />
-          <MoneyInput
-            label="Your proposed gross exit per unit"
-            value={exit}
-            onChange={setExit}
-          />
+          {!purchaseOnly && (
+            <MoneyInput
+              label="Your proposed gross exit per unit"
+              value={exit}
+              onChange={(value) => {
+                setExit(value);
+                setMessage("");
+              }}
+            />
+          )}
         </div>
         <div className="actions">
           <button type="submit">Save manual quote</button>
@@ -307,42 +324,70 @@ function QuoteEditor({
         </div>
         <p role="status">{message}</p>
         <small>
-          Leave purchase price blank to use the vendor or provider quote. Leave
-          exit blank to use the current market exit. Manual entries are
-          scenarios, not confirmed sales.
+          Leave purchase price blank to use the vendor or provider quote.{" "}
+          {purchaseOnly
+            ? "DE recovery uses the individual material exits, not this item's resale price."
+            : "Leave exit blank to use the current market exit."}{" "}
+          Manual entries are scenarios, not confirmed sales.
         </small>
       </form>
     </details>
   );
 }
+function deMaterialIds(e: Evaluation, market: MarketData): number[] {
+  if (!e.de) return [];
+  return (
+    ITEMS[e.action.itemId]?.de ||
+    market.deItems.find((i) => i.id === e.action.itemId)?.de ||
+    []
+  ).flatMap((o) => o.drops.map((d) => d.id));
+}
 function InputQuotes({
   ids,
+  purchaseOnlyId,
+  exitIds = [],
   c,
   market,
   update,
 }: {
   ids: number[];
+  purchaseOnlyId?: number;
+  exitIds?: number[];
   c: Character;
   market: MarketData;
   update: (fn: (c: Character) => Character) => boolean;
 }) {
   const unique = [...new Set(ids)].filter((id) => id > 0),
-    missing = unique.filter(
-      (id) => quoteFor(id, c, market)?.ask == null,
+    missing = unique.filter((id) =>
+      exitIds.includes(id)
+        ? exitFor(id, c, market) === null
+        : quoteFor(id, c, market)?.ask == null,
     ).length;
   if (!unique.length) return null;
   return (
     <details className="input-quotes">
-      <summary>Reagent prices{missing ? ` · ${missing} missing` : ""}</summary>
+      <summary>
+        {purchaseOnlyId ? "Input and DE material prices" : "Reagent prices"}
+        {missing ? ` · ${missing} missing` : ""}
+      </summary>
       <p>
-        Enter purchase quotes for the materials used here. Existing stock is
-        still consumed once per batch.
+        {purchaseOnlyId
+          ? "The destroyed item's exit price is unused. Set each recovered material's gross exit to change the DE recovery estimate."
+          : "Enter purchase quotes for the materials used here."}{" "}
+        Existing stock is still consumed once per batch.
       </p>
       {unique.map((id) => (
         <div key={id}>
           <p>
-            <b>{itemName(id)}</b> · current purchase reference{" "}
-            {money(quoteFor(id, c, market)?.ask)}
+            <b>{itemName(id)}</b> ·{" "}
+            {exitIds.includes(id)
+              ? "current gross exit reference"
+              : "current purchase reference"}{" "}
+            {money(
+              exitIds.includes(id)
+                ? exitFor(id, c, market)
+                : quoteFor(id, c, market)?.ask,
+            )}
           </p>
           <QuoteEditor
             id={id}
@@ -350,6 +395,7 @@ function InputQuotes({
             onUpdate={update}
             expanded
             title="Set material quote"
+            purchaseOnly={id === purchaseOnlyId}
           />
         </div>
       ))}
@@ -762,7 +808,11 @@ function App() {
       <div className="calculation">
         <CostLines e={e} />
         <InputQuotes
-          ids={e.cost.lines.map((l) => l.id)}
+          purchaseOnlyId={
+            e.action.kind.includes("de") ? e.action.itemId : undefined
+          }
+          exitIds={deMaterialIds(e, market)}
+          ids={[...e.cost.lines.map((l) => l.id), ...deMaterialIds(e, market)]}
           c={c}
           market={market}
           update={update}
@@ -839,8 +889,9 @@ function App() {
               Recipe requirements & source ↗
             </a>
             <br />
-            {r.profession} {r.min} · yellow {r.yellow}, green {r.green}, grey{" "}
-            {r.grey} · {r.binding} · {r.expansion}
+            {r.acquisition === "conversion"
+              ? "Whole-lot conversion · no profession or recipe unlock required"
+              : `${r.profession} ${r.min} · yellow ${r.yellow}, green ${r.green}, grey ${r.grey} · ${r.binding} · ${r.expansion}`}
             <br />
             {r.note}{" "}
             {recipeTools(r).length
@@ -852,6 +903,9 @@ function App() {
         <QuoteEditor
           key={c.id + "-" + restoreRevision + "-" + e.action.itemId}
           id={e.action.itemId}
+          purchaseOnly={
+            e.action.kind === "buy-de" || e.action.kind === "craft-de"
+          }
           c={c}
           onUpdate={update}
         />
@@ -1389,16 +1443,24 @@ function App() {
                   )
                     return;
                   const raw = JSON.stringify(next);
-                  localStorage.setItem(STORE, raw);
-                  savedRaw.current = raw;
+                  let restoreError = "";
+                  try {
+                    localStorage.setItem(STORE, raw);
+                    savedRaw.current = raw;
+                  } catch {
+                    restoreError =
+                      "Backup loaded in this tab only. Storage is unavailable; export before closing.";
+                  }
                   setState(next);
                   setRestoreRevision((n) => n + 1);
                   setModal(false);
                   setHistory(null);
-                  setStorageError("");
+                  setStorageError(restoreError);
                   setStale(false);
                   setToast(
-                    "Profiles restored. Market snapshots are fetched separately.",
+                    restoreError
+                      ? "Profiles loaded for this session. Export before closing."
+                      : "Profiles restored. Market snapshots are fetched separately.",
                   );
                 } catch (e) {
                   setToast((e as Error).message);
@@ -1439,10 +1501,21 @@ function Leveling({
       Object.keys(c.skills)[0] as Profession,
     ),
     [strategy, setStrategy] = useState<"cash" | "net">("cash");
-  useEffect(
-    () => setProfession(Object.keys(c.skills)[0] as Profession),
-    [c.id],
-  );
+  useEffect(() => {
+    if (!c.skills[profession])
+      setProfession(Object.keys(c.skills)[0] as Profession);
+  }, [c.id, Object.keys(c.skills).join(","), profession]);
+  if (!Object.keys(c.skills).length)
+    return (
+      <section className="page-heading">
+        <h1>Plan your skill points</h1>
+        <p>
+          No profession is saved for this character.{" "}
+          <a href="#opportunities">Choose a profession in Character plan</a> to
+          start.
+        </p>
+      </section>
+    );
   const s = c.skills[profession],
     plan = levelRoute(c, market, profession, strategy),
     recipes = RECIPES.filter((r) => r.profession === profession),
@@ -1768,7 +1841,7 @@ function Batch({
   update: (fn: (c: Character) => Character) => boolean;
   copy: (s: string) => Promise<void>;
 }) {
-  const plan = batchPlan(c.batch, c, market),
+  const plan = useMemo(() => batchPlan(c.batch, c, market), [c, market]),
     [postView, setPostView] = useState(false);
   const modify = (id: string, fn: (a: Action) => Action) =>
     update((c) => ({
@@ -1974,13 +2047,19 @@ function Batch({
                       }}
                     />
                   </label>
+                  {!a.kind.includes("de") && (
+                    <MoneyInput
+                      label="Gross exit / output unit"
+                      value={a.exit}
+                      onChange={(exit) => modify(a.id, (a) => ({ ...a, exit }))}
+                    />
+                  )}
                   <MoneyInput
-                    label="Gross exit / output unit"
-                    value={a.exit}
-                    onChange={(exit) => modify(a.id, (a) => ({ ...a, exit }))}
-                  />
-                  <MoneyInput
-                    label="Deposit / output unit (copper or g/s/c)"
+                    label={
+                      a.kind.includes("de")
+                        ? "Deposit allowance / item disenchanted"
+                        : "Deposit / output unit (copper or g/s/c)"
+                    }
                     value={a.deposit}
                     onChange={(deposit) =>
                       modify(a.id, (a) => ({ ...a, deposit }))
@@ -2066,21 +2145,30 @@ function Batch({
                     {e.de?.guaranteed && a.retain
                       ? "Retained guaranteed yields can supply a later row."
                       : "Random yields are not spendable cash or guaranteed inputs. Record actual drops before relying on them for another craft."}{" "}
-                    Sale assumptions apply to material recovery; deposits are a
-                    conservative per-input allowance for this DE action, not a
-                    server-calculated posting quote.
+                    Edit individual material prices under Inputs and
+                    material-value accounting. Sale assumptions apply to
+                    material recovery; deposits are a conservative per-input
+                    allowance for this DE action, not a server-calculated
+                    posting quote.
                   </p>
                 )}
                 <details>
                   <summary>Inputs and material-value accounting</summary>
                   <CostLines e={e} />
                   <InputQuotes
-                    ids={e.cost.lines.map((l) => l.id)}
+                    purchaseOnlyId={
+                      a.kind.includes("de") ? a.itemId : undefined
+                    }
+                    exitIds={deMaterialIds(e, market)}
+                    ids={[
+                      ...e.cost.lines.map((l) => l.id),
+                      ...deMaterialIds(e, market),
+                    ]}
                     c={c}
                     market={market}
                     update={update}
                   />
-                  <DEExplanation e={e} />
+                  <DEExplanation e={e} headingLevel={3} />
                 </details>
                 <div className="actions">
                   <button
@@ -2176,7 +2264,7 @@ function HistoryChart({ q }: { q: Quote }) {
   return (
     <section className="history">
       <div className="actions">
-        <h4>History of median asks</h4>
+        <h3>History of median asks</h3>
         <label>
           Window
           <select value={range} onChange={(e) => setRange(e.target.value)}>
@@ -2455,6 +2543,7 @@ function Watchlist({
             if (!saved) return;
             setGross(null);
             setCost(null);
+            setDeposit(0);
           }}
         >
           <div className="form-grid">
@@ -2768,6 +2857,11 @@ function ProfileEditor({
                   setInventoryNote(c.inventory[id]?.note || "");
                 }}
               >
+                {!ITEMS[inventoryItem] && (
+                  <option value={inventoryItem}>
+                    {itemName(inventoryItem)} · imported item
+                  </option>
+                )}
                 {Object.values(ITEMS)
                   .filter((i) => i.id > 0)
                   .map((i) => (
