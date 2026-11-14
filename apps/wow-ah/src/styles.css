@@ -103,6 +103,8 @@ button:disabled {
   background: var(--green);
   color: white;
   border-color: var(--green);
+  /* Switching a neutral action to primary must not animate white text over a pale fill. */
+  transition: none;
 }
 .primary:hover {
   background: #2c604e;
