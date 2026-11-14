@@ -65,3 +65,5 @@ Catalogue reviewed 2026-11-14 against Forever client-data references and the Nov
 Manual vendor prices account for actual reputation discounts. Reference Fine Thread is1s, not the feed's2s. Bronze Framework requires Engineering145, not the feed's105. Engineering references that show three thresholds start at yellow; they do not imply an orange interval.
 
 Tests cover handoff acceptance values, finite donations, mixed essence purchases/whole lots, skill gates/caps, recipe fees once, missing/stale quotes, restricted market identity, shared market stock, retained outputs, budget and deposits, import/transfer isolation, mobile widths320–1280, all-screen accessibility, provider failure, synthetic endpoint shapes and a separate live-browser smoke check.
+
+[Multi-round product, UX, design and engineering audit](MULTI_ROUND_AUDIT.md) documents the findings, independent follow-through and layout measurements.

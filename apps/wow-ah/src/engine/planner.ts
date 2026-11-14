@@ -56,7 +56,7 @@ export function quoteFor(
   now = Date.now(),
 ): Quote | undefined {
   const manual = c.manual[id];
-  if (manual?.market === "forever.rp.alliance.eu")
+  if (manual?.market === "forever.rp.alliance.eu" && manual.ask !== null)
     return {
       id,
       name: itemName(id),

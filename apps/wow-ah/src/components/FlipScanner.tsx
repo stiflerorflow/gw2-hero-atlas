@@ -68,7 +68,13 @@ export function FlipScanner({
     [sort, setSort] = useState("activity"),
     [maxBuy, setMaxBuy] = useState<number | null>(null),
     [positive, setPositive] = useState(true),
-    [showAll, setShowAll] = useState(false);
+    [showAll, setShowAll] = useState(false),
+    [drafts, setDrafts] = useState<
+      Record<
+        number,
+        { exit: number | null; deposit: number | null; qty: number }
+      >
+    >({});
   const rows = (market.deals || [])
     .map((d) => ({
       d,
@@ -108,16 +114,11 @@ export function FlipScanner({
   return (
     <>
       <section className="page-heading scanner-heading">
-        <h1>Compare resale candidates</h1>
+        <h1>Flip scanner</h1>
         <p>
           {loading
-            ? "Loading the market scan."
-            : `${rows.length} candidates match your filters.`}{" "}
-          Check the quoted spread, demand and price age before buying.
-        </p>
-        <p className="note">
-          Potential profit includes the 5% AH cut and excludes lost deposits.
-          Resale prices are assumptions.
+            ? "Loading market quotes…"
+            : `${rows.length} candidates. Check the quoted prices before buying.`}
         </p>
       </section>
       <div className="scan-presets" role="group" aria-label="Scan presets">
@@ -148,10 +149,10 @@ export function FlipScanner({
           <label>
             Rank results
             <select value={sort} onChange={(e) => setSort(e.target.value)}>
-              <option value="activity">Most estimated sales/day</option>
-              <option value="profit">Highest potential profit/unit</option>
-              <option value="roi">Highest return on cash</option>
-              <option value="cost">Lowest buy price</option>
+              <option value="activity">Daily demand</option>
+              <option value="profit">Profit / item</option>
+              <option value="roi">Return %</option>
+              <option value="cost">Buy price</option>
             </select>
           </label>
           <label>
@@ -162,10 +163,8 @@ export function FlipScanner({
                 setModel(e.target.value as "current" | "historical")
               }
             >
-              <option value="current">Current market spread</option>
-              <option value="historical">
-                Historical recovery · speculative
-              </option>
+              <option value="current">Current prices</option>
+              <option value="historical">Price recovery · speculative</option>
             </select>
           </label>
         </div>
@@ -268,14 +267,10 @@ export function FlipScanner({
       </div>
       <div className="section-title">
         <div>
-          <h2>Resale candidates</h2>
+          <h2 className="scanner-results-heading">Resale candidates</h2>
           <p className="note">
-            {rows.length} shown · up to 200 provider leads · {filters.discount}
-            %+ reference discount ·{" "}
-            {filters.sells
-              ? filters.sells + "+ estimated units/day"
-              : "all activity levels"}
-            . Search filters these returned leads, not every item in the game.
+            {Math.min(rows.length, showAll ? 200 : compact ? 3 : 12)} of{" "}
+            {rows.length} candidates · {filters.discount}%+ reference discount
           </p>
         </div>
         <a
@@ -307,6 +302,26 @@ export function FlipScanner({
         {rows.slice(0, showAll ? 200 : compact ? 3 : 12).map(({ d, q, s }) => (
           <article className="panel flip-card" key={d.id}>
             <h3>{q.name}</h3>
+            <dl className="card-numbers">
+              <div>
+                <dt>Buy / unit</dt>
+                <dd>{money(s.buy)}</dd>
+              </div>
+              <div>
+                <dt>Assumed sell / unit</dt>
+                <dd>{money(s.exit)}</dd>
+              </div>
+              <div>
+                <dt>Potential profit / unit</dt>
+                <dd
+                  className={
+                    s.profit !== null && s.profit > 0 ? "positive" : "negative"
+                  }
+                >
+                  {money(s.profit)}
+                </dd>
+              </div>
+            </dl>
             <div className="candidate-verdict">
               <strong>
                 {
@@ -333,22 +348,7 @@ export function FlipScanner({
                 estimated market units sold · {q.quantity ?? "unknown"} listed
               </span>
             </div>
-            <dl className="card-numbers">
-              <div>
-                <dt>Buy / unit</dt>
-                <dd>{money(s.buy)}</dd>
-              </div>
-              <div>
-                <dt>Potential profit / unit</dt>
-                <dd
-                  className={
-                    s.profit !== null && s.profit > 0 ? "positive" : "negative"
-                  }
-                >
-                  {money(s.profit)}
-                </dd>
-              </div>
-            </dl>
+
             <div className="row-actions">
               <button onClick={() => void copy(q.name)}>Copy item name</button>
               <a
@@ -462,6 +462,16 @@ export function FlipScanner({
                 percent={exitPercent}
                 model={model}
                 load={load}
+                draft={drafts[q.id] || { exit: null, deposit: 0, qty: 1 }}
+                change={(patch) =>
+                  setDrafts((old) => ({
+                    ...old,
+                    [q.id]: {
+                      ...(old[q.id] || { exit: null, deposit: 0, qty: 1 }),
+                      ...patch,
+                    },
+                  }))
+                }
               />
               <p className="note">
                 Independent market checks:{" "}
@@ -501,10 +511,12 @@ export function FlipScanner({
       <details className="panel">
         <summary>How to use this scanner</summary>
         <p>
-          Choose a scan, compare daily activity and profit, then inspect the
-          actual listings before buying. Try a small position first. Your own
-          listing competes with other sellers, so market volume is not a promise
-          of personal sales.
+          Potential profit includes one 5% AH cut and excludes lost deposits.
+          Search covers these provider leads, not every item in the game. Choose
+          a scan, compare daily activity and profit, then inspect the actual
+          listings before buying. Try a small position first. Your own listing
+          competes with other sellers, so market volume is not a promise of
+          personal sales.
         </p>
         <p>
           The provider supplies discounted-item leads, not complete market
@@ -530,7 +542,17 @@ function FlipDetail({
   percent,
   model,
   load,
+  draft,
+  change,
 }: {
+  draft: { exit: number | null; deposit: number | null; qty: number };
+  change: (
+    patch: Partial<{
+      exit: number | null;
+      deposit: number | null;
+      qty: number;
+    }>,
+  ) => void;
   q: Quote;
   reference: number | null;
   basis: string;
@@ -538,10 +560,8 @@ function FlipDetail({
   model: "current" | "historical";
   load: (id: number) => Promise<void>;
 }) {
-  const [exit, setExit] = useState<number | null>(null),
-    [deposit, setDeposit] = useState<number | null>(0),
-    [qty, setQty] = useState(1),
-    [loading, setLoading] = useState(false),
+  const { exit, deposit, qty } = draft;
+  const [loading, setLoading] = useState(false),
     [error, setError] = useState("");
   const s = flipScenario(
     q,
@@ -585,7 +605,9 @@ function FlipDetail({
           hours.
         </p>
       )}
-      {q.history && <PriceContext q={q} />}
+      {q.history && (q.historyExpiresAt ?? q.expiresAt) > Date.now() && (
+        <PriceContext q={q} />
+      )}
       {q.history && (
         <p className="note">
           Recent typical asks: {money(q.median)} · reference used here:{" "}
@@ -598,13 +620,13 @@ function FlipDetail({
         <MoneyInput
           label="Override gross resale / unit · calculator"
           value={exit}
-          onChange={setExit}
+          onChange={(exit) => change({ exit })}
         />
         <MoneyInput
           label="Lost deposit allowance / unit"
           allowUnknown={false}
           value={deposit}
-          onChange={setDeposit}
+          onChange={(deposit) => change({ deposit })}
         />
         <label>
           Test quantity
@@ -615,7 +637,7 @@ function FlipDetail({
             value={qty}
             onChange={(e) => {
               const n = +e.target.value;
-              if (Number.isInteger(n) && n > 0 && n <= 1000) setQty(n);
+              if (Number.isInteger(n) && n > 0 && n <= 1000) change({ qty: n });
             }}
           />
         </label>

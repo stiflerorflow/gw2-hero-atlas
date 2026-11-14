@@ -67,6 +67,7 @@ export type Quote = {
   coveredHours: number | null;
   windowDays?: number | null;
   salesMethod?: string;
+  historyExpiresAt?: number;
   history?: { t: string; min: number | null; median: number | null }[];
 };
 export type Inventory = { qty: number; note: string };

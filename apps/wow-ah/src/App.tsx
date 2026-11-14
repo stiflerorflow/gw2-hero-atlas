@@ -1,3 +1,4 @@
+import { mergeHistoryQuote } from "./market/historyMerge";
 import {
   Fragment,
   useCallback,
@@ -215,10 +216,14 @@ function QuoteEditor({
   id,
   c,
   onUpdate,
+  expanded = false,
+  title = "Enter your in-game quote / exit scenario",
 }: {
+  title?: string;
+  expanded?: boolean;
   id: number;
   c: Character;
-  onUpdate: (fn: (c: Character) => Character) => void;
+  onUpdate: (fn: (c: Character) => Character) => boolean;
 }) {
   const [ask, setAsk] = useState<number | null>(c.manual[id]?.ask ?? null),
     [exit, setExit] = useState<number | null>(c.manual[id]?.exit ?? null),
@@ -228,8 +233,8 @@ function QuoteEditor({
     setExit(c.manual[id]?.exit ?? null);
   }, [c.manual[id]?.ask, c.manual[id]?.exit]);
   return (
-    <details className="quote-editor">
-      <summary>Enter your in-game quote / exit scenario</summary>
+    <details className="quote-editor" open={expanded || undefined}>
+      <summary>{title}</summary>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -239,7 +244,7 @@ function QuoteEditor({
             );
             return;
           }
-          onUpdate((c) => ({
+          const saved = onUpdate((c) => ({
             ...c,
             manual: {
               ...c.manual,
@@ -252,7 +257,11 @@ function QuoteEditor({
               },
             },
           }));
-          setMessage("Saved for this character and market, with a timestamp.");
+          setMessage(
+            saved
+              ? "Saved for this character and market, with a timestamp."
+              : "Not saved. Reload to use the latest profiles.",
+          );
         }}
       >
         <div className="form-grid">
@@ -272,11 +281,15 @@ function QuoteEditor({
           <button
             type="button"
             onClick={() => {
-              onUpdate((c) => {
+              const saved = onUpdate((c) => {
                 const manual = { ...c.manual };
                 delete manual[id];
                 return { ...c, manual };
               });
+              if (!saved) {
+                setMessage("Not changed. Reload to use the latest profiles.");
+                return;
+              }
               setAsk(null);
               setExit(null);
               setMessage("Manual override removed.");
@@ -287,12 +300,71 @@ function QuoteEditor({
         </div>
         <p role="status">{message}</p>
         <small>
-          Not a confirmed sale or a live listing. Source snapshot timestamps are
-          never replaced with refresh time.
+          Leave purchase price blank to use the vendor or provider quote. Leave
+          exit blank to use the current market exit. Manual entries are
+          scenarios, not confirmed sales.
         </small>
       </form>
     </details>
   );
+}
+function InputQuotes({
+  ids,
+  c,
+  market,
+  update,
+}: {
+  ids: number[];
+  c: Character;
+  market: MarketData;
+  update: (fn: (c: Character) => Character) => boolean;
+}) {
+  const unique = [...new Set(ids)].filter((id) => id > 0),
+    missing = unique.filter(
+      (id) => quoteFor(id, c, market)?.ask == null,
+    ).length;
+  if (!unique.length) return null;
+  return (
+    <details className="input-quotes">
+      <summary>Reagent prices{missing ? ` · ${missing} missing` : ""}</summary>
+      <p>
+        Enter purchase quotes for the materials used here. Existing stock is
+        still consumed once per batch.
+      </p>
+      {unique.map((id) => (
+        <div key={id}>
+          <p>
+            <b>{itemName(id)}</b> · current purchase reference{" "}
+            {money(quoteFor(id, c, market)?.ask)}
+          </p>
+          <QuoteEditor
+            id={id}
+            c={c}
+            onUpdate={update}
+            expanded
+            title="Set material quote"
+          />
+        </div>
+      ))}
+    </details>
+  );
+}
+function mergeHistory(fresh: MarketData, previous: MarketData): MarketData {
+  const quotes = { ...fresh.quotes };
+  for (const [key, q] of Object.entries(quotes)) {
+    const old = previous.quotes[+key];
+    if (
+      old?.history &&
+      old.historyExpiresAt !== undefined &&
+      old.historyExpiresAt > Date.now()
+    )
+      quotes[+key] = {
+        ...q,
+        history: old.history,
+        historyExpiresAt: old.historyExpiresAt,
+      };
+  }
+  return { ...fresh, quotes };
 }
 function App() {
   const initial = useRef<{
@@ -344,19 +416,23 @@ function App() {
     [showAll, setShowAll] = useState(false),
     [sort, setSort] = useState<"profit" | "cost" | "yield">("profit"),
     [history, setHistory] = useState<number | null>(null),
+    [historyPending, setHistoryPending] = useState<number | null>(null),
     [inspect, setInspect] = useState<string | null>(null);
+  useEffect(() => {
+    if (stale) setModal(false);
+  }, [stale]);
   const c = state.characters.find((x) => x.id === state.active)!;
   const commit = useCallback(
     (next: SavedState) => {
       if (stale) {
         setToast("Reload before editing: another tab changed your profiles.");
-        return;
+        return false;
       }
       try {
         if (!storageError) {
           if (localStorage.getItem(STORE) !== savedRaw.current) {
             setStale(true);
-            return;
+            return false;
           }
           const raw = JSON.stringify(next);
           localStorage.setItem(STORE, raw);
@@ -368,6 +444,7 @@ function App() {
         );
       }
       setState(next);
+      return true;
     },
     [stale, storageError],
   );
@@ -418,7 +495,40 @@ function App() {
       ].sort((a, b) => a - b),
     [state.characters.map((c) => c.watch.map((w) => w.id).join(",")).join(";")],
   );
-  const abort = useRef<AbortController | null>(null);
+  const abort = useRef<AbortController | null>(null),
+    historySequence = useRef(0);
+  useEffect(() => {
+    if (page !== "watchlist") {
+      historySequence.current++;
+      setHistoryPending(null);
+    }
+  }, [page]);
+  useEffect(() => {
+    historySequence.current++;
+    setHistory(null);
+    setHistoryPending(null);
+  }, [c.id, restoreRevision]);
+  async function fetchHistory(id: number, select = false) {
+    const sequence = select ? ++historySequence.current : 0;
+    if (select) {
+      setHistory(id);
+      setHistoryPending(id);
+    }
+    try {
+      const q = await loadHistory(id);
+      if (select && sequence !== historySequence.current) return;
+      setMarket((old) => {
+        const merged = mergeHistoryQuote(old.quotes[id], q),
+          quotes = { ...old.quotes };
+        if (merged) quotes[id] = merged;
+        else delete quotes[id];
+        return { ...old, quotes };
+      });
+    } finally {
+      if (select && sequence === historySequence.current)
+        setHistoryPending(null);
+    }
+  }
   const refresh = useCallback(async () => {
     abort.current?.abort();
     if (page === "sell") {
@@ -433,7 +543,8 @@ function App() {
         page === "scanner"
           ? await loadScanner(scanFilters, controller.signal)
           : await loadMarket(allWatches, controller.signal);
-      if (!controller.signal.aborted) setMarket(fresh);
+      if (!controller.signal.aborted)
+        setMarket((old) => mergeHistory(fresh, old));
     } catch (e) {
       if (!controller.signal.aborted)
         setMarket((old) => ({
@@ -447,6 +558,21 @@ function App() {
   useEffect(() => {
     setMarket(unknownMarket());
   }, [page === "scanner", page === "sell", scanFilters]);
+  useEffect(() => {
+    const deadlines = Object.values(market.quotes).flatMap((q) => [
+      q.expiresAt,
+      ...(q.history ? [q.historyExpiresAt ?? q.expiresAt] : []),
+    ]);
+    if (market.imported.length || market.deItems.length || market.deals?.length)
+      deadlines.push(market.expiresAt);
+    const times = deadlines.filter(Number.isFinite);
+    if (!times.length) return;
+    const timer = setTimeout(
+      () => setMarket((old) => purgeExpired(old)),
+      Math.max(0, Math.min(...times) - Date.now()) + 1,
+    );
+    return () => clearTimeout(timer);
+  }, [market]);
   useEffect(() => {
     void refresh();
     const timer = setInterval(() => void refresh(), 60000),
@@ -576,10 +702,13 @@ function App() {
       setToast("Keep batches to 50 actions.");
       return;
     }
-    update((c) => ({
-      ...c,
-      batch: [...c.batch, { ...a, id: uid(), sellFraction: 0 }],
-    }));
+    if (
+      !update((c) => ({
+        ...c,
+        batch: [...c.batch, { ...a, id: uid(), sellFraction: 0 }],
+      }))
+    )
+      return;
     setToast(
       "Added one unit to " +
         c.name +
@@ -595,10 +724,13 @@ function App() {
       setToast("Watchlist limit: 100 items per character.");
       return;
     }
-    update((c) => ({
-      ...c,
-      watch: [...c.watch, { id, buyBelow: null, sellAbove: null }],
-    }));
+    if (
+      !update((c) => ({
+        ...c,
+        watch: [...c.watch, { id, buyBelow: null, sellAbove: null }],
+      }))
+    )
+      return;
     setToast("Added to watchlist.");
   };
   const copy = async (text: string) => {
@@ -622,6 +754,12 @@ function App() {
     return (
       <div className="calculation">
         <CostLines e={e} />
+        <InputQuotes
+          ids={e.cost.lines.map((l) => l.id)}
+          c={c}
+          market={market}
+          update={update}
+        />
         <DEExplanation e={e} />
         {patternPayback(e) !== null && (
           <p>
@@ -880,8 +1018,10 @@ function App() {
         </div>
       )}
       <main id="main-content" tabIndex={-1}>
-        {page === "sell" && <SellOrVendor />}
-        {page === "scanner" && (
+        <div hidden={page !== "sell"}>
+          <SellOrVendor active={page === "sell"} />
+        </div>
+        <div hidden={page !== "scanner"}>
           <FlipScanner
             market={market}
             loading={loading}
@@ -890,24 +1030,20 @@ function App() {
             copy={copy}
             watch={watch}
             character={c.name}
-            load={async (id) => {
-              const q = await loadHistory(id);
-              setMarket((old) => ({
-                ...old,
-                quotes: { ...old.quotes, [id]: q },
-              }));
-            }}
+            load={(id) => fetchHistory(id)}
           />
-        )}
+        </div>
         {page === "opportunities" && (
           <>
             <section className="intro">
               <div>
                 <h1>Crafting opportunities</h1>
                 <p>
-                  {c.cash === null
-                    ? "Enter cash to check affordability."
-                    : `${affordable} positive scenarios fit the inputs budget.`}{" "}
+                  {loading
+                    ? "Loading prices for this character’s professions."
+                    : c.cash === null
+                      ? "Enter cash to check affordability."
+                      : `${affordable} positive scenarios fit the inputs budget.`}{" "}
                   Compare the cost and requirements before adding a batch.
                 </p>
               </div>
@@ -1139,6 +1275,7 @@ function App() {
             market={market}
             update={update}
             add={add}
+            loading={loading}
           />
         )}
         {page === "batch" && (
@@ -1158,15 +1295,15 @@ function App() {
             update={update}
             watch={watch}
             history={history}
-            setHistory={setHistory}
+            historyPending={historyPending}
+            setHistory={(id) => {
+              historySequence.current++;
+              setHistoryPending(null);
+              setHistory(id);
+            }}
             load={async (id) => {
               try {
-                const q = await loadHistory(id);
-                setMarket((old) => ({
-                  ...old,
-                  quotes: { ...old.quotes, [id]: q },
-                }));
-                setHistory(id);
+                await fetchHistory(id, true);
               } catch (e) {
                 setToast((e as Error).message);
               }
@@ -1262,11 +1399,13 @@ function Leveling({
   market,
   update,
   add,
+  loading,
 }: {
   c: Character;
   market: MarketData;
-  update: (fn: (c: Character) => Character) => void;
+  update: (fn: (c: Character) => Character) => boolean;
   add: (a: Action) => void;
+  loading: boolean;
 }) {
   const [profession, setProfession] = useState<Profession>(
       Object.keys(c.skills)[0] as Profession,
@@ -1285,11 +1424,13 @@ function Leveling({
       <section className="page-heading">
         <h1>Plan your skill points</h1>
         <p>
-          {gathering
-            ? "Record your current skill and gathered materials."
-            : plan.steps.length
-              ? `The estimated route reaches ${plan.end}. Check the steps below, then add them to a batch.`
-              : "No priced, learned route is available yet. Confirm known recipes and missing prices below."}
+          {loading
+            ? "Loading prices before estimating a route."
+            : gathering
+              ? "Record your current skill and gathered materials."
+              : plan.steps.length
+                ? `The estimated route reaches ${plan.end}. Check the steps below, then add them to a batch.`
+                : "No priced, learned route is available yet. Confirm known recipes and missing prices below."}
         </p>
       </section>
       <div className="panel leveling-controls">
@@ -1402,7 +1543,9 @@ function Leveling({
               </div>
               <span className="pill">Estimated attempts</span>
             </div>
-            {plan.steps.length ? (
+            {loading ? (
+              <p role="status">Checking material prices…</p>
+            ) : plan.steps.length ? (
               <ol className="route-steps">
                 {plan.steps.map((step) => (
                   <li key={step.from}>
@@ -1453,7 +1596,9 @@ function Leveling({
                 know below and enter missing quotes.
               </p>
             )}
-            {plan.stopped && <p className="alert">{plan.stopped}</p>}
+            {!loading && plan.stopped && (
+              <p className="alert">{plan.stopped}</p>
+            )}
             <p className="note">
               Ranks one point at a time among checked, learned recipes using
               replacement-material prices. It is not a globally optimized
@@ -1479,6 +1624,17 @@ function Leveling({
             </p>
           </details>
         </>
+      )}
+      {!gathering && (
+        <section className="panel">
+          <h2>Material quotes</h2>
+          <InputQuotes
+            ids={recipes.flatMap((r) => r.reagents.map((v) => v.id))}
+            c={c}
+            market={market}
+            update={update}
+          />
+        </section>
       )}
       <section className="panel">
         <h2>Recipe book · {profession}</h2>
@@ -1515,22 +1671,27 @@ function Leveling({
                 </span>
               </label>
               <div>
-                <MoneyInput
-                  label="Actual unlock quote · once"
-                  value={c.unlockCosts[r.id] ?? r.unlock}
-                  onChange={(n) => {
-                    if (n === null) return;
-                    update((c) => ({
-                      ...c,
-                      unlockCosts: { ...c.unlockCosts, [r.id]: n },
-                    }));
-                  }}
-                />
+                {!c.known.includes(r.id) && (
+                  <MoneyInput
+                    label="Actual unlock quote · once"
+                    value={c.unlockCosts[r.id] ?? r.unlock}
+                    onChange={(n) => {
+                      if (n === null) return;
+                      update((c) => ({
+                        ...c,
+                        unlockCosts: { ...c.unlockCosts, [r.id]: n },
+                      }));
+                    }}
+                  />
+                )}
                 <a href={r.source} target="_blank" rel="noreferrer">
                   Requirements source ↗
                 </a>
               </div>
-              <p>{r.note}</p>
+              <details className="recipe-facts">
+                <summary>Recipe notes</summary>
+                <p>{r.note}</p>
+              </details>
             </div>
           ))
         ) : (
@@ -1576,7 +1737,7 @@ function Batch({
 }: {
   c: Character;
   market: MarketData;
-  update: (fn: (c: Character) => Character) => void;
+  update: (fn: (c: Character) => Character) => boolean;
   copy: (s: string) => Promise<void>;
 }) {
   const plan = batchPlan(c.batch, c, market),
@@ -1667,13 +1828,15 @@ function Batch({
       <p className={"batch-status " + (plan.ready ? "good" : "warning")}>
         {!c.batch.length
           ? "Add a small test batch from Crafting or Leveling."
-          : plan.ready
-            ? "Fits the stated budget with known deposits. Verify all in-game quotes before acting."
-            : plan.fits === false
-              ? "This batch exceeds the budget after your reserve."
-              : plan.upfront === null
-                ? "Upfront total is incomplete: enter missing input prices, fees and deposits."
-                : "Inputs may fit, but requirements or deposits still need attention."}
+          : plan.spendable === null
+            ? "Enter this character’s cash to check whether the batch fits."
+            : plan.ready
+              ? "Fits the stated budget with known deposits. Verify all in-game quotes before acting."
+              : plan.fits === false
+                ? "This batch exceeds the budget after your reserve."
+                : plan.upfront === null
+                  ? "Upfront total is incomplete: enter missing input prices, fees and deposits."
+                  : "Inputs may fit, but requirements or deposits still need attention."}
       </p>
       <div className="batch-top">
         <MoneyInput
@@ -1879,6 +2042,12 @@ function Batch({
                 <details>
                   <summary>Inputs and material-value accounting</summary>
                   <CostLines e={e} />
+                  <InputQuotes
+                    ids={e.cost.lines.map((l) => l.id)}
+                    c={c}
+                    market={market}
+                    update={update}
+                  />
                   <DEExplanation e={e} />
                 </details>
                 <div className="actions">
@@ -1956,7 +2125,9 @@ function Batch({
 }
 function HistoryChart({ q }: { q: Quote }) {
   const [range, setRange] = useState("7d");
-  const samples = (q.history || []).filter(
+  const samples = (
+      (q.historyExpiresAt ?? q.expiresAt) > Date.now() ? q.history || [] : []
+    ).filter(
       (s) =>
         s.median !== null &&
         (range !== "24h" || Date.parse(s.t) >= Date.now() - 86400000),
@@ -2020,14 +2191,16 @@ function Watchlist({
   watch,
   history,
   setHistory,
+  historyPending,
   load,
 }: {
   c: Character;
   market: MarketData;
-  update: (fn: (c: Character) => Character) => void;
+  update: (fn: (c: Character) => Character) => boolean;
   watch: (id: number) => void;
   history: number | null;
   setHistory: (id: number | null) => void;
+  historyPending: number | null;
   load: (id: number) => Promise<void>;
 }) {
   const [item, setItem] = useState(4306),
@@ -2067,14 +2240,24 @@ function Watchlist({
           <input
             type="search"
             value={itemSearch}
-            onChange={(e) => setItemSearch(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setItemSearch(value);
+              const match = Object.values(ITEMS).find(
+                (i) =>
+                  i.id > 0 &&
+                  i.name.toLowerCase().includes(value.toLowerCase()),
+              );
+              setItem(match?.id || 0);
+            }}
             placeholder="Search item names"
           />
         </label>
         <label>
           Item
           <select value={item} onChange={(e) => setItem(+e.target.value)}>
-            {!candidates.some((i) => i.id === item) && (
+            {!item && <option value={0}>No matching item</option>}
+            {item > 0 && !candidates.some((i) => i.id === item) && (
               <option value={item}>{itemName(item)}</option>
             )}
             {candidates.map((i) => (
@@ -2084,7 +2267,9 @@ function Watchlist({
             ))}
           </select>
         </label>
-        <button className="primary">Add to watchlist</button>
+        <button className="primary" disabled={!item}>
+          Add to watchlist
+        </button>
       </form>
       <div className="watch-grid">
         {c.watch.map((w) => {
@@ -2093,7 +2278,7 @@ function Watchlist({
                 ? market.quotes[w.id]
                 : undefined,
             manual = c.manual[w.id],
-            ask = manual ? manual.ask : (q?.ask ?? null),
+            ask = manual?.ask ?? q?.ask ?? null,
             hit =
               ask !== null &&
               ((w.buyBelow !== null && ask <= w.buyBelow) ||
@@ -2120,7 +2305,9 @@ function Watchlist({
                 <small>lowest ask / manual purchase quote per unit</small>
               </p>
               <p>
-                {manual ? "Manual · " + time(manual.observedAt) : quoteAge(q)}
+                {manual?.ask !== null && manual?.ask !== undefined
+                  ? "Manual purchase · " + time(manual.observedAt)
+                  : quoteAge(q)}
               </p>
               <Demand q={q} />
               {hit && (
@@ -2129,32 +2316,35 @@ function Watchlist({
                   listings and exit price.
                 </p>
               )}
-              <div className="form-grid">
-                <MoneyInput
-                  label="Buy at or below / unit"
-                  value={w.buyBelow}
-                  onChange={(buyBelow) =>
-                    update((c) => ({
-                      ...c,
-                      watch: c.watch.map((x) =>
-                        x.id === w.id ? { ...x, buyBelow } : x,
-                      ),
-                    }))
-                  }
-                />
-                <MoneyInput
-                  label="Inspect asks at or above / unit"
-                  value={w.sellAbove}
-                  onChange={(sellAbove) =>
-                    update((c) => ({
-                      ...c,
-                      watch: c.watch.map((x) =>
-                        x.id === w.id ? { ...x, sellAbove } : x,
-                      ),
-                    }))
-                  }
-                />
-              </div>
+              <details className="watch-settings">
+                <summary>Price thresholds</summary>{" "}
+                <div className="form-grid">
+                  <MoneyInput
+                    label="Buy at or below / unit"
+                    value={w.buyBelow}
+                    onChange={(buyBelow) =>
+                      update((c) => ({
+                        ...c,
+                        watch: c.watch.map((x) =>
+                          x.id === w.id ? { ...x, buyBelow } : x,
+                        ),
+                      }))
+                    }
+                  />
+                  <MoneyInput
+                    label="Inspect asks at or above / unit"
+                    value={w.sellAbove}
+                    onChange={(sellAbove) =>
+                      update((c) => ({
+                        ...c,
+                        watch: c.watch.map((x) =>
+                          x.id === w.id ? { ...x, sellAbove } : x,
+                        ),
+                      }))
+                    }
+                  />
+                </div>
+              </details>
               <p>
                 Recent typical listing: {money(q?.median)} · quantity{" "}
                 {q?.quantity ?? "unknown"}. Your recorded sales:{" "}
@@ -2166,15 +2356,31 @@ function Watchlist({
                 .
               </p>
               <button
+                disabled={historyPending === w.id}
                 onClick={() =>
-                  history === w.id ? setHistory(null) : void load(w.id)
+                  history === w.id && q?.history
+                    ? setHistory(null)
+                    : void load(w.id)
                 }
               >
-                {history === w.id
-                  ? "Close price history"
-                  : "Load 24h / 7d history"}
+                {historyPending === w.id
+                  ? "Loading price history…"
+                  : history === w.id
+                    ? q?.history
+                      ? "Close price history"
+                      : "Reload price history"
+                    : "Load 24h / 7d history"}
               </button>
-              {history === w.id && q && <HistoryChart q={q} />}
+              {history === w.id &&
+                historyPending !== w.id &&
+                (q?.history ? (
+                  <HistoryChart q={q} />
+                ) : (
+                  <p className="note">
+                    History is unavailable or its cache expired. Reload it to
+                    check the latest observations.
+                  </p>
+                ))}
               <QuoteEditor
                 key={c.id + "-" + w.id}
                 id={w.id}
@@ -2199,7 +2405,7 @@ function Watchlist({
           onSubmit={(e) => {
             e.preventDefault();
             if (gross === null) return;
-            update((c) => ({
+            const saved = update((c) => ({
               ...c,
               sales: [
                 ...c.sales,
@@ -2214,6 +2420,7 @@ function Watchlist({
                 },
               ].slice(-1000),
             }));
+            if (!saved) return;
             setGross(null);
             setCost(null);
           }}
@@ -2316,8 +2523,8 @@ function ProfileEditor({
 }: {
   c: Character;
   state: SavedState;
-  update: (fn: (c: Character) => Character) => void;
-  commit: (s: SavedState) => void;
+  update: (fn: (c: Character) => Character) => boolean;
+  commit: (s: SavedState) => boolean;
   close: () => void;
   notify: (s: string) => void;
 }) {
@@ -2627,7 +2834,14 @@ function ProfileEditor({
         <button
           onClick={() => {
             try {
-              commit(transfer(state, c.id, to, transferItem, transferQty));
+              if (
+                !commit(transfer(state, c.id, to, transferItem, transferQty))
+              ) {
+                setTransferMessage(
+                  "Not recorded. Reload to use the latest profiles.",
+                );
+                return;
+              }
               setTransferMessage(
                 "Recorded transfer; move the actual items in game.",
               );

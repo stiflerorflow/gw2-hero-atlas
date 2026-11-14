@@ -1,3 +1,5 @@
+import { ExpiryCache } from "./expiryCache";
+import { isCopper } from "../engine/money";
 export type CatalogItem = {
   id: number;
   name: string;
@@ -6,15 +8,17 @@ export type CatalogItem = {
   vendorSell?: number | null;
   binding?: string | null;
   build?: string;
+  expiresAt?: number;
 };
 export type CatalogPage = {
   items: CatalogItem[];
   page: number;
   hasMore: boolean;
   total: number | null;
+  expiresAt?: number;
 };
 const BASE = "https://thewowdb.com/api/v1/forever/",
-  cache = new Map<string, { data: unknown; expires: number }>();
+  cache = new ExpiryCache<unknown>(200);
 let pauseUntil = 0;
 export function catalogURL(value: unknown) {
   try {
@@ -28,7 +32,7 @@ export function catalogURL(value: unknown) {
 }
 async function read(path: string, signal?: AbortSignal) {
   const previous = cache.get(path);
-  if (previous && previous.expires > Date.now()) return previous.data;
+  if (previous && previous.expires > Date.now()) return previous;
   if (Date.now() < pauseUntil)
     throw Error(
       "Catalogue is rate-limited. Try again after " +
@@ -63,10 +67,9 @@ async function read(path: string, signal?: AbortSignal) {
             Number(cc.match(/(?:^|,)\s*max-age=(\d+)/)?.[1] ?? 60) - age,
           ),
         );
-  cache.set(path, { data, expires: Date.now() + ttl * 1000 });
-  for (const [k, v] of cache) if (v.expires <= Date.now()) cache.delete(k);
-  if (cache.size > 200) cache.delete(cache.keys().next().value!);
-  return data;
+  const result = { data, expires: Date.now() + ttl * 1000 };
+  cache.set(path, result);
+  return result;
 }
 function item(x: any): CatalogItem | null {
   if (
@@ -126,12 +129,7 @@ export function normalizeCatalogItem(raw: unknown, id: number): CatalogItem {
     throw Error("Catalogue item or game version did not match.");
   return {
     ...v,
-    vendorSell:
-      typeof x.vendor_sell === "number" &&
-      Number.isSafeInteger(x.vendor_sell) &&
-      x.vendor_sell >= 0
-        ? x.vendor_sell
-        : null,
+    vendorSell: isCopper(x.vendor_sell) ? x.vendor_sell : null,
     binding: typeof x.binding === "string" ? x.binding : null,
     build: typeof x.build === "string" ? x.build : "",
   };
@@ -154,17 +152,28 @@ export async function searchCatalog(
   const id = itemIdFrom(query);
   if (id) {
     const v = await getCatalogItem(id, signal);
-    return { items: [v], page: 1, hasMore: false, total: 1 };
+    return {
+      items: [v],
+      page: 1,
+      hasMore: false,
+      total: 1,
+      expiresAt: v.expiresAt,
+    };
   }
   const p = new URLSearchParams({
     q: query.trim().slice(0, 64),
     page: String(page),
     per_page: "25",
   });
-  return normalizeCatalog(await read("item/?" + p, signal));
+  const response = await read("item/?" + p, signal);
+  return { ...normalizeCatalog(response.data), expiresAt: response.expires };
 }
 export async function getCatalogItem(id: number, signal?: AbortSignal) {
   if (!Number.isSafeInteger(id) || id <= 0 || id > 2_000_000)
     throw Error("Invalid item ID.");
-  return normalizeCatalogItem(await read("item/" + id, signal), id);
+  const response = await read("item/" + id, signal);
+  return {
+    ...normalizeCatalogItem(response.data, id),
+    expiresAt: response.expires,
+  };
 }

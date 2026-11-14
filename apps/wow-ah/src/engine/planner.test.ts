@@ -11,6 +11,8 @@ import {
 import { RECIPES, CONVERSIONS } from "../catalog/recipes";
 import { ITEMS } from "../catalog/items";
 import {
+  quoteFor,
+  exitFor,
   acquire,
   craftCost,
   evaluate,
@@ -499,4 +501,39 @@ it("orders observation ages by time rather than date-string offsets", () => {
   expect(evaluate(action("craft", 7048, 8760), c, m).oldest).toBe(
     "2026-11-14T10:00:00+02:00",
   );
+});
+
+it("an exit-only scenario preserves independently sourced purchase prices", () => {
+  const { c, m } = fixture();
+  c.manual[4306] = {
+    market: MARKET,
+    ask: null,
+    exit: 300,
+    observedAt: new Date().toISOString(),
+    note: "Sale scenario only",
+  };
+  m.quotes[4306] = {
+    id: 4306,
+    name: "Silk Cloth",
+    ask: 100,
+    median: 110,
+    median7d: 120,
+    quantity: 20,
+    soldPerDay: 5,
+    observedAt: "2026-11-14T10:00:00Z",
+    source: "AHledger",
+    url: "",
+    expiresAt: Date.now() + 60000,
+    detectedSale: null,
+    coveredHours: null,
+  };
+  expect(quoteFor(4306, c, m)?.ask).toBe(100);
+  expect(quoteFor(4306, c, m)?.source).toBe("AHledger");
+  expect(exitFor(4306, c, m)).toBe(300);
+  c.manual[2321] = { ...c.manual[4306], exit: 200 };
+  expect(quoteFor(2321, c, m)?.ask).toBe(100);
+  m.quotes[4306].expiresAt = 0;
+  expect(quoteFor(4306, c, m)).toBeUndefined();
+  c.manual[4306].ask = 90;
+  expect(quoteFor(4306, c, m)?.ask).toBe(90);
 });

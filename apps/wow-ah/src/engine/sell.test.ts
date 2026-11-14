@@ -95,3 +95,12 @@ it("candidate conclusions prioritize the reason to pause rather than encouraging
     assessCandidate({ ...q, observedAt: null }, 7, 30, undefined).title,
   ).toBe("Check the live quote");
 });
+
+it("stale losing quotes do not produce a confident vendor verdict", () => {
+  expect(sellDecision(100, 50, 1, 0, false, true).title).toBe(
+    "Refresh the AH quote",
+  );
+  expect(sellDecision(100, null, 1, 0, false, true).title).toBe(
+    "AH price unavailable",
+  );
+});

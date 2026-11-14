@@ -1,3 +1,4 @@
+import { ExpiryCache } from "./expiryCache";
 import type {
   Item,
   MarketData,
@@ -10,7 +11,7 @@ import { MARKET } from "../types";
 import { ITEMS } from "../catalog/items";
 import { RECIPES } from "../catalog/recipes";
 const BASE = "https://api.ahledger.com/v1",
-  cache = new Map<string, { data: unknown; expires: number }>();
+  cache = new ExpiryCache<unknown>();
 let backoffUntil = 0;
 export const unknownMarket = (): MarketData => ({
   quotes: {},
@@ -94,7 +95,6 @@ export async function request(
         1000;
   const result = { data, expires };
   cache.set(path, result);
-  for (const [k, v] of cache) if (v.expires <= Date.now()) cache.delete(k);
   return result;
 }
 function assertMarket(x: Record<string, any>) {
@@ -376,6 +376,7 @@ export async function loadHistory(
     windowDays: num(sales.windowDays),
     salesMethod:
       typeof sales.method === "string" ? safeURL(sales.method) : undefined,
+    historyExpiresAt: response.expires,
     history: Array.isArray(x.series)
       ? x.series
           .filter((s: any) => s && stamp(s.t))
@@ -392,7 +393,18 @@ export function purgeExpired(m: MarketData): MarketData {
   return {
     ...m,
     quotes: Object.fromEntries(
-      Object.entries(m.quotes).filter(([, q]) => q.expiresAt > Date.now()),
+      Object.entries(m.quotes)
+        .filter(([, q]) => q.expiresAt > Date.now())
+        .map(([id, q]) => {
+          if (
+            q.historyExpiresAt !== undefined &&
+            q.historyExpiresAt <= Date.now()
+          ) {
+            const { history, historyExpiresAt, ...quote } = q;
+            return [id, quote];
+          }
+          return [id, q];
+        }),
     ),
     imported: m.expiresAt > Date.now() ? m.imported : [],
     deItems: m.expiresAt > Date.now() ? m.deItems : [],

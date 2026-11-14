@@ -6,12 +6,13 @@ import type { Quote } from "../types";
 import { money } from "../engine/money";
 import { sellDecision } from "../engine/sell";
 import { MoneyInput } from "./MoneyInput";
-export function SellOrVendor() {
+export function SellOrVendor({ active = true }: { active?: boolean }) {
   const [query, setQuery] = useState(""),
     [result, setResult] = useState<CatalogPage | null>(null),
     [searched, setSearched] = useState(""),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
+    [notice, setNotice] = useState(""),
     [selected, setSelected] = useState<CatalogItem | null>(null),
     [quote, setQuote] = useState<Quote | null>(null),
     [detailError, setDetailError] = useState(""),
@@ -21,26 +22,61 @@ export function SellOrVendor() {
   const comparison = useRef<HTMLElement | null>(null),
     opener = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    if (selected) {
+    if (selected && active) {
       comparison.current?.focus();
       comparison.current?.scrollIntoView({ block: "start" });
     }
-  }, [selected?.id]);
-  const [, tick] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => tick((n) => n + 1), 15000);
-    return () => {
-      clearInterval(t);
+  }, [selected?.id, active]);
+  useEffect(
+    () => () => {
       searchAbort.current?.abort();
       detailAbort.current?.abort();
-    };
-  }, []);
+    },
+    [],
+  );
+  useEffect(() => {
+    const deadlines = [
+      quote?.expiresAt,
+      selected?.expiresAt,
+      result?.expiresAt,
+    ].filter((n): n is number => typeof n === "number" && Number.isFinite(n));
+    if (!deadlines.length) return;
+    const timer = setTimeout(
+      () => {
+        const now = Date.now();
+        if (result?.expiresAt !== undefined && result.expiresAt <= now) {
+          setResult(null);
+          setNotice("Catalogue results expired. Search again to refresh them.");
+        }
+        if (quote && quote.expiresAt <= now) {
+          setQuote(null);
+          setDetailError(
+            "AH quote expired. Refresh the comparison before relying on its price.",
+          );
+        }
+        if (selected?.expiresAt !== undefined && selected.expiresAt <= now) {
+          setSelected({
+            id: selected.id,
+            name: "Item #" + selected.id,
+            quality: "unknown",
+            url: "https://thewowdb.com",
+          });
+          setDetailError(
+            "Item facts expired. Refresh the comparison to check vendor value and binding.",
+          );
+        }
+      },
+      Math.max(1, Math.min(...deadlines) - Date.now()),
+    );
+    return () => clearTimeout(timer);
+  }, [quote, selected, result]);
   async function search(text: string, page = 1) {
     searchAbort.current?.abort();
     const c = new AbortController();
     searchAbort.current = c;
     setBusy(true);
     setError("");
+    setNotice("");
     setResult(null);
     setSearched(text);
     detailAbort.current?.abort();
@@ -62,7 +98,16 @@ export function SellOrVendor() {
     detailAbort.current?.abort();
     const c = new AbortController();
     detailAbort.current = c;
-    setSelected(v);
+    setSelected(
+      v.expiresAt !== undefined && v.expiresAt <= Date.now()
+        ? {
+            id: v.id,
+            name: "Item #" + v.id,
+            quality: "unknown",
+            url: "https://thewowdb.com",
+          }
+        : v,
+    );
     setQuote(null);
     setDetailError("");
     setDetailBusy(true);
@@ -140,6 +185,11 @@ export function SellOrVendor() {
           .
         </p>
       )}
+      {notice && (
+        <p className="note" role="status">
+          {notice}
+        </p>
+      )}
       {busy && <p role="status">Searching the Forever catalogue…</p>}
       {selected && (
         <section
@@ -150,7 +200,8 @@ export function SellOrVendor() {
         >
           <div className="section-title">
             <h2>{selected.name}</h2>
-            <button className="text-button"
+            <button
+              className="text-button"
               onClick={() => {
                 detailAbort.current?.abort();
                 setSelected(null);
@@ -282,6 +333,10 @@ function Comparison({
         item.binding || "",
       ),
     bound = automaticBound || soulbound,
+    factsReady =
+      item.vendorSell !== undefined &&
+      (item.expiresAt === undefined || item.expiresAt > Date.now()),
+    eligibilityUnknown = !factsReady && !bound,
     validQuote = quote && quote.expiresAt > Date.now() ? quote : null,
     ask = override ?? validQuote?.ask ?? null,
     vendor = vendorOverride ?? item.vendorSell ?? null,
@@ -293,23 +348,43 @@ function Comparison({
     ask,
     qty,
     lost ?? 0,
-    bound,
+    bound || eligibilityUnknown,
     override !== null ? false : old,
   );
   return (
     <>
       <div className="decision-summary">
-        <h3>{d.title}</h3>
+        <h3>{eligibilityUnknown ? "Refresh item facts" : d.title}</h3>
         <p>
-          {bound
-            ? "Check whether you still need it before vendoring."
-            : d.extra === null
-              ? "A missing price is unknown, not zero."
-              : d.extra > 0
-                ? `The AH scenario pays ${money(d.extra)} more for ${qty} ${qty === 1 ? "unit" : "units"} if all sell.`
-                : `At this sale price, vendoring returns ${money(Math.abs(d.extra))} more, or the same amount.`}
+          {eligibilityUnknown
+            ? "Current item facts are needed to check whether this item can be auctioned. Price overrides do not confirm auction eligibility."
+            : d.title === "Refresh the AH quote"
+              ? "The quote is over an hour old or has no observation time. Check the current in-game price before choosing."
+              : bound
+                ? "Check whether you still need it before vendoring."
+                : d.extra === null
+                  ? "A missing price is unknown, not zero."
+                  : d.extra > 0
+                    ? `The AH scenario pays ${money(d.extra)} more for ${qty} ${qty === 1 ? "unit" : "units"} if all sell.`
+                    : `At this sale price, vendoring returns ${money(Math.abs(d.extra))} more, or the same amount.`}
         </p>
       </div>
+      {(override !== null || vendorOverride !== null) && (
+        <div className="note" role="status">
+          <p>
+            {override !== null ? "Manual AH price is in use. " : ""}
+            {vendorOverride !== null ? "Manual vendor value is in use." : ""}
+          </p>
+          {override !== null && (
+            <button onClick={() => setOverride(null)}>Use market quote</button>
+          )}
+          {vendorOverride !== null && (
+            <button onClick={() => setVendorOverride(null)}>
+              Use catalogue vendor value
+            </button>
+          )}
+        </div>
+      )}
       <dl className="summary-strip">
         <div>
           <dt>
@@ -342,15 +417,21 @@ function Comparison({
             }}
           />
         </label>
-        <label className="inline">
-          <input
-            type="checkbox"
-            checked={bound}
-            disabled={automaticBound}
-            onChange={(e) => setSoulbound(e.target.checked)}
-          />
-          Item is already soulbound
-        </label>
+        {eligibilityUnknown ? (
+          <p className="note">
+            Auction eligibility is unknown until item facts are refreshed.
+          </p>
+        ) : (
+          <label className="inline">
+            <input
+              type="checkbox"
+              checked={bound}
+              disabled={automaticBound}
+              onChange={(e) => setSoulbound(e.target.checked)}
+            />
+            Item is already soulbound
+          </label>
+        )}
       </div>
       <p className="note">
         {override !== null

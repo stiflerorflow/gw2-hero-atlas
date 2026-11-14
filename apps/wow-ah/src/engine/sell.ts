@@ -16,10 +16,10 @@ export function sellDecision(
       ? "Check the vendor value"
       : gross === null
         ? "AH price unavailable"
-        : extra !== null && extra <= 0
-          ? "Vendor pays at least as much"
-          : quoteOld
-            ? "Refresh the AH quote"
+        : quoteOld
+          ? "Refresh the AH quote"
+          : extra !== null && extra <= 0
+            ? "Vendor pays at least as much"
             : "AH could pay more";
   return {
     title,

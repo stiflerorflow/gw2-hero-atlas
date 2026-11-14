@@ -72,7 +72,7 @@ test("default scanner needs no profile or crafting, ranks market activity and ev
   });
   await page.goto("");
   await expect(
-    page.getByRole("heading", { name: "Compare resale candidates" }),
+    page.getByRole("heading", { name: "Flip scanner" }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Edit profile", exact: true }),
@@ -117,7 +117,7 @@ test("default scanner needs no profile or crafting, ranks market activity and ev
     .toBe(true);
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Compare resale candidates" }),
+    page.getByRole("heading", { name: "Flip scanner" }),
   ).toBeVisible();
 });
 test("scanner handles missing data without phantom flips and preserves crafting workflow", async ({
