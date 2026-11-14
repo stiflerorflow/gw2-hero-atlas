@@ -2046,3 +2046,12 @@ main:focus {
     scroll-behavior: auto !important;
   }
 }
+
+.tool-checks {
+  margin: 12px 0 18px;
+}
+.tool-checks .inline {
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 0;
+}

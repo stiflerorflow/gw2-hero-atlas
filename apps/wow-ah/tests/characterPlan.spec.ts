@@ -216,3 +216,78 @@ test("changing profession preserves its position and a new skill moves the defau
   await page.reload();
   await expect(first.getByRole("combobox")).toHaveValue("Alchemy");
 });
+
+test("confirming a Copper Rod unlocks Wand progress, without assuming tool ownership or guaranteed DE profit", async ({
+  page,
+}) => {
+  const market = "forever.rp.alliance.eu";
+  await page.route("https://api.ahledger.com/**", async (r) => {
+    const path = new URL(r.request().url()).pathname;
+    let body: any = { market };
+    if (path.endsWith("/markets"))
+      body = {
+        markets: [
+          { id: market, ruleset: "rp", region: "eu", faction: "alliance" },
+        ],
+      };
+    else if (path.includes("/tooltip/"))
+      body = {
+        market,
+        items: [
+          [10938, 100],
+          [11288, 500],
+          [10059, 7000],
+          [11176, 3000],
+          [11175, 30000],
+          [11178, 20000],
+        ].map(([id, minBuyout]) => ({
+          id,
+          name: String(id),
+          minBuyout,
+          quantity: 10,
+          observedAt: new Date(Date.now() - 90 * 60000).toISOString(),
+        })),
+      };
+    await r.fulfill({
+      json: body,
+      headers: { "Cache-Control": "max-age=300" },
+    });
+  });
+  await page.goto("#opportunities");
+  await page
+    .getByRole("spinbutton", { name: "Current character level", exact: true })
+    .fill("20");
+  await expect(
+    page.locator(".plan-choice h3").filter({ hasText: "Greater Magic Wand" }),
+  ).toHaveCount(0);
+  await page
+    .getByRole("checkbox", {
+      name: "I have Runed Copper Rod available",
+      exact: true,
+    })
+    .check();
+  const wand = page.locator(".plan-choice").filter({
+    has: page.getByRole("heading", {
+      name: "Greater Magic Wand",
+      exact: true,
+    }),
+  });
+  await expect(wand).toContainText("Enchanting progress");
+  const de = page.locator(".plan-choice").filter({
+    has: page.getByRole("heading", {
+      name: "Duskwoven Bracers",
+      exact: true,
+    }),
+  });
+  await expect(de).toContainText("25%");
+  await expect(de).toContainText("over an hour old");
+  await expect(de).toContainText("DE skill gains are not modeled");
+  await page.reload();
+  await expect(
+    page.getByRole("checkbox", {
+      name: "I have Runed Copper Rod available",
+      exact: true,
+    }),
+  ).toBeChecked();
+  await expect(wand).toBeVisible();
+});

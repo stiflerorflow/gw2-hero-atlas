@@ -1,6 +1,8 @@
 import type { Item, Outcome } from "../types";
+import { VENDOR_CORRECTIONS } from "./vendorCorrections";
+// Item levels 26–30 correspond to required equipment levels 21–25.
 const greenSource =
-  "https://bootybaybroker.com/forever/crafting/disenchant?faction=alliance&realm=camwow-eu4-realm-10-rp&region=eu";
+  "https://www.wow-professions.com/forever/disenchanting-guide";
 export const ARMOR_26_30: Outcome[] = [
   {
     probability: 0.75,
@@ -42,6 +44,9 @@ export const ITEMS: Record<number, Item> = Object.fromEntries(
       [1210, "Shadowgem"],
       [6338, "Silver Rod"],
       [6339, "Runed Silver Rod"],
+      [6218, "Runed Copper Rod"],
+      [5956, "Blacksmith Hammer"],
+      [6219, "Arclight Spanner"],
       [5763, "Red Woolen Bag"],
       [4313, "Red Woolen Boots"],
       [4333, "Dark Silk Shirt"],
@@ -112,6 +117,42 @@ Object.assign(ITEMS[4253], {
 });
 for (const id of [11287, 11288, 6339, 4333, 5763, 5764]) ITEMS[id].noDE = true;
 ITEMS[6339].binding = "BoP";
+ITEMS[6218].binding = "BoP";
+ITEMS[6218].noDE = true;
 ITEMS[4333].vendorSell = 1200;
 ITEMS[5764].vendorSell = 3000;
 export const itemName = (id: number) => ITEMS[id]?.name || `Item #${id}`;
+
+// Item 10059: Wowhead Forever item level 50 / required level 45, checked
+// against WoW-Professions' required-level 41–45 baseline DE table (2026-11-14).
+for (const [id, name] of [
+  [11176, "Dream Dust"],
+  [11175, "Greater Nether Essence"],
+  [11178, "Large Radiant Shard"],
+] as [number, string][])
+  ITEMS[id] = { id, name };
+ITEMS[10059] = {
+  id: 10059,
+  name: "Duskwoven Bracers",
+  binding: "BoE",
+  de: [
+    {
+      probability: 0.75,
+      drops: [{ id: 11176, min: 1, max: 2 }],
+      source: greenSource,
+    },
+    {
+      probability: 0.2,
+      drops: [{ id: 11175, min: 1, max: 2 }],
+      source: greenSource,
+    },
+    {
+      probability: 0.05,
+      drops: [{ id: 11178, min: 1, max: 1 }],
+      source: greenSource,
+    },
+  ],
+};
+
+for (const [id, fix] of Object.entries(VENDOR_CORRECTIONS))
+  if (ITEMS[+id]) ITEMS[+id].vendorSell = fix.value;

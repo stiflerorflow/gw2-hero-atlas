@@ -98,3 +98,65 @@ test("catalogue failure stays useful and does not pretend there are no items", a
   await expect(page.getByRole("alert")).toBeVisible();
   await expect(page.locator(".catalog-results")).toHaveCount(0);
 });
+
+test("a Classic vendor value cannot reverse the Forever Wand recommendation", async ({
+  page,
+}) => {
+  await page.route("https://thewowdb.com/api/v1/**", (r) =>
+    r.fulfill({
+      json: {
+        id: 11288,
+        kind: "item",
+        version: "forever",
+        name: "Greater Magic Wand",
+        quality: "Uncommon",
+        vendor_sell: 1535,
+        binding: "Binds when equipped",
+        links: {
+          html: "https://thewowdb.com/wow-forever/item/greater-magic-wand-11288/",
+        },
+      },
+      headers: { "Cache-Control": "max-age=60" },
+    }),
+  );
+  await page.route("https://api.ahledger.com/**", (r) =>
+    r.fulfill({
+      json: {
+        market: "forever.rp.alliance.eu",
+        item: { id: 11288, name: "Greater Magic Wand" },
+        latest: {
+          minBuyout: 300,
+          quantity: 10,
+          observedAt: new Date().toISOString(),
+        },
+        series: [],
+      },
+      headers: { "Cache-Control": "max-age=60" },
+    }),
+  );
+  await page.goto("#sell");
+  await page
+    .getByRole("searchbox", { name: "Item name, ID or pasted item link" })
+    .fill("11288");
+  await page.getByRole("button", { name: "Search items", exact: true }).click();
+  await page.locator(".catalog-results button").first().click();
+  await expect(
+    page.getByRole("heading", { name: "AH could pay more", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.locator(".item-comparison .summary-strip dd").first(),
+  ).toHaveText("2s");
+  await expect(page.locator(".item-comparison")).toContainText(
+    "Forever vendor correction",
+  );
+  await page
+    .getByText("Adjust prices and see item facts", { exact: true })
+    .click();
+  await page.getByRole("textbox", { name: /Vendor sell value/ }).fill("5s");
+  await expect(
+    page.getByRole("heading", {
+      name: "Vendor pays at least as much",
+      exact: true,
+    }),
+  ).toBeVisible();
+});

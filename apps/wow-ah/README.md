@@ -59,6 +59,8 @@ Net sales apply one 5% faction cut. Deposits are separate upfront commitments; s
 
 Listing-depth snapshots, authenticated Blizzard data, background notifications, cross-market comparisons and cloud sync are deferred. No secrets belong in Pages; any future Blizzard OAuth collector needs a backend.
 
+[Live character, crafting and vendor verification](CHARACTER_VALIDATION.md) records the independent arithmetic, prerequisite fixes, corrected Forever vendor values and remaining limits.
+
 ## Accuracy and sources
 
 Catalogue reviewed 2026-11-14 against Forever client-data references and the November11 bag hotfix. Each recipe and DE outcome carries a source URL. API-reported profits and skill gates are never accepted as authoritative.

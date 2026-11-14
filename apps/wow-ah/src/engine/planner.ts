@@ -8,7 +8,12 @@ import type {
   Recipe,
 } from "../types";
 import { ITEMS, itemName } from "../catalog/items";
-import { RECIPES, CONVERSIONS, recipeById } from "../catalog/recipes";
+import {
+  RECIPES,
+  CONVERSIONS,
+  recipeById,
+  recipeTools,
+} from "../catalog/recipes";
 import { net } from "./money";
 export type Line = {
   id: number;
@@ -123,8 +128,9 @@ export function access(
   if (!s) return `Needs ${r.profession}`;
   if (s.level < r.min) return `Needs ${r.profession} ${r.min}`;
   if (r.min > s.cap) return `Rank cap ${s.cap} blocks this recipe`;
-  if (r.tool && !c.tools.includes(r.tool))
-    return `Confirm ${itemName(r.tool)} in profile tools`;
+  const missingTools = recipeTools(r).filter((id) => !c.tools.includes(id));
+  if (missingTools.length)
+    return `Confirm ${missingTools.map(itemName).join(" and ")} in profile tools`;
   if (!r.verified) return "Imported recipe: requirements not verified";
   if (forLevel && r.once) return "One-time tool: not a repeat skill route";
   if (!c.known.includes(r.id)) return `Not learned · ${r.acquisition}`;
@@ -285,6 +291,10 @@ export function craftCost(
   if (fee === null)
     out.missing.push(
       "Enter the actual recipe/trainer price, or mark this recipe learned.",
+    );
+  if (r.station)
+    out.steps.push(
+      `Prepare a nearby ${r.station}${recipeTools(r).length ? `; bring ${recipeTools(r).map(itemName).join(" and ")}` : ""}.`,
     );
   out.steps.push(
     `${Math.ceil(crafts)} × ${r.name} → ${Math.ceil(crafts) * r.count} ${r.service ? "applications" : itemName(r.output)}`,

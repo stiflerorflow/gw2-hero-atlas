@@ -369,6 +369,20 @@ function Comparison({
                     : `At this sale price, vendoring returns ${money(Math.abs(d.extra))} more, or the same amount.`}
         </p>
       </div>
+      {item.vendorReference && (
+        <p className="note">
+          Forever vendor correction:{" "}
+          <a
+            href={item.vendorReference.source}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Blizzard's price update ↗
+          </a>{" "}
+          · checked {item.vendorReference.checkedAt}. The catalogue can retain
+          Classic vendor values.
+        </p>
+      )}
       {(override !== null || vendorOverride !== null) && (
         <div className="note" role="status">
           <p>
@@ -380,7 +394,9 @@ function Comparison({
           )}
           {vendorOverride !== null && (
             <button onClick={() => setVendorOverride(null)}>
-              Use catalogue vendor value
+              {item.vendorReference
+                ? "Use corrected vendor reference"
+                : "Use catalogue vendor value"}
             </button>
           )}
         </div>

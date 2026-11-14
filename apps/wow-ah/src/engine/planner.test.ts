@@ -537,3 +537,40 @@ it("an exit-only scenario preserves independently sourced purchase prices", () =
   c.manual[4306].ask = 90;
   expect(quoteFor(4306, c, m)?.ask).toBe(90);
 });
+
+it("checks both engineering tools; training and a nearby station are distinct prerequisites", () => {
+  const { c, m } = fixture({ 2841: 100, 2592: 100, 4375: 1000 });
+  c.skills = { Engineering: { level: 130, cap: 150, target: 150 } };
+  const r = recipe(3942),
+    a = action("craft", 4375, 3942);
+  c.tools = [5956];
+  expect(access(r, c)).toContain("Arclight Spanner");
+  expect(evaluate(a, c, m).eligible).toBe(false);
+  c.tools.push(6219);
+  expect(evaluate(a, c, m).eligible).toBe(true);
+  expect(evaluate(a, c, m).cost.cash).toBe(800);
+  expect(r.station).toBe("Anvil");
+  expect(evaluate(a, c, m).cost.steps.join(" ")).toContain(
+    "Prepare a nearby Anvil",
+  );
+  expect(r.count).toBe(1);
+  c.known.push(3942);
+  expect(evaluate(a, c, m).cost.cash).toBe(300);
+  expect(evaluate(a, c, m).skill).toBeCloseTo(0.7);
+});
+it("independently cross-checked bracer outcomes can have a positive mean with a 75% loss probability", () => {
+  const { c, m } = fixture({
+    10059: 7000,
+    11176: 3000,
+    11175: 30000,
+    11178: 20000,
+  });
+  const e = evaluate(action("buy-de", 10059), c, m);
+  // Synthetic regression prices: 75% dust, 20% essence, 5% shard; 1–2 units uniformly modeled.
+  const independentRecovery =
+    (0.75 * 1.5 * 3000 + 0.2 * 1.5 * 30000 + 0.05 * 20000) * 0.95;
+  expect(e.proceeds).toBeCloseTo(independentRecovery);
+  expect(e.profit).toBeGreaterThan(0);
+  expect(e.de!.breakEvenChance).toBeCloseTo(0.25);
+  expect(e.de!.worst! - e.cost.cash!).toBeLessThan(0);
+});

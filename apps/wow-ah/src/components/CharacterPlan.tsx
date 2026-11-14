@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { Action, Character, MarketData, Profession } from "../types";
 import { PROFESSIONS } from "../types";
 import { ITEMS, itemName } from "../catalog/items";
-import { RECIPES } from "../catalog/recipes";
+import { RECIPES, recipeTools, relevantTools } from "../catalog/recipes";
 import { characterPlan, keySupplies } from "../engine/characterPlan";
 import { MoneyInput } from "./MoneyInput";
 import { money } from "../engine/money";
@@ -136,6 +136,32 @@ export function CharacterPlan({
             Adjust limits, targets or trained caps
           </button>
         </p>
+        {relevantTools(c).length > 0 && (
+          <div className="tool-checks">
+            <p className="note">
+              Confirm tools you have available. Unconfirmed tools block recipes
+              that need them.
+            </p>
+            {relevantTools(c).map((id) => (
+              <label className="inline" key={id}>
+                <input
+                  type="checkbox"
+                  checked={c.tools.includes(id)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    update((c) => ({
+                      ...c,
+                      tools: checked
+                        ? [...new Set([...c.tools, id])]
+                        : c.tools.filter((v) => v !== id),
+                    }));
+                  }}
+                />
+                I have {itemName(id)} available
+              </label>
+            ))}
+          </div>
+        )}
         <details>
           <summary>Relevant supplies · optional</summary>
           <p className="note">
@@ -213,7 +239,9 @@ export function CharacterPlan({
                       {e.action.kind === "craft-de"
                         ? "Craft one and disenchant it"
                         : e.action.kind === "buy-de"
-                          ? "Buy one and disenchant it"
+                          ? (c.inventory[e.action.itemId]?.qty ?? 0) >= 1
+                            ? "Disenchant one from your recorded supplies"
+                            : "Buy one and disenchant it"
                           : r?.service
                             ? "Apply one enchant to suitable owned gear"
                             : e.action.kind === "convert"
@@ -227,7 +255,11 @@ export function CharacterPlan({
                         <dd>{money(e.cost.cash)}</dd>
                       </div>
                       <div>
-                        <dt>Expected skill gain</dt>
+                        <dt>
+                          {e.de
+                            ? "Modeled craft skill gain"
+                            : "Expected skill gain"}
+                        </dt>
                         <dd>{e.skill.toFixed(2)}</dd>
                       </div>
                       <div>
@@ -246,10 +278,10 @@ export function CharacterPlan({
                         : "No posting deposit is assumed for kept tools or enchant applications."}
                     </p>
                     {e.oldest &&
-                      Date.now() - Date.parse(e.oldest) > 6 * 3600_000 && (
+                      Date.now() - Date.parse(e.oldest) > 3600_000 && (
                         <p className="note">
-                          Price data used here is over six hours old. Recheck
-                          the prices in game.
+                          Price data used here is over an hour old. Recheck the
+                          prices in game.
                         </p>
                       )}
                     {e.de && (
@@ -257,7 +289,15 @@ export function CharacterPlan({
                         {e.de.guaranteed
                           ? "Material yield is guaranteed; resale prices are not."
                           : `One-roll cash margin before deposits: ${money(e.de.worst === null ? null : e.de.worst * e.units - e.cost.cash!)} to ${money(e.de.best === null ? null : e.de.best * e.units - e.cost.cash!)}. Material drops vary.`}{" "}
-                        Disenchanting does not award Enchanting skill.
+                        {e.de.breakEvenChance !== null && !e.de.guaranteed && (
+                          <>
+                            {" "}
+                            Modeled chance to cover cash inputs before deposits:{" "}
+                            {(e.de.breakEvenChance * 100).toFixed(0)}%.{" "}
+                          </>
+                        )}
+                        DE skill gains are not modeled; this plan does not count
+                        them toward your Enchanting target.
                       </p>
                     )}
                     {r && !c.known.includes(r.id) && (
@@ -325,6 +365,19 @@ export function CharacterPlan({
                           </a>
                         </p>
                       ))}
+                      {r && recipeTools(r).length > 0 && (
+                        <p className="note">
+                          Tools: {recipeTools(r).map(itemName).join(", ")}.
+                          {r.station ? ` Use a nearby ${r.station}.` : ""}
+                        </p>
+                      )}
+                      {e.de && !ITEMS[e.action.itemId]?.de && (
+                        <p className="note">
+                          DE table supplied by the price provider; not
+                          independently checked for this item. Verify its
+                          outcome table before buying.
+                        </p>
+                      )}
                       {r && (
                         <p className="note">
                           {r.profession} {r.min} · {r.acquisition} · {r.binding}{" "}
@@ -392,6 +445,10 @@ export function CharacterPlan({
           catalogue is a small checked set, not every recipe in Forever.
           Equipment's required wearing level does not decide whether you can
           craft it for sale.
+        </p>
+        <p>
+          Skill chances and DE stack averages are baseline estimates. Legacy
+          perks, campsite bonuses and individual sales speed are not modeled.
         </p>
         <p>
           Use Leveling to confirm recipes, tools, targets and material quotes.

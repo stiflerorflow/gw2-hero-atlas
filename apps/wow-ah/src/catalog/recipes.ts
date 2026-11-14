@@ -224,7 +224,8 @@ export const RECIPES: Recipe[] = [
       [10938, 1],
     ],
     {
-      unlock: 0,
+      tool: 6218,
+      unlock: null,
       note: "Explicit item exception: cannot be disenchanted. No Enchanting skill gain at 115 or above.",
     },
   ),
@@ -239,7 +240,9 @@ export const RECIPES: Recipe[] = [
       [10938, 2],
     ],
     {
-      unlock: 0,
+      tool: 6218,
+      source: "https://www.wowhead.com/forever/spell=14807/greater-magic-wand",
+      unlock: 200,
       note: "Explicit item exception: cannot be disenchanted, even if a generic weapon table or feed lists yields.",
     },
   ),
@@ -251,6 +254,7 @@ export const RECIPES: Recipe[] = [
     [50, 100, 120, 140],
     [[10940, 2]],
     {
+      tool: 6218,
       service: true,
       binding: "none",
       unlock: 200,
@@ -265,6 +269,7 @@ export const RECIPES: Recipe[] = [
     [70, 110, 130, 150],
     [[10940, 2]],
     {
+      tool: 6218,
       service: true,
       binding: "none",
       unlock: 200,
@@ -431,8 +436,12 @@ RECIPES.push(
       [2592, 1],
     ],
     {
-      unlock: null,
-      note: "Yellow from its learn threshold 125; no guaranteed skill-up claim. Components can be kept for later Engineering.",
+      unlock: 500,
+      tools: [5956, 6219],
+      station: "Anvil",
+      source:
+        "https://www.wowhead.com/forever/spell=3942/whirring-bronze-gizmo",
+      note: "Yellow from skill 125; not a guaranteed skill-up. Requires a Blacksmith Hammer, Arclight Spanner and a nearby Anvil. Training reference 5s; confirm your trainer quote.",
     },
   ),
   r(
@@ -452,3 +461,14 @@ RECIPES.push(
     },
   ),
 );
+
+export const recipeTools = (recipe: Recipe): number[] => [
+  ...new Set([...(recipe.tool ? [recipe.tool] : []), ...(recipe.tools || [])]),
+];
+export const relevantTools = (c: import("../types").Character): number[] => [
+  ...new Set(
+    RECIPES.filter(
+      (r) => c.skills[r.profession] && r.min <= c.skills[r.profession]!.level,
+    ).flatMap(recipeTools),
+  ),
+];

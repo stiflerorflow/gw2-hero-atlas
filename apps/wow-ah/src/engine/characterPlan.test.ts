@@ -154,3 +154,25 @@ describe("character next steps", () => {
     expect(keySupplies(c)).toEqual([785, 2450]);
   });
 });
+
+it("blocks Wand progress until the actual required Copper Rod is confirmed", () => {
+  const { c, m } = fixture({ 10938: 100, 11288: 1000 });
+  c.skills = { Enchanting: { level: 100, cap: 150, target: 150 } };
+  expect(
+    characterPlan(c, m).choices.some((x) =>
+      x.goals.includes("Enchanting progress"),
+    ),
+  ).toBe(false);
+  c.tools = [6218];
+  const choice = characterPlan(c, m).choices.find(
+    (x) => x.evaluation.action.recipeId === 14807,
+  )!;
+  expect(choice).toBeDefined();
+  expect(choice.evaluation.cost.cash).toBe(238);
+  c.known = c.known.filter((id) => id !== 14807);
+  expect(
+    characterPlan(c, m).choices.find(
+      (x) => x.evaluation.action.recipeId === 14807,
+    )!.evaluation.cost.cash,
+  ).toBe(438);
+});

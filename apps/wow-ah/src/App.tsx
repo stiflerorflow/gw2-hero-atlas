@@ -18,7 +18,13 @@ import type {
 } from "./types";
 import { MARKET, PROFESSIONS } from "./types";
 import { ITEMS, itemName } from "./catalog/items";
-import { RECIPES, CONVERSIONS, recipeById } from "./catalog/recipes";
+import {
+  RECIPES,
+  CONVERSIONS,
+  recipeById,
+  recipeTools,
+  relevantTools,
+} from "./catalog/recipes";
 import {
   patternPayback,
   access,
@@ -74,7 +80,7 @@ function download(name: string, data: string) {
 function quoteAge(q: Quote | undefined) {
   return !q?.observedAt
     ? "No scan time"
-    : Date.now() - Date.parse(q.observedAt) > 6 * 3600_000
+    : Date.now() - Date.parse(q.observedAt) > 3600_000
       ? "Old scan · " + time(q.observedAt)
       : time(q.observedAt);
 }
@@ -799,7 +805,7 @@ function App() {
             <dd>{money(e.maxBuy)}</dd>
           </div>
           <div>
-            <dt>Expected skill gain</dt>
+            <dt>{e.de ? "Modeled craft skill gain" : "Expected skill gain"}</dt>
             <dd>{e.skill.toFixed(2)}</dd>
           </div>
         </dl>
@@ -836,7 +842,11 @@ function App() {
             {r.profession} {r.min} · yellow {r.yellow}, green {r.green}, grey{" "}
             {r.grey} · {r.binding} · {r.expansion}
             <br />
-            {r.note}
+            {r.note}{" "}
+            {recipeTools(r).length
+              ? `Tools: ${recipeTools(r).map(itemName).join(", ")}.`
+              : ""}{" "}
+            {r.station ? `Use a nearby ${r.station}.` : ""}
           </p>
         )}
         <QuoteEditor
@@ -2036,7 +2046,11 @@ function Batch({
                     <dd>{money(e.depositHeld)}</dd>
                   </div>
                   <div>
-                    <dt>Expected skill gain</dt>
+                    <dt>
+                      {e.de
+                        ? "Modeled craft skill gain"
+                        : "Expected skill gain"}
+                    </dt>
                     <dd>{e.skill.toFixed(2)}</dd>
                   </div>
                 </dl>
@@ -2700,13 +2714,14 @@ function ProfileEditor({
                 value={p}
                 onChange={(e) =>
                   update((c) => {
-                    const skills = { ...c.skills };
-                    delete skills[p as Profession];
-                    skills[e.target.value as Profession] = {
-                      level: 1,
-                      cap: 150,
-                      target: 150,
-                    };
+                    const profession = e.target.value as Profession;
+                    const skills = Object.fromEntries(
+                      Object.entries(c.skills).map(([slot, value]) =>
+                        slot === p
+                          ? [profession, { level: 1, cap: 75, target: 150 }]
+                          : [slot, value],
+                      ),
+                    );
                     return { ...c, skills };
                   })
                 }
@@ -2930,21 +2945,24 @@ function ProfileEditor({
             }}
           />
         </div>
-        <label className="inline">
-          <input
-            type="checkbox"
-            checked={c.tools.includes(6339)}
-            onChange={(e) =>
-              update((c) => ({
-                ...c,
-                tools: e.target.checked
-                  ? [...new Set([...c.tools, 6339])]
-                  : c.tools.filter((i) => i !== 6339),
-              }))
-            }
-          />
-          I have the required Runed Silver Rod available
-        </label>
+        {relevantTools(c).map((id) => (
+          <label className="inline" key={id}>
+            <input
+              type="checkbox"
+              checked={c.tools.includes(id)}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                update((c) => ({
+                  ...c,
+                  tools: checked
+                    ? [...new Set([...c.tools, id])]
+                    : c.tools.filter((v) => v !== id),
+                }));
+              }}
+            />
+            I have {itemName(id)} available
+          </label>
+        ))}
       </section>
       <button className="primary wide" onClick={close}>
         Done · return to planner

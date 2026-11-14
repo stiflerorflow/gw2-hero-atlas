@@ -46,6 +46,8 @@ export type Recipe = {
   source: string;
   note: string;
   tool?: number;
+  tools?: number[];
+  station?: string;
   once?: boolean;
   service?: boolean;
   binding: "BoE" | "BoP" | "none";

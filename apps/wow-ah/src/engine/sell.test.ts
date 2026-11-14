@@ -104,3 +104,42 @@ it("stale losing quotes do not produce a confident vendor verdict", () => {
     "AH price unavailable",
   );
 });
+
+it("replaces known Classic vendor values with sourced Forever corrections", () => {
+  for (const [id, oldValue, foreverValue] of [
+    [11287, 508, 110],
+    [11288, 1535, 200],
+    [11289, 3581, 450],
+    [11290, 5263, 600],
+    [20744, 500, 100],
+  ]) {
+    const item = normalizeCatalogItem(
+      {
+        id,
+        name: "Synthetic legacy-value response",
+        version: "forever",
+        kind: "item",
+        vendor_sell: oldValue,
+        binding: "Binds when equipped",
+      },
+      id,
+    );
+    expect(item.vendorSell).toBe(foreverValue);
+    expect(item.vendorReference?.source).toContain("us.forums.blizzard.com");
+    expect(item.vendorReference?.checkedAt).toBe("2026-11-14");
+  }
+  const wand = normalizeCatalogItem(
+    {
+      id: 11288,
+      name: "Greater Magic Wand",
+      version: "forever",
+      kind: "item",
+      vendor_sell: 1535,
+    },
+    11288,
+  );
+  // A 3s auction should beat its 2s vendor value, rather than inventing a 15s35c payout.
+  expect(sellDecision(wand.vendorSell!, 300, 1, 0, false).title).toBe(
+    "AH could pay more",
+  );
+});

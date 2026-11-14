@@ -1,11 +1,14 @@
 import { ExpiryCache } from "./expiryCache";
 import { isCopper } from "../engine/money";
+import { VENDOR_CORRECTIONS } from "../catalog/vendorCorrections";
+import type { VendorReference } from "../catalog/vendorCorrections";
 export type CatalogItem = {
   id: number;
   name: string;
   quality: string;
   url: string;
   vendorSell?: number | null;
+  vendorReference?: VendorReference;
   binding?: string | null;
   build?: string;
   expiresAt?: number;
@@ -129,7 +132,12 @@ export function normalizeCatalogItem(raw: unknown, id: number): CatalogItem {
     throw Error("Catalogue item or game version did not match.");
   return {
     ...v,
-    vendorSell: isCopper(x.vendor_sell) ? x.vendor_sell : null,
+    vendorSell:
+      VENDOR_CORRECTIONS[id]?.value ??
+      (isCopper(x.vendor_sell) ? x.vendor_sell : null),
+    ...(VENDOR_CORRECTIONS[id]
+      ? { vendorReference: VENDOR_CORRECTIONS[id] }
+      : {}),
     binding: typeof x.binding === "string" ? x.binding : null,
     build: typeof x.build === "string" ? x.build : "",
   };
