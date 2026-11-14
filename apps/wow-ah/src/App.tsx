@@ -39,6 +39,7 @@ import {
   purgeExpired,
   unknownMarket,
 } from "./market/ahledger";
+import { SellOrVendor } from "./components/SellOrVendor";
 import { FlipScanner } from "./components/FlipScanner";
 import { loadScanner, DEFAULT_SCAN } from "./market/scanner";
 import type { ScanFilters } from "./market/scanner";
@@ -321,9 +322,14 @@ function App() {
     [stale, setStale] = useState(false),
     savedRaw = useRef(initial.current.raw),
     [page, setPage] = useState(
-      ["scanner", "opportunities", "leveling", "batch", "watchlist"].includes(
-        location.hash.slice(1),
-      )
+      [
+        "scanner",
+        "sell",
+        "opportunities",
+        "leveling",
+        "batch",
+        "watchlist",
+      ].includes(location.hash.slice(1))
         ? location.hash.slice(1)
         : "scanner",
     ),
@@ -380,9 +386,14 @@ function App() {
   useEffect(() => {
     const fn = () =>
       setPage(
-        ["scanner", "opportunities", "leveling", "batch", "watchlist"].includes(
-          location.hash.slice(1),
-        )
+        [
+          "scanner",
+          "sell",
+          "opportunities",
+          "leveling",
+          "batch",
+          "watchlist",
+        ].includes(location.hash.slice(1))
           ? location.hash.slice(1)
           : "scanner",
       );
@@ -391,7 +402,14 @@ function App() {
   }, []);
   useEffect(() => {
     document.title =
-      page[0].toUpperCase() + page.slice(1) + " · The Copper Ledger";
+      ({
+        scanner: "Flip scanner",
+        sell: "Sell or vendor",
+        opportunities: "Crafting",
+        leveling: "Leveling",
+        batch: "Batch planner",
+        watchlist: "Watchlist",
+      }[page] || "Planner") + " · The Copper Ledger";
   }, [page]);
   const allWatches = useMemo(
     () =>
@@ -403,6 +421,10 @@ function App() {
   const abort = useRef<AbortController | null>(null);
   const refresh = useCallback(async () => {
     abort.current?.abort();
+    if (page === "sell") {
+      setLoading(false);
+      return;
+    }
     const controller = new AbortController();
     abort.current = controller;
     setLoading(true);
@@ -421,10 +443,10 @@ function App() {
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
-  }, [allWatches.join(","), page === "scanner", scanFilters]);
+  }, [allWatches.join(","), page === "scanner", page === "sell", scanFilters]);
   useEffect(() => {
     setMarket(unknownMarket());
-  }, [page === "scanner", scanFilters]);
+  }, [page === "scanner", page === "sell", scanFilters]);
   useEffect(() => {
     void refresh();
     const timer = setInterval(() => void refresh(), 60000),
@@ -777,10 +799,10 @@ function App() {
           </span>
           <span>
             THE COPPER LEDGER
-            <small>Market insights. A clearer next move.</small>
+            <small>Auction prices and profession planning.</small>
           </span>
         </a>
-        {page === "scanner" ? (
+        {["scanner", "sell"].includes(page) ? (
           <p className="scanner-identity">
             Market-wide scanning
             <br />
@@ -810,14 +832,23 @@ function App() {
         <span>
           <i /> WoW Forever · EU · RP non-PvP · Alliance
         </span>
-        <span>Observed {stamp ? time(stamp) : "— no market observation"}</span>
-        <button onClick={() => void refresh()} disabled={loading}>
-          {loading ? "Refreshing…" : "↻ Refresh"}
-        </button>
+        <span>
+          {page === "sell" ? (
+            "Quote time is shown with each item"
+          ) : (
+            <>Observed {stamp ? time(stamp) : "— no market observation"}</>
+          )}
+        </span>
+        {page !== "sell" && (
+          <button onClick={() => void refresh()} disabled={loading}>
+            {loading ? "Refreshing…" : "↻ Refresh"}
+          </button>
+        )}
       </div>
       <nav className="main-nav" aria-label="Planner">
         {[
           ["scanner", "Flip scanner", "00"],
+          ["sell", "Sell or vendor", "05"],
           ["opportunities", "Crafting", "01"],
           ["leveling", "Leveling", "02"],
           ["batch", "Batch planner", "03"],
@@ -849,6 +880,7 @@ function App() {
         </div>
       )}
       <main id="main-content" tabIndex={-1}>
+        {page === "sell" && <SellOrVendor />}
         {page === "scanner" && (
           <FlipScanner
             market={market}
@@ -871,16 +903,12 @@ function App() {
           <>
             <section className="intro">
               <div>
-                <p className="eyebrow">{c.name}’s market notebook</p>
-                <h1>
-                  Make your next
-                  <br />
-                  <em>copper count.</em>
-                </h1>
+                <h1>Crafting opportunities</h1>
                 <p>
-                  Buy with a budget. Craft with a reason.
-                  <br />
-                  See the assumptions before you spend.
+                  {c.cash === null
+                    ? "Enter cash to check affordability."
+                    : `${affordable} positive scenarios fit the inputs budget.`}{" "}
+                  Compare the cost and requirements before adding a batch.
                 </p>
               </div>
               <aside className="wallet">
@@ -910,14 +938,13 @@ function App() {
                 <span>Faction AH cut</span>
               </div>
               <div>
-                <b>Start small</b>
-                <span>Market demand ≠ your sales</span>
+                <b>Deposits</b>
+                <span>Enter the in-game quote</span>
               </div>
             </section>
             <div className="section-title">
               <div>
-                <p className="eyebrow">Inspect, then test</p>
-                <h2>On the workbench</h2>
+                <h2>Compare craft costs</h2>
               </div>
               <Credit />
             </div>
@@ -1256,13 +1283,13 @@ function Leveling({
   return (
     <>
       <section className="page-heading">
-        <p className="eyebrow">Skill, without the blind spending</p>
-        <h1>
-          A route to <em>your next point.</em>
-        </h1>
+        <h1>Plan your skill points</h1>
         <p>
-          Every threshold comes from the checked catalogue. Your cap, tools and
-          learned recipes determine what is usable now.
+          {gathering
+            ? "Record your current skill and gathered materials."
+            : plan.steps.length
+              ? `The estimated route reaches ${plan.end}. Check the steps below, then add them to a batch.`
+              : "No priced, learned route is available yet. Confirm known recipes and missing prices below."}
         </p>
       </section>
       <div className="panel leveling-controls">
@@ -1631,15 +1658,23 @@ function Batch({
   return (
     <>
       <section className="page-heading">
-        <p className="eyebrow">Reserve first. Revenue later.</p>
-        <h1>
-          A batch you can <em>actually fund.</em>
-        </h1>
+        <h1>Check your batch budget</h1>
         <p>
           Shared inputs are consumed once across this character’s actions. Other
           characters’ materials and cash stay separate.
         </p>
       </section>
+      <p className={"batch-status " + (plan.ready ? "good" : "warning")}>
+        {!c.batch.length
+          ? "Add a small test batch from Crafting or Leveling."
+          : plan.ready
+            ? "Fits the stated budget with known deposits. Verify all in-game quotes before acting."
+            : plan.fits === false
+              ? "This batch exceeds the budget after your reserve."
+              : plan.upfront === null
+                ? "Upfront total is incomplete: enter missing input prices, fees and deposits."
+                : "Inputs may fit, but requirements or deposits still need attention."}
+      </p>
       <div className="batch-top">
         <MoneyInput
           label="Cash reserve"
@@ -1688,17 +1723,7 @@ function Batch({
           <span>Scenario profit · not realized</span>
         </div>
       </section>
-      <p className={"batch-status " + (plan.ready ? "good" : "warning")}>
-        {!c.batch.length
-          ? "Add a small test batch from Crafting or Leveling."
-          : plan.ready
-            ? "Fits the stated budget with known deposits. Verify all in-game quotes before acting."
-            : plan.fits === false
-              ? "This batch exceeds the budget after your reserve."
-              : plan.upfront === null
-                ? "Upfront total is incomplete: enter missing input prices, fees and deposits."
-                : "Inputs may fit, but requirements or deposits still need attention."}
-      </p>
+
       <p className="note">
         Profit assumes only the sale fraction selected below. Zero sales is the
         default. A returned deposit is not income; only unsold/expired deposits
@@ -2024,10 +2049,7 @@ function Watchlist({
   return (
     <>
       <section className="page-heading">
-        <p className="eyebrow">Observe before committing</p>
-        <h1>
-          Your market <em>shortlist.</em>
-        </h1>
+        <h1>Watch market prices</h1>
         <p>
           Track asking prices and your own transactions separately. Thresholds
           are checks while this page is open, not background notifications.
@@ -2164,7 +2186,8 @@ function Watchlist({
           );
         })}
       </div>
-      <section className="panel sales-log">
+      <details className="panel sales-log">
+        <summary>Record a completed sale</summary>
         <p className="eyebrow">Your evidence, not inferred demand</p>
         <h2>Record a completed sale</h2>
         <p>
@@ -2279,7 +2302,7 @@ function Watchlist({
             </ul>
           </details>
         )}
-      </section>
+      </details>
     </>
   );
 }
@@ -2343,8 +2366,8 @@ function ProfileEditor({
         </button>
       </div>
       <p>
-        Inventory and cash are isolated per character. Glimpo and Grimpo Grongo
-        are distinct profiles.
+        Edit this character’s cash, skills and supplies. Other characters stay
+        separate.
       </p>
       <div className="form-grid">
         <label>

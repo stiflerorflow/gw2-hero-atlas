@@ -15,6 +15,7 @@ async function setup(page: any) {
   await page.route("https://api.ahledger.com/**", (r: any) => r.abort());
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(url + "#watchlist");
+  await page.locator(".sales-log > summary").click();
 }
 test("Enter saves current money edits, not previous quote or sale values", async ({
   page,
@@ -83,6 +84,7 @@ test("unsaved sale drafts are cleared when changing characters", async ({
   await page
     .getByRole("combobox", { name: "Character", exact: true })
     .selectOption("chumbles");
+  await page.locator(".sales-log > summary").click();
   await expect(
     page.getByRole("textbox", { name: /Total gross sale proceeds/ }),
   ).toHaveValue("");

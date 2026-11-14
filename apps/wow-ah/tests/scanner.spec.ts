@@ -72,7 +72,7 @@ test("default scanner needs no profile or crafting, ranks market activity and ev
   });
   await page.goto("");
   await expect(
-    page.getByRole("heading", { name: "Find your next flip." }),
+    page.getByRole("heading", { name: "Compare resale candidates" }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Edit profile", exact: true }),
@@ -117,7 +117,7 @@ test("default scanner needs no profile or crafting, ranks market activity and ev
     .toBe(true);
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Find your next flip." }),
+    page.getByRole("heading", { name: "Compare resale candidates" }),
   ).toBeVisible();
 });
 test("scanner handles missing data without phantom flips and preserves crafting workflow", async ({
@@ -129,7 +129,7 @@ test("scanner handles missing data without phantom flips and preserves crafting 
   await expect(page.locator(".flip-card")).toHaveCount(0);
   await page.getByRole("link", { name: "Crafting", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Make your next copper count." }),
+    page.getByRole("heading", { name: "Crafting opportunities" }),
   ).toBeVisible();
   await expect(
     page.getByRole("combobox", { name: "Character", exact: true }),
@@ -186,12 +186,10 @@ test("historical recovery is opt-in and vendor competition/old quotes are expose
     .getByRole("combobox", { name: "Resale model", exact: true })
     .selectOption("historical");
   await expect(page.locator(".flip-card")).toHaveCount(2);
-  const bag = page
-    .locator(".flip-card")
-    .filter({
-      has: page.getByRole("heading", { name: "Mageweave Reagent Bag" }),
-    });
-  await expect(bag).toContainText("needs a market recovery");
+  const bag = page.locator(".flip-card").filter({
+    has: page.getByRole("heading", { name: "Mageweave Reagent Bag" }),
+  });
+  await expect(bag).toContainText("Needs a price recovery");
   await expect(bag).toContainText("Quote is 120 minutes old");
   const thread = page
     .locator(".flip-card")

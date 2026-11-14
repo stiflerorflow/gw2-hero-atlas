@@ -16,6 +16,10 @@ The default [flip scanner](https://stiflerorflow.github.io/gw2-hero-atlas/wow-ah
 
 Initial profiles: Glimpo Tailoring120/Enchanting100, 2g50; Chumbles Herbalism110/Alchemy130; Grimpo Grongo Warrior Engineering130/Mining110. Cash for the last two is unknown. Explicit transfers move finite recorded materials without pooling wallets; soulbound tools cannot transfer.
 
+## Sell or vendor
+
+Open `#sell` to search the paged Forever catalogue by name, item ID or pasted item link. Select an item to compare vendor gold against the EU RP Alliance AH scenario after fees. No profile or sales logging is required. [API choices and presentation review](API_CONTEXT_REVIEW.md).
+
 ## Development and release
 
 ```sh

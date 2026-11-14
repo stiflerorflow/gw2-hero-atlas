@@ -1,3 +1,4 @@
+import { assessCandidate } from "../engine/assessment";
 import { ITEMS } from "../catalog/items";
 import { PriceContext } from "./PriceContext";
 import { useEffect, useState } from "react";
@@ -107,19 +108,16 @@ export function FlipScanner({
   return (
     <>
       <section className="page-heading scanner-heading">
-        <p className="eyebrow">Buy low. Resell. Keep the difference.</p>
-        <h1>
-          Find your next <em>flip.</em>
-        </h1>
+        <h1>Compare resale candidates</h1>
         <p>
-          Scan the market for resale opportunities. No profession, inventory or
-          character setup required.
+          {loading
+            ? "Loading the market scan."
+            : `${rows.length} candidates match your filters.`}{" "}
+          Check the quoted spread, demand and price age before buying.
         </p>
         <p className="note">
-          Potential profit uses your assumed resale price after the 5% AH cut,
-          before lost deposits. Current-spread mode caps the resale assumption
-          at today’s median asks. Historical recovery is a separate speculative
-          mode; neither price is a confirmed sale.
+          Potential profit includes the 5% AH cut and excludes lost deposits.
+          Resale prices are assumptions.
         </p>
       </section>
       <div className="scan-presets" role="group" aria-label="Scan presets">
@@ -308,17 +306,21 @@ export function FlipScanner({
       <div className="flip-grid">
         {rows.slice(0, showAll ? 200 : compact ? 3 : 12).map(({ d, q, s }) => (
           <article className="panel flip-card" key={d.id}>
-            <div className="card-top">
-              <span className="eyebrow">{d.quality || "Market resale"}</span>
-              <span className="pill">
-                {q.soldPerDay === null
-                  ? "Demand unknown"
-                  : q.soldPerDay === 0
-                    ? "No inferred sales"
-                    : "Estimated activity"}
-              </span>
-            </div>
             <h3>{q.name}</h3>
+            <div className="candidate-verdict">
+              <strong>
+                {
+                  assessCandidate(q, s.profit, s.exit, ITEMS[q.id]?.vendor)
+                    .title
+                }
+              </strong>
+              <p>
+                {
+                  assessCandidate(q, s.profit, s.exit, ITEMS[q.id]?.vendor)
+                    .reason
+                }
+              </p>
+            </div>
             <div className="flip-demand">
               <b>
                 {q.soldPerDay === null
@@ -347,90 +349,6 @@ export function FlipScanner({
                 </dd>
               </div>
             </dl>
-            <p className="card-note">
-              {d.reference !== null && d.reference > 0 && s.buy !== null && (
-                <>
-                  <b>
-                    {((1 - s.buy / d.reference) * 100).toFixed(1)}% below
-                    reference asks
-                  </b>
-                  <br />
-                </>
-              )}
-              Assumed resale {money(s.exit)} ·{" "}
-              {s.roi === null
-                ? "Unknown ROI"
-                : s.roi.toFixed(1) + "% return on cash"}
-              <br />
-              {model === "current"
-                ? "Capped at current median; historical ceiling "
-                : "Speculative recovery to "}
-              {exitPercent}% of {basisLabel(d.basis)} ({money(d.reference)})
-              <br />
-              Current median asks: {money(q.median)}
-            </p>
-            <p className="note">
-              {s.daysSupply === null
-                ? "Days of supply unknown"
-                : s.daysSupply.toFixed(1) + " approximate days of supply"}{" "}
-              · whole market, not your selling time.
-            </p>
-            {(q.soldPerDay === null ||
-              q.soldPerDay === 0 ||
-              d.basis === "scan") && (
-              <p className="warning">
-                {d.basis === "scan"
-                  ? "Reference is only the current scan; no historical discount is established."
-                  : "Demand is not established. A large paper margin may never sell."}
-              </p>
-            )}
-            {model === "historical" &&
-              s.exit !== null &&
-              q.median !== null &&
-              s.exit > q.median && (
-                <p className="warning">
-                  Resale assumption is{" "}
-                  {((s.exit / q.median - 1) * 100).toFixed(0)}% above current
-                  median asks. This needs a market recovery, not just a relist.
-                </p>
-              )}
-            {ITEMS[q.id]?.vendor !== undefined && (
-              <p className="warning">
-                Vendor competition: catalogue purchase reference{" "}
-                {money(ITEMS[q.id].vendor)} per unit before reputation
-                discounts. Check NPC stock before buying from the AH.
-                {q.id === 2320 && (
-                  <>
-                    {" "}
-                    <a
-                      href="https://wow-forever.gg/spotlight/coarse-thread/"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Vendor check ↗
-                    </a>
-                  </>
-                )}
-              </p>
-            )}
-            {q.observedAt &&
-              Date.now() - Date.parse(q.observedAt) > 3600000 && (
-                <p className="warning">
-                  Quote is{" "}
-                  {Math.floor((Date.now() - Date.parse(q.observedAt)) / 60000)}{" "}
-                  minutes old. Verify the current in-game price before buying.
-                </p>
-              )}
-            <p className="timestamp">
-              Observed{" "}
-              {q.observedAt
-                ? new Date(q.observedAt).toLocaleString()
-                : "unknown"}
-              {q.observedAt &&
-              Date.now() - Date.parse(q.observedAt) > 6 * 3600000
-                ? " · old scan"
-                : ""}
-            </p>
             <div className="row-actions">
               <button onClick={() => void copy(q.name)}>Copy item name</button>
               <a
@@ -443,6 +361,100 @@ export function FlipScanner({
             </div>
             <details>
               <summary>Price history & calculator</summary>
+              <details className="price-evidence">
+                <summary>Price assumptions and source details</summary>{" "}
+                <p className="card-note">
+                  {d.reference !== null &&
+                    d.reference > 0 &&
+                    s.buy !== null && (
+                      <>
+                        <b>
+                          {((1 - s.buy / d.reference) * 100).toFixed(1)}% below
+                          reference asks
+                        </b>
+                        <br />
+                      </>
+                    )}
+                  Assumed resale {money(s.exit)} ·{" "}
+                  {s.roi === null
+                    ? "Unknown ROI"
+                    : s.roi.toFixed(1) + "% return on cash"}
+                  <br />
+                  {model === "current"
+                    ? "Capped at current median; historical ceiling "
+                    : "Speculative recovery to "}
+                  {exitPercent}% of {basisLabel(d.basis)} ({money(d.reference)})
+                  <br />
+                  Current median asks: {money(q.median)}
+                </p>
+                <p className="note">
+                  {s.daysSupply === null
+                    ? "Days of supply unknown"
+                    : s.daysSupply.toFixed(1) +
+                      " approximate days of supply"}{" "}
+                  · whole market, not your selling time.
+                </p>
+                {(q.soldPerDay === null ||
+                  q.soldPerDay === 0 ||
+                  d.basis === "scan") && (
+                  <p className="warning">
+                    {d.basis === "scan"
+                      ? "Reference is only the current scan; no historical discount is established."
+                      : "Demand is not established. A large paper margin may never sell."}
+                  </p>
+                )}
+                {model === "historical" &&
+                  s.exit !== null &&
+                  q.median !== null &&
+                  s.exit > q.median && (
+                    <p className="warning">
+                      Resale assumption is{" "}
+                      {((s.exit / q.median - 1) * 100).toFixed(0)}% above
+                      current median asks. This needs a market recovery, not
+                      just a relist.
+                    </p>
+                  )}
+                {ITEMS[q.id]?.vendor !== undefined && (
+                  <p className="warning">
+                    Vendor competition: catalogue purchase reference{" "}
+                    {money(ITEMS[q.id].vendor)} per unit before reputation
+                    discounts. Check NPC stock before buying from the AH.
+                    {q.id === 2320 && (
+                      <>
+                        {" "}
+                        <a
+                          href="https://wow-forever.gg/spotlight/coarse-thread/"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Vendor check ↗
+                        </a>
+                      </>
+                    )}
+                  </p>
+                )}
+                {q.observedAt &&
+                  Date.now() - Date.parse(q.observedAt) > 3600000 && (
+                    <p className="warning">
+                      Quote is{" "}
+                      {Math.floor(
+                        (Date.now() - Date.parse(q.observedAt)) / 60000,
+                      )}{" "}
+                      minutes old. Verify the current in-game price before
+                      buying.
+                    </p>
+                  )}
+                <p className="timestamp">
+                  Observed{" "}
+                  {q.observedAt
+                    ? new Date(q.observedAt).toLocaleString()
+                    : "unknown"}
+                  {q.observedAt &&
+                  Date.now() - Date.parse(q.observedAt) > 6 * 3600000
+                    ? " · old scan"
+                    : ""}
+                </p>
+              </details>
               <FlipDetail
                 q={q}
                 reference={d.reference}

@@ -16,7 +16,7 @@ test("phone: navigation, isolated profiles, inventory, batch and accessible layo
   );
   await page.goto("#opportunities");
   await expect(
-    page.getByRole("heading", { name: "Make your next copper count." }),
+    page.getByRole("heading", { name: "Crafting opportunities" }),
   ).toBeVisible();
   await expect(page.locator(".wallet")).toContainText("2g 50s");
   await expect(page.locator(".opportunity")).toHaveCount(3);
@@ -57,7 +57,14 @@ test("phone: navigation, isolated profiles, inventory, batch and accessible layo
   ).toHaveValue("glimpo");
   for (const width of [320, 390, 768, 1280]) {
     await page.setViewportSize({ width, height: 844 });
-    for (const hash of ["opportunities", "leveling", "batch", "watchlist"]) {
+    for (const hash of [
+      "scanner",
+      "sell",
+      "opportunities",
+      "leveling",
+      "batch",
+      "watchlist",
+    ]) {
       await page.goto("#" + hash);
       await expect
         .poll(() =>
@@ -114,7 +121,14 @@ test("every screen passes accessibility checks on phone and desktop", async ({
   await page.route(api, (r) => r.abort());
   for (const width of [390, 1280]) {
     await page.setViewportSize({ width, height: 844 });
-    for (const hash of ["opportunities", "leveling", "batch", "watchlist"]) {
+    for (const hash of [
+      "scanner",
+      "sell",
+      "opportunities",
+      "leveling",
+      "batch",
+      "watchlist",
+    ]) {
       await page.goto("#" + hash);
       const scan = await new AxeBuilder({ page }).analyze();
       expect(
