@@ -16,6 +16,7 @@ import {
 } from "../catalog/recipes";
 import { net } from "./money";
 import { isAuctionBound } from "./binding";
+import { bestKnownSaleValue } from "./sell";
 export type Line = {
   id: number;
   qty: number;
@@ -109,6 +110,18 @@ export function exitFor(
   const market = m.quotes[id];
   return market && market.expiresAt > Date.now() ? market.ask : null;
 }
+export function ownedValue(
+  id: number,
+  c: Character,
+  m: MarketData,
+): number | null {
+  const item = resolvedItem(id, m);
+  return bestKnownSaleValue(
+    ITEMS[id]?.vendorSell ?? item.vendorSell ?? null,
+    exitFor(id, c, m),
+    isAuctionBound(ITEMS[id]?.binding ?? item.binding),
+  );
+}
 export function unlockCost(
   r: Recipe,
   c: Character,
@@ -179,12 +192,23 @@ function rawAcquire(
   const out = emptyCost(pool),
     q = quoteFor(id, c, m),
     price = q?.ask ?? null;
-  out.cash = price === null ? null : Math.ceil(price * qty);
+  const lot =
+    q?.source === "Vendor reference · editable"
+      ? (ITEMS[id]?.vendorLot ?? 1)
+      : 1;
+  const purchased = Math.ceil(qty / lot) * lot;
+  if (purchased > qty) {
+    out.pool[id] = (out.pool[id] || 0) + purchased - qty;
+    out.steps.push(
+      `Buy ${purchased} ${itemName(id)} in vendor lots of ${lot}; keep ${purchased - qty} unused for later steps.`,
+    );
+  }
+  out.cash = price === null ? null : Math.ceil(price * purchased);
   out.economic = out.cash;
   out.lines = [
     {
       id,
-      qty,
+      qty: purchased,
       cash: out.cash,
       economic: out.economic,
       source: q?.source || "Unpriced",
@@ -214,8 +238,8 @@ export function acquire(
   const owned = Math.min(qty, Math.max(0, result.pool[id] || 0));
   if (owned) {
     result.pool[id] -= owned;
-    const price = exitFor(id, c, m),
-      economic = price === null ? null : net(price) * owned;
+    const price = ownedValue(id, c, m),
+      economic = price === null ? null : price * owned;
     result.economic = economic;
     result.lines.push({
       id,
@@ -717,8 +741,8 @@ export function batchPlan(actions: Action[], c: Character, m: MarketData) {
     const id = +key,
       qty = Math.min(used, c.inventory[id]?.qty || 0);
     if (qty) {
-      const price = exitFor(id, c, m);
-      economic = plus(economic, price === null ? null : net(price) * qty);
+      const price = ownedValue(id, c, m);
+      economic = plus(economic, price === null ? null : price * qty);
     }
   }
   const upfront = plus(cash, held),

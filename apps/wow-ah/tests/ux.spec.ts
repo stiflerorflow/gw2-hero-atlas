@@ -145,7 +145,7 @@ test("scanner calculator drafts survive navigation without storing provider pric
 }) => {
   await fixture(page);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("");
+  await page.goto("#scanner");
   const card = page.locator(".flip-card").first();
   await card.getByText("Price history & calculator", { exact: true }).click();
   await card
@@ -262,7 +262,7 @@ test("late scanner history cannot rewind a newly refreshed buy quote", async ({
       headers: { "Cache-Control": `max-age=${ttl}` },
     });
   });
-  await page.goto("");
+  await page.goto("#scanner");
   const card = page.locator(".flip-card").first();
   await card.getByText("Price history & calculator", { exact: true }).click();
   const older = page.waitForResponse((r) => r.url().includes("/prices/"));

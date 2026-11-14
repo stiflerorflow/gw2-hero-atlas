@@ -84,16 +84,21 @@ test("character context is short, isolated and persistent without changing the g
   await page
     .getByRole("combobox", { name: "Character", exact: true })
     .selectOption("glimpo");
+  await context.locator(".context-editor > summary").click();
   await expect(
     context.getByRole("spinbutton", { name: "Current character level" }),
   ).toHaveValue("20");
   await expect(
     context.getByRole("textbox", { name: "Current gold on this character" }),
   ).toHaveValue("3g 0s");
+  await context
+    .getByText("Relevant supplies · optional", { exact: true })
+    .click();
   await expect(
     context.getByRole("spinbutton", { name: "Wool Cloth", exact: true }),
   ).toHaveValue("7");
   await page.reload();
+  await context.locator(".context-editor > summary").click();
   await expect(
     context.getByRole("spinbutton", { name: "Current character level" }),
   ).toHaveValue("20");
@@ -214,6 +219,7 @@ test("changing profession preserves its position and a new skill moves the defau
     target: 225,
   });
   await page.reload();
+  await page.locator(".context-editor > summary").click();
   await expect(first.getByRole("combobox")).toHaveValue("Alchemy");
 });
 
@@ -273,6 +279,10 @@ test("confirming a Copper Rod unlocks Wand progress, without assuming tool owner
     }),
   });
   await expect(wand).toContainText("Enchanting progress");
+  await page.getByText("Compare priorities", { exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "Gold priority", exact: true })
+    .selectOption("margin");
   const de = page.locator(".plan-choice").filter({
     has: page.getByRole("heading", {
       name: "Duskwoven Bracers",
@@ -283,6 +293,7 @@ test("confirming a Copper Rod unlocks Wand progress, without assuming tool owner
   await expect(de).toContainText("over an hour old");
   await expect(de).toContainText("DE skill gains are not modeled");
   await page.reload();
+  await page.locator(".context-editor > summary").click();
   await expect(
     page.getByRole("checkbox", {
       name: "I have Runed Copper Rod available",

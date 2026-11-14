@@ -18,6 +18,7 @@ export type Item = {
   id: number;
   name: string;
   vendor?: number;
+  vendorLot?: number;
   vendorSell?: number;
   de?: Outcome[];
   noDE?: boolean;

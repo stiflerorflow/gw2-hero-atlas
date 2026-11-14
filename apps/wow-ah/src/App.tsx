@@ -1,3 +1,5 @@
+import { ROUTES, pageFromHash } from "./state/routes";
+import { BatchGuide } from "./components/BatchGuide";
 import { mergeHistoryQuote } from "./market/historyMerge";
 import {
   Fragment,
@@ -164,10 +166,10 @@ function CostLines({ e }: { e: Evaluation }) {
         </div>
       </dl>
       <p className="note">
-        Owned inputs use zero extra cash and their assumed net resale value as
-        opportunity cost. Cheapest asks are unit-price scenarios: total stock
-        does not prove that all units are offered at that price. Subcomponent
-        plans use whole crafts and retain surplus.
+        Owned inputs use zero extra cash and their best known vendor or net AH
+        value as opportunity cost. Cheapest asks are unit-price scenarios: total
+        stock does not prove that all units are offered at that price.
+        Subcomponent plans use whole crafts and retain surplus.
       </p>
     </>
   );
@@ -446,18 +448,7 @@ function App() {
     [storageError, setStorageError] = useState(initial.current.error),
     [stale, setStale] = useState(false),
     savedRaw = useRef(initial.current.raw),
-    [page, setPage] = useState(
-      [
-        "scanner",
-        "sell",
-        "opportunities",
-        "leveling",
-        "batch",
-        "watchlist",
-      ].includes(location.hash.slice(1))
-        ? location.hash.slice(1)
-        : "scanner",
-    ),
+    [page, setPage] = useState(() => pageFromHash(location.hash)),
     [modal, setModal] = useState(false),
     [restoreRevision, setRestoreRevision] = useState(0),
     [toast, setToast] = useState(""),
@@ -514,19 +505,7 @@ function App() {
     return () => window.removeEventListener("storage", fn);
   }, []);
   useEffect(() => {
-    const fn = () =>
-      setPage(
-        [
-          "scanner",
-          "sell",
-          "opportunities",
-          "leveling",
-          "batch",
-          "watchlist",
-        ].includes(location.hash.slice(1))
-          ? location.hash.slice(1)
-          : "scanner",
-      );
+    const fn = () => setPage(pageFromHash(location.hash));
     window.addEventListener("hashchange", fn);
     return () => window.removeEventListener("hashchange", fn);
   }, []);
@@ -1034,7 +1013,7 @@ function App() {
         Skip to content
       </a>
       <header className="masthead">
-        <a className="brand" href="#scanner">
+        <a className="brand" href="#opportunities">
           <span className="brand-mark">
             C<span>↗</span>
           </span>
@@ -1087,14 +1066,7 @@ function App() {
         )}
       </div>
       <nav className="main-nav" aria-label="Planner">
-        {[
-          ["scanner", "Flip scanner", "00"],
-          ["sell", "Sell or vendor", "05"],
-          ["opportunities", "Character plan", "01"],
-          ["leveling", "Leveling", "02"],
-          ["batch", "Batch planner", "03"],
-          ["watchlist", "Watchlist", "04"],
-        ].map(([id, label]) => (
+        {ROUTES.map(([id, label]) => (
           <a
             key={id}
             href={"#" + id}
@@ -1987,6 +1959,12 @@ function Batch({
                   ? "Upfront total is incomplete: enter missing input prices, fees and deposits."
                   : "Inputs may fit, but requirements or deposits still need attention."}
       </p>
+      <BatchGuide
+        c={c}
+        plan={plan}
+        showChecklist={() => setPostView(true)}
+        showEditor={() => setPostView(false)}
+      />
       <div className="batch-top">
         <MoneyInput
           label="Cash reserve"
@@ -2056,7 +2034,7 @@ function Batch({
             const e = plan.rows[i],
               recipe = recipeById(a.recipeId || 0);
             return (
-              <article className="batch-row" key={a.id}>
+              <article className="batch-row" key={a.id} id={"batch-" + a.id}>
                 <div className="section-title">
                   <div>
                     <span className="eyebrow">
@@ -2102,17 +2080,19 @@ function Batch({
                       onChange={(exit) => modify(a.id, (a) => ({ ...a, exit }))}
                     />
                   )}
-                  <MoneyInput
-                    label={
-                      a.kind.includes("de")
-                        ? "Deposit allowance / item disenchanted"
-                        : "Deposit / output unit (copper or g/s/c)"
-                    }
-                    value={a.deposit}
-                    onChange={(deposit) =>
-                      modify(a.id, (a) => ({ ...a, deposit }))
-                    }
-                  />
+                  <div data-deposit>
+                    <MoneyInput
+                      label={
+                        a.kind.includes("de")
+                          ? "Deposit allowance / item disenchanted"
+                          : "Deposit / output unit (copper or g/s/c)"
+                      }
+                      value={a.deposit}
+                      onChange={(deposit) =>
+                        modify(a.id, (a) => ({ ...a, deposit }))
+                      }
+                    />
+                  </div>
                   <label className="field">
                     Units sold (whole items; DE uses recovery share)
                     <select

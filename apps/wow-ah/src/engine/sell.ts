@@ -1,3 +1,17 @@
+/** Best known disposal alternative; an unknown auction quote never erases a vendor floor. */
+export function bestKnownSaleValue(
+  vendor: number | null,
+  gross: number | null,
+  bound = false,
+): number | null {
+  const auction = bound || gross === null ? null : gross * 0.95;
+  return vendor === null
+    ? auction
+    : auction === null
+      ? vendor
+      : Math.max(vendor, auction);
+}
+
 export function sellDecision(
   vendor: number | null,
   gross: number | null,

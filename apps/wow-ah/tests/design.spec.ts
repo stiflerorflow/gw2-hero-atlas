@@ -42,7 +42,7 @@ test("scanner exposes candidates early with readable controls and stable local t
       [1280, 650],
     ]) {
       await page.setViewportSize({ width, height: 900 });
-      await page.goto("");
+      await page.goto("#scanner");
       if (fallback)
         await page.addStyleTag({
           content: ':root{--font-ui:"DejaVu Sans",system-ui,sans-serif}',

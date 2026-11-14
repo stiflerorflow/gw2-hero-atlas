@@ -89,7 +89,7 @@ Object.assign(ITEMS[2605], { vendor: 100 });
 Object.assign(ITEMS[6260], { vendor: 50 });
 Object.assign(ITEMS[4470], { vendor: 38 });
 Object.assign(ITEMS[17034], { vendor: 7 });
-Object.assign(ITEMS[3372], { vendor: 200 });
+Object.assign(ITEMS[3372], { vendor: 40, vendorLot: 5, vendorSell: 10 });
 Object.assign(ITEMS[7048], {
   de: ARMOR_26_30,
   vendorSell: 745,
@@ -156,3 +156,44 @@ ITEMS[10059] = {
 
 for (const [id, fix] of Object.entries(VENDOR_CORRECTIONS))
   if (ITEMS[+id]) ITEMS[+id].vendorSell = fix.value;
+
+// Checked profession supplies and outputs. Unknown vendor values stay unknown.
+for (const [id, name] of [
+  [785, "Mageroyal"],
+  [2450, "Briarthorn"],
+  [3371, "Empty Vial"],
+  [2838, "Heavy Stone"],
+  [4377, "Heavy Blasting Powder"],
+  [2841, "Bronze Bar"],
+  [4375, "Whirring Bronze Gizmo"],
+  [4382, "Bronze Framework"],
+  [2319, "Medium Leather"],
+  [3820, "Stranglekelp"],
+  [6359, "Firefin Snapper"],
+  [3355, "Wild Steelbloom"],
+  [3356, "Kingsblood"],
+  [3385, "Lesser Mana Potion"],
+  [6371, "Fire Oil"],
+  [3389, "Elixir of Lesser Defense"],
+  [6373, "Elixir of Fire Power"],
+  [3827, "Mana Potion"],
+  [2880, "Weak Flux"],
+  [4371, "Bronze Tube"],
+  [3575, "Iron Bar"],
+  [10558, "Gold Power Core"],
+  [4387, "Iron Strut"],
+  [4389, "Gyrochronatom"],
+  [7912, "Solid Stone"],
+  [10505, "Solid Blasting Powder"],
+] as [number, string][])
+  ITEMS[id] = { ...ITEMS[id], id, name };
+Object.assign(ITEMS[3371], { vendor: 4, vendorLot: 5, vendorSell: 1 });
+Object.assign(ITEMS[2880], { vendor: 100, vendorSell: 25 });
+for (const [id, value] of [
+  [4377, 150],
+  [4375, 115],
+  [4382, 600],
+] as [number, number][])
+  ITEMS[id].vendorSell = value;
+// Remove obsolete pattern placeholders, never infer recipe acquisition items.
+for (const id of [5773, 4347, 4345, 4350, 4346, 4348, 4349]) delete ITEMS[id];

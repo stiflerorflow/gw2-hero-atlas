@@ -1,10 +1,13 @@
-import { useMemo } from "react";
-import type { Action, Character, MarketData, Profession } from "../types";
-import { PROFESSIONS } from "../types";
+import { useMemo, useState } from "react";
+import type { Action, Character, MarketData } from "../types";
 import { ITEMS, itemName } from "../catalog/items";
-import { recipeById, recipeTools, relevantTools } from "../catalog/recipes";
-import { characterPlan, keySupplies } from "../engine/characterPlan";
-import { MoneyInput } from "./MoneyInput";
+import { recipeById, recipeTools } from "../catalog/recipes";
+import {
+  characterPlan,
+  DEFAULT_PRIORITIES,
+  hasYieldDownside,
+} from "../engine/characterPlan";
+import { CharacterContext } from "./CharacterContext";
 import { money } from "../engine/money";
 export function CharacterPlan({
   c,
@@ -23,8 +26,11 @@ export function CharacterPlan({
   settings: () => void;
   revision?: number;
 }) {
-  const plan = useMemo(() => characterPlan(c, market), [c, market]),
-    supplies = keySupplies(c);
+  const [priorities, setPriorities] = useState(DEFAULT_PRIORITIES);
+  const plan = useMemo(
+    () => characterPlan(c, market, priorities),
+    [c, market, priorities],
+  );
   return (
     <section className="character-plan">
       <div className="page-heading">
@@ -32,208 +38,66 @@ export function CharacterPlan({
         <p>Use your level, professions and gold to choose a small next step.</p>
       </div>
       <section className="panel" aria-label="Character context">
-        <div className="form-grid">
-          <label>
-            Current character level
-            <input
-              type="number"
-              min="1"
-              max="60"
-              placeholder="Not entered"
-              value={c.characterLevel ?? ""}
-              onChange={(e) => {
-                const n = e.target.value === "" ? null : +e.target.value;
-                if (n === null || (Number.isInteger(n) && n >= 1 && n <= 60))
-                  update((c) => ({ ...c, characterLevel: n }));
-              }}
-            />
-          </label>
-          <MoneyInput
-            key={c.id + "-" + revision}
-            label="Current gold on this character"
-            value={c.cash}
-            onChange={(cash) =>
-              update((c) => ({
-                ...c,
-                cash,
-                budget: c.budget === c.cash ? cash : c.budget,
-              }))
-            }
-          />
-          {Object.keys(c.skills).length < 2 && (
-            <label>
-              Add profession
-              <select
-                value=""
-                onChange={(e) => {
-                  const profession = e.target.value as Profession;
-                  if (profession)
-                    update((c) => ({
-                      ...c,
-                      skills: {
-                        ...c.skills,
-                        [profession]: { level: 1, cap: 75, target: 150 },
-                      },
-                    }));
-                }}
-              >
-                <option value="">Choose a profession…</option>
-                {PROFESSIONS.filter((p) => !c.skills[p]).map((p) => (
-                  <option key={p}>{p}</option>
-                ))}
-              </select>
-            </label>
-          )}
-          {Object.entries(c.skills).map(([p, s], i) => (
-            <fieldset key={p}>
-              <legend>Profession {i + 1}</legend>
-              <label>
-                Profession
-                <select
-                  value={p}
-                  onChange={(e) => {
-                    const profession = e.target.value as Profession;
-                    update((c) => {
-                      const skills = Object.fromEntries(
-                        Object.entries(c.skills).map(([slot, value]) =>
-                          slot === p
-                            ? [profession, { level: 1, cap: 75, target: 150 }]
-                            : [slot, value],
-                        ),
-                      );
-                      return { ...c, skills };
-                    });
-                  }}
-                >
-                  {PROFESSIONS.filter((v) => v === p || !c.skills[v]).map(
-                    (v) => (
-                      <option key={v}>{v}</option>
-                    ),
-                  )}
-                </select>
-              </label>
-              <label>
-                Current skill
-                <input
-                  aria-label={`Current ${p} skill`}
-                  type="number"
-                  min="1"
-                  max="300"
-                  value={s.level}
-                  onChange={(e) => {
-                    const level = +e.target.value;
-                    if (Number.isInteger(level) && level >= 1 && level <= 300)
-                      update((c) => ({
-                        ...c,
-                        skills: {
-                          ...c.skills,
-                          [p]: {
-                            ...s,
-                            level,
-                            target:
-                              level >= s.target
-                                ? Math.min(
-                                    300,
-                                    (Math.floor(level / 75) + 1) * 75,
-                                  )
-                                : s.target,
-                            cap: Math.max(
-                              s.cap,
-                              level <= 75
-                                ? 75
-                                : level <= 150
-                                  ? 150
-                                  : level <= 225
-                                    ? 225
-                                    : 300,
-                            ),
-                          },
-                        },
-                      }));
-                  }}
-                />
-              </label>
-            </fieldset>
-          ))}
-        </div>
-        <p className="note">
-          Inputs budget: <b>{money(plan.spendable)}</b> after your reserve and
-          saved spending limit.{" "}
-          <button className="text-button" onClick={settings}>
-            Adjust limits, targets or trained caps
-          </button>
-        </p>
-        {relevantTools(c).length > 0 && (
-          <div className="tool-checks">
-            <p className="note">
-              Confirm tools you have available. Unconfirmed tools block recipes
-              that need them.
-            </p>
-            {relevantTools(c).map((id) => (
-              <label className="inline" key={id}>
-                <input
-                  type="checkbox"
-                  checked={c.tools.includes(id)}
-                  onChange={(e) => {
-                    const checked = e.target.checked;
-                    update((c) => ({
-                      ...c,
-                      tools: checked
-                        ? [...new Set([...c.tools, id])]
-                        : c.tools.filter((v) => v !== id),
-                    }));
-                  }}
-                />
-                I have {itemName(id)} available
-              </label>
-            ))}
-          </div>
-        )}
-        <details>
-          <summary>Relevant supplies · optional</summary>
-          <p className="note">
-            Enter only what is available now. Unrecorded supplies are assumed
-            unavailable; free or donated stock is finite.
-          </p>
-          <div className="form-grid">
-            {supplies.map((id) => (
-              <label key={id}>
-                {itemName(id)}
-                <input
-                  type="number"
-                  min="0"
-                  max="1000000"
-                  value={c.inventory[id]?.qty ?? 0}
-                  onChange={(e) => {
-                    const qty = +e.target.value;
-                    if (Number.isInteger(qty) && qty >= 0 && qty <= 1e6)
-                      update((c) => ({
-                        ...c,
-                        inventory: {
-                          ...c.inventory,
-                          [id]: {
-                            qty,
-                            note: c.inventory[id]?.note || "Owned supply",
-                          },
-                        },
-                      }));
-                  }}
-                />
-              </label>
-            ))}
-          </div>
-          <button onClick={settings}>Other inventory and tools</button>
-        </details>
+        <CharacterContext
+          key={c.id}
+          c={c}
+          update={update}
+          settings={settings}
+          revision={revision}
+          spendable={plan.spendable}
+        />
       </section>
       <section aria-label="Suggested next steps">
         <div className="section-title">
-          <h2>Your next steps</h2>
+          <h2 id="next-steps-title" tabIndex={-1}>
+            Your next steps
+          </h2>
           <span className="note">
             {loading
               ? "Checking prices…"
               : `${plan.checked} checked action types`}
           </span>
         </div>
+        <details className="plan-priorities">
+          <summary>Compare priorities</summary>
+          <div className="form-grid">
+            <label>
+              Progress priority
+              <select
+                value={priorities.progress}
+                onChange={(e) =>
+                  setPriorities({
+                    ...priorities,
+                    progress: e.target.value as "cash" | "net",
+                  })
+                }
+              >
+                <option value="cash">Lowest upfront cost</option>
+                <option value="net">Lowest cost after quoted resale</option>
+              </select>
+            </label>
+            <label>
+              Gold priority
+              <select
+                value={priorities.gold}
+                onChange={(e) =>
+                  setPriorities({
+                    ...priorities,
+                    gold: e.target.value as "yield" | "margin",
+                  })
+                }
+              >
+                <option value="yield">Lower yield risk first</option>
+                <option value="margin">Highest expected margin</option>
+              </select>
+            </label>
+          </div>
+          <p className="note">
+            These compare one attempt at a time. Lower yield risk does not
+            guarantee buyers or profit. Neither option predicts your selling
+            speed.
+          </p>
+        </details>
         {plan.blockers.length > 0 ? (
           <div className="decision-summary">
             <h3>Finish the character context</h3>
@@ -299,7 +163,8 @@ export function CharacterPlan({
                       </div>
                     </dl>
                     <p className="note">
-                      After input resale value: {money(e.economicProfit)}.{" "}
+                      After best known input sale value:{" "}
+                      {money(e.economicProfit)}.{" "}
                       {e.depositHeld === null
                         ? "Posting deposit is not included; enter it in Batch before spending."
                         : "No posting deposit is assumed for kept tools or enchant applications."}
@@ -353,6 +218,13 @@ export function CharacterPlan({
                           I already know this recipe
                         </label>
                       )}
+                    {hasYieldDownside(e) &&
+                      goals.includes("Gold opportunity") && (
+                        <p className="warning">
+                          Higher-risk gold option · a bad drop can leave you
+                          worse off.
+                        </p>
+                      )}
                     <p className="note">{reason}</p>
                     <div className="row-actions">
                       <button className="primary" onClick={() => add(e.action)}>
@@ -370,6 +242,11 @@ export function CharacterPlan({
                           </li>
                         ))}
                       </ul>
+                      <p className="note">
+                        Owned inputs use the higher known vendor payout or net
+                        auction quote. Auction values assume a buyer; missing
+                        auction data can leave only a vendor floor.
+                      </p>
                       {e.oldest && (
                         <p className="note">
                           Oldest recorded price observation:{" "}
@@ -455,6 +332,23 @@ export function CharacterPlan({
           </>
         )}
       </section>
+      <details className="panel">
+        <summary>Checked recipe coverage</summary>
+        <p className="note">
+          This planner compares a checked subset, not every recipe in Forever.
+          Unknown trainer fees need entering in Leveling, or confirmation that
+          the recipe is learned.
+        </p>
+        {plan.coverage.map((v) => (
+          <p key={v.profession}>
+            <b>{v.profession}:</b> {v.total} repeat recipes checked; {v.current}{" "}
+            can still give skill at your current level, {v.learned} marked
+            learned. The checked set can give skill through {v.through}, subject
+            to your trained cap, materials and tools.{" "}
+            <a href="#leveling">Review recipes and fees</a>.
+          </p>
+        ))}
+      </details>
       <details className="panel">
         <summary>How character level and priorities are used</summary>
         <p>

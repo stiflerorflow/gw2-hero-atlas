@@ -70,7 +70,7 @@ test("default scanner needs no profile or crafting, ranks market activity and ev
       headers: { "Cache-Control": "max-age=300" },
     });
   });
-  await page.goto("");
+  await page.goto("#scanner");
   await expect(
     page.getByRole("heading", { name: "Flip scanner" }),
   ).toBeVisible();
@@ -124,7 +124,7 @@ test("scanner handles missing data without phantom flips and preserves crafting 
   page,
 }) => {
   await page.route("https://api.ahledger.com/**", (r) => r.abort());
-  await page.goto("");
+  await page.goto("#scanner");
   await expect(page.getByRole("alert")).toContainText(/fetch|network|failed/i);
   await expect(page.locator(".flip-card")).toHaveCount(0);
   await page.getByRole("link", { name: "Character plan", exact: true }).click();
@@ -178,7 +178,7 @@ test("historical recovery is opt-in and vendor competition/old quotes are expose
       headers: { "Cache-Control": "max-age=300" },
     });
   });
-  await page.goto("");
+  await page.goto("#scanner");
   await expect(page.locator(".empty")).toContainText(
     "No matching resale candidates",
   );

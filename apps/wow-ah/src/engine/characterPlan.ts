@@ -24,8 +24,13 @@ export function keySupplies(c: Character) {
     ids.push(
       ...(c.skills.Enchanting.level < 130 ? [10940, 10938, 11083] : [11083]),
     );
-  if (c.skills.Alchemy) ids.push(785, 2450);
-  if (c.skills.Engineering) ids.push(2838, 2841, 2592);
+  if (c.skills.Alchemy)
+    ids.push(
+      ...(c.skills.Alchemy.level < 160
+        ? [785, 2450, 3820, 6359, 3355, 3356]
+        : [3820, 3356, 6371, 3355]),
+    );
+  if (c.skills.Engineering) ids.push(2838, 2841, 2592, 3575, 10558, 7912);
   return [...new Set(ids)].slice(0, 6);
 }
 export type Suggestion = {
@@ -33,7 +38,29 @@ export type Suggestion = {
   goals: string[];
   reason: string;
 };
-export function characterPlan(c: Character, m: MarketData) {
+export type PlanPreferences = {
+  progress: "cash" | "net";
+  gold: "yield" | "margin";
+};
+export const DEFAULT_PRIORITIES: PlanPreferences = {
+  progress: "cash",
+  gold: "yield",
+};
+// Yield risk is separate from sale risk: fixed outputs still need buyers.
+export function hasYieldDownside(e: Evaluation) {
+  return (
+    !!e.de &&
+    !e.de.guaranteed &&
+    (e.de.worst === null ||
+      e.cost.economic === null ||
+      e.de.worst * e.units < e.cost.economic)
+  );
+}
+export function characterPlan(
+  c: Character,
+  m: MarketData,
+  priorities = DEFAULT_PRIORITIES,
+) {
   const spendable =
     c.cash === null
       ? null
@@ -142,20 +169,29 @@ export function characterPlan(c: Character, m: MarketData) {
       const ranked = available
         .filter((e) => {
           const r = RECIPES.find((r) => r.id === e.action.recipeId);
-          return r?.profession === p && !r.once && e.skill > 0;
+          return (
+            r?.profession === p &&
+            !r.once &&
+            e.skill > 0 &&
+            (priorities.progress === "cash" || e.proceeds !== null)
+          );
         })
-        .sort(
-          (a, b) =>
-            a.cost.cash! / a.skill - b.cost.cash! / b.skill ||
-            (b.proceeds ?? -Infinity) - (a.proceeds ?? -Infinity),
-        );
+        .sort((a, b) => {
+          const perPoint = (e: Evaluation) =>
+            (e.cost.cash! -
+              (priorities.progress === "net" ? (e.proceeds ?? 0) : 0)) /
+            e.skill;
+          return perPoint(a) - perPoint(b) || a.cost.cash! - b.cost.cash!;
+        });
       const e = ranked[0];
       if (e)
         choices.push({
           evaluation: e,
           goals: [`${p} progress`],
           reason:
-            "Lowest cash cost per expected skill point among the checked, affordable one-craft options.",
+            priorities.progress === "cash"
+              ? "Lowest cash cost per expected skill point among the checked, affordable one-craft options."
+              : "Lowest modeled net cost per expected skill point after quoted resale. All inputs still need funding upfront; sale and deposits are uncertain.",
         });
       else
         notes.push(
@@ -172,7 +208,14 @@ export function characterPlan(c: Character, m: MarketData) {
           e.economicProfit > 0 &&
           !RECIPES.find((r) => r.id === e.action.recipeId)?.once,
       )
-      .sort((a, b) => (b.economicProfit ?? 0) - (a.economicProfit ?? 0));
+      .sort(
+        (a, b) =>
+          (priorities.gold === "yield"
+            ? Number(hasYieldDownside(a)) - Number(hasYieldDownside(b))
+            : 0) ||
+          (b.economicProfit ?? 0) - (a.economicProfit ?? 0) ||
+          a.cost.cash! - b.cost.cash!,
+      );
     const best = earn[0];
     if (best) {
       const same = choices.find(
@@ -184,12 +227,33 @@ export function characterPlan(c: Character, m: MarketData) {
           evaluation: best,
           goals: ["Gold opportunity"],
           reason:
-            "Highest modeled profit after valuing owned inputs among the checked, affordable one-unit options.",
+            priorities.gold === "yield"
+              ? hasYieldDownside(best)
+                ? "Only variable-yield opportunities have a positive modeled margin. This is a higher-risk alternative; wait if you cannot absorb a bad drop."
+                : "Prioritizes output without a modeled yield loss, then expected profit. Sale prices and selling time remain uncertain."
+              : "Highest expected margin among checked affordable options. A higher average may depend on rare drops; it does not imply safer or faster gold.",
         });
     } else
       notes.push(
         "No checked gold opportunity currently has a positive margin within this budget after valuing owned materials.",
       );
   }
-  return { spendable, blockers, choices, notes, checked: all.length };
+  const coverage = Object.entries(c.skills)
+    .filter(([p]) => CRAFTING.includes(p as Profession))
+    .map(([profession, skill]) => {
+      const recipes = RECIPES.filter(
+        (r) => r.verified && r.profession === profession && !r.once,
+      );
+      const current = recipes.filter(
+        (r) => r.min <= skill.level && r.grey > skill.level,
+      );
+      return {
+        profession,
+        total: recipes.length,
+        current: current.length,
+        learned: current.filter((r) => c.known.includes(r.id)).length,
+        through: Math.max(0, ...recipes.map((r) => r.grey - 1)),
+      };
+    });
+  return { spendable, blockers, choices, notes, coverage, checked: all.length };
 }

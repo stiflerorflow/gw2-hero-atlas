@@ -346,15 +346,6 @@ export const RECIPES: Recipe[] = [
     },
   ),
 ];
-for (const recipe of RECIPES) {
-  if (!ITEMS[recipe.output])
-    ITEMS[recipe.output] = {
-      id: recipe.output,
-      name: recipe.name,
-      noDE: recipe.service,
-      binding: recipe.binding,
-    };
-}
 export const recipeById = (id: number) =>
   [...RECIPES, ...CONVERSIONS].find((r) => r.id === id);
 export const CONVERSIONS: Recipe[] = [
@@ -420,24 +411,6 @@ export const CONVERSIONS: Recipe[] = [
     },
   ),
 ];
-for (const [id, name] of [
-  [785, "Mageroyal"],
-  [2450, "Briarthorn"],
-  [3371, "Empty Vial"],
-] as [number, string][])
-  ITEMS[id] = { id, name };
-ITEMS[3371].vendor = 20;
-// Remove unrelated unverified pattern-name stubs; the catalogue never guesses an unlock item.
-for (const id of [5773, 4347, 4345, 4350, 4346, 4348, 4349]) delete ITEMS[id];
-for (const [id, name, vendorSell] of [
-  [2838, "Heavy Stone", 0],
-  [4377, "Heavy Blasting Powder", 150],
-  [2841, "Bronze Bar", 0],
-  [4375, "Whirring Bronze Gizmo", 115],
-  [4382, "Bronze Framework", 600],
-  [2319, "Medium Leather", 0],
-] as [number, string, number][])
-  ITEMS[id] = { id, name, ...(vendorSell ? { vendorSell } : {}) };
 RECIPES.push(
   r(
     3945,
@@ -488,6 +461,132 @@ RECIPES.push(
   ),
 );
 
+// Checked 2026-11-14 against WCLBox build 1.60.1.70938 and Forever spell data.
+// Trainer fees remain unknown until entered or the recipe is marked learned.
+const checked = (profession: string) =>
+  `https://wowforever.wclbox.com/en/zhuanye/${profession}`;
+RECIPES.push(
+  r(
+    3173,
+    "Lesser Mana Potion",
+    "Alchemy",
+    3385,
+    [120, 145, 165, 185],
+    [
+      [785, 1],
+      [3820, 1],
+      [3371, 1],
+    ],
+    { source: checked("alchemy") },
+  ),
+  r(
+    7837,
+    "Fire Oil",
+    "Alchemy",
+    6371,
+    [130, 150, 160, 170],
+    [
+      [6359, 2],
+      [3371, 1],
+    ],
+    {
+      count: 2,
+      source: checked("alchemy"),
+      note: "Two Fire Oil per craft. Each craft consumes two Firefin Snapper and one Empty Vial.",
+    },
+  ),
+  r(
+    3177,
+    "Elixir of Lesser Defense",
+    "Alchemy",
+    3389,
+    [130, 155, 175, 195],
+    [
+      [3355, 1],
+      [3820, 1],
+      [3372, 1],
+    ],
+    { source: checked("alchemy") },
+  ),
+  r(
+    7845,
+    "Elixir of Fire Power",
+    "Alchemy",
+    6373,
+    [140, 165, 185, 205],
+    [
+      [6371, 2],
+      [3356, 1],
+      [3372, 1],
+    ],
+    { source: checked("alchemy") },
+  ),
+  r(
+    3452,
+    "Mana Potion",
+    "Alchemy",
+    3827,
+    [160, 180, 200, 220],
+    [
+      [3820, 1],
+      [3356, 1],
+      [3372, 1],
+    ],
+    { source: checked("alchemy") },
+  ),
+  r(
+    3941,
+    "Bronze Tube",
+    "Engineering",
+    4371,
+    [105, 105, 130, 155],
+    [
+      [2841, 2],
+      [2880, 1],
+    ],
+    { source: checked("engineering"), tools: [5956], station: "Anvil" },
+  ),
+  r(
+    3958,
+    "Iron Strut",
+    "Engineering",
+    4387,
+    [160, 160, 170, 180],
+    [[3575, 2]],
+    { source: checked("engineering"), tools: [5956], station: "Anvil" },
+  ),
+  r(
+    3961,
+    "Gyrochronatom",
+    "Engineering",
+    4389,
+    [170, 170, 190, 210],
+    [
+      [3575, 1],
+      [10558, 1],
+    ],
+    { source: checked("engineering"), tools: [5956, 6219], station: "Anvil" },
+  ),
+  r(
+    12585,
+    "Solid Blasting Powder",
+    "Engineering",
+    10505,
+    [175, 175, 185, 195],
+    [[7912, 2]],
+    { source: checked("engineering") },
+  ),
+);
+
+for (const recipe of RECIPES) {
+  if (!ITEMS[recipe.output])
+    ITEMS[recipe.output] = {
+      id: recipe.output,
+      name: recipe.name,
+      noDE: recipe.service,
+      binding: recipe.binding,
+    };
+}
 export const recipeTools = (recipe: Recipe): number[] => [
   ...new Set([...(recipe.tool ? [recipe.tool] : []), ...(recipe.tools || [])]),
 ];

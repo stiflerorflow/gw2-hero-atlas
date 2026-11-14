@@ -2062,3 +2062,29 @@ main:focus {
   margin: 0;
   padding: 8px 0;
 }
+/* Saved context stays compact; the next action remains close to the page title. */
+.context-editor > summary {
+  line-height: 1.5;
+}
+.context-editor > summary .note {
+  display: block;
+  margin: 4px 0 0;
+}
+.context-editor[open] > summary {
+  margin-bottom: 20px;
+}
+.context-editor > .primary {
+  margin-top: 16px;
+}
+.context-editor .form-grid {
+  align-items: start;
+}
+.plan-priorities {
+  margin: 0 0 16px;
+}
+.plan-priorities .form-grid {
+  margin-top: 12px;
+}
+.batch-row [data-deposit] {
+  min-width: 0;
+}

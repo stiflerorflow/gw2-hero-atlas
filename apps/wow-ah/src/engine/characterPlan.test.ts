@@ -151,7 +151,7 @@ describe("character next steps", () => {
       Herbalism: { level: 110, cap: 150, target: 150 },
       Alchemy: { level: 130, cap: 150, target: 150 },
     };
-    expect(keySupplies(c)).toEqual([785, 2450]);
+    expect(keySupplies(c)).toEqual([785, 2450, 3820, 6359, 3355, 3356]);
   });
 });
 
