@@ -29,7 +29,9 @@ const num = (x: unknown): number | null =>
 const price = (x: unknown): number | null =>
   num(x) !== null && Number.isSafeInteger(x) ? (x as number) : null;
 const stamp = (x: unknown): string | null =>
-  typeof x === "string" && Number.isFinite(Date.parse(x)) ? x : null;
+  typeof x === "string" && Number.isFinite(Date.parse(x))
+    ? new Date(x).toISOString()
+    : null;
 export const safeURL = (x: unknown): string => {
   if (typeof x !== "string") return "https://ahledger.com";
   try {
@@ -70,6 +72,7 @@ export async function request(
   if (!response.ok)
     throw Error(`AHledger ${response.status}: ${path.split("?")[0]}`);
   const data: unknown = await response.json(),
+    responseAge = Math.max(0, Number(response.headers.get("Age")) || 0),
     maxAge = response.headers
       .get("Cache-Control")
       ?.match(/(?:^|,)\s*max-age=(\d+)/)?.[1],
@@ -84,7 +87,7 @@ export async function request(
               response.headers.get("Cache-Control") || "",
             )
               ? 0
-              : (maxAge ?? 60),
+              : Math.max(0, Number(maxAge ?? 60) - responseAge),
           ),
         ),
       ) *
@@ -112,7 +115,10 @@ export function normalizeTooltip(raw: unknown, expires: number): Quote[] {
   return x.items
     .filter(
       (r: any) =>
-        Number.isSafeInteger(r.id) && r.id > 0 && typeof r.name === "string",
+        r &&
+        Number.isSafeInteger(r.id) &&
+        r.id > 0 &&
+        typeof r.name === "string",
     )
     .map((r: any) => ({
       id: r.id,
@@ -138,17 +144,24 @@ export function normalizeCrafting(raw: unknown): Recipe[] {
   return x.recipes
     .filter(
       (r: any) =>
-        Number.isInteger(r.recipe?.spellId) &&
+        r &&
+        Number.isSafeInteger(r.recipe?.spellId) &&
+        r.recipe.spellId > 0 &&
         typeof r.recipe?.name === "string" &&
         Array.isArray(r.reagents) &&
         r.reagents.every(
           (v: any) =>
-            Number.isInteger(v.id) && num(v.qty) !== null && v.qty > 0,
+            v &&
+            Number.isSafeInteger(v.id) &&
+            v.id > 0 &&
+            Number.isSafeInteger(v.qty) &&
+            v.qty > 0,
         ) &&
         ["Tailoring", "Enchanting", "Alchemy", "Engineering"].includes(
           r.recipe.profession,
         ) &&
-        Number.isInteger(r.result?.id),
+        Number.isSafeInteger(r.result?.id) &&
+        r.result.id > 0,
     )
     .map((r: any) => {
       for (const item of [r.result, ...r.reagents])
@@ -185,7 +198,7 @@ export function normalizeCrafting(raw: unknown): Recipe[] {
       };
     });
 }
-function normalizeDE(raw: unknown): Item[] {
+export function normalizeDE(raw: unknown): Item[] {
   const x = object(raw);
   assertMarket(x);
   if (!Array.isArray(x.opportunities))
@@ -193,7 +206,10 @@ function normalizeDE(raw: unknown): Item[] {
   return x.opportunities
     .filter(
       (r: any) =>
-        Number.isInteger(r.item?.id) &&
+        r &&
+        Number.isSafeInteger(r.item?.id) &&
+        r.item.id > 0 &&
+        typeof r.item.name === "string" &&
         !ITEMS[r.item.id]?.noDE &&
         Array.isArray(r.yields),
     )
@@ -201,7 +217,9 @@ function normalizeDE(raw: unknown): Item[] {
       const de: Outcome[] = r.yields
         .filter(
           (y: any) =>
-            price(y.id) !== null &&
+            y &&
+            Number.isSafeInteger(y.id) &&
+            y.id > 0 &&
             num(y.chance) !== null &&
             y.chance > 0 &&
             y.chance <= 1 &&
@@ -218,7 +236,12 @@ function normalizeDE(raw: unknown): Item[] {
         }));
       if (!ITEMS[r.item.id])
         ITEMS[r.item.id] = { id: r.item.id, name: r.item.name };
-      return { ...ITEMS[r.item.id], de: ITEMS[r.item.id]?.de || de };
+      return {
+        ...ITEMS[r.item.id],
+        de:
+          ITEMS[r.item.id]?.de ||
+          (de.length === r.yields.length ? de : undefined),
+      };
     })
     .filter(
       (i: Item) =>
@@ -236,6 +259,7 @@ export async function loadMarket(
     !Array.isArray(markets.markets) ||
     !markets.markets.some(
       (m: any) =>
+        m &&
         m.id === MARKET &&
         m.ruleset === "rp" &&
         m.region === "eu" &&
@@ -266,7 +290,14 @@ export async function loadMarket(
         assertMarket(x);
         if (Array.isArray(x.deals))
           for (const d of x.deals.slice(0, 40)) {
-            if (!Number.isInteger(d.item?.id)) continue;
+            if (
+              !d ||
+              !Number.isSafeInteger(d.item?.id) ||
+              d.item.id <= 0 ||
+              typeof d.item.name !== "string" ||
+              result.deals?.some((v) => v.id === d.item.id)
+            )
+              continue;
             ITEMS[d.item.id] ??= { id: d.item.id, name: String(d.item.name) };
             (result.deals ??= []).push({
               id: d.item.id,
@@ -344,12 +375,13 @@ export async function loadHistory(
     coveredHours: num(sales.coveredHours),
     history: Array.isArray(x.series)
       ? x.series
-          .filter((s: any) => stamp(s.t))
+          .filter((s: any) => s && stamp(s.t))
           .map((s: any) => ({
-            t: s.t,
+            t: stamp(s.t)!,
             min: price(s.min),
             median: price(s.median),
           }))
+          .sort((a, b) => Date.parse(a.t) - Date.parse(b.t))
       : [],
   };
 }

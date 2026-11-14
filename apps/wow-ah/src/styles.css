@@ -1427,3 +1427,30 @@ main:focus {
 .alert {
   color: #735126;
 }
+
+/* Keep phone form text large enough to avoid Safari zooming the viewport on
+   focus. More specific filter/profile rules must not override this baseline. */
+@media (max-width: 600px) {
+  .app-shell input:not([type="checkbox"]):not([type="file"]),
+  .app-shell select,
+  .profile-dialog input:not([type="checkbox"]),
+  .profile-dialog select {
+    font-size: 16px;
+  }
+}
+.scroll-table:focus-visible {
+  outline: 3px solid #aa7637;
+  outline-offset: 3px;
+}
+.batch-item-title {
+  font-family: inherit;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+}
+@media (max-width: 600px) {
+  .batch-item-title {
+    font-size: 20px;
+  }
+}

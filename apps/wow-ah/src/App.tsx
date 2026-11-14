@@ -101,7 +101,12 @@ function Credit({ url = "https://ahledger.com" }: { url?: string }) {
 function CostLines({ e }: { e: Evaluation }) {
   return (
     <>
-      <div className="scroll-table">
+      <div
+        className="scroll-table"
+        tabIndex={0}
+        role="region"
+        aria-label="Input cost details"
+      >
         <table>
           <thead>
             <tr>
@@ -214,6 +219,10 @@ function QuoteEditor({
   const [ask, setAsk] = useState<number | null>(c.manual[id]?.ask ?? null),
     [exit, setExit] = useState<number | null>(c.manual[id]?.exit ?? null),
     [message, setMessage] = useState("");
+  useEffect(() => {
+    setAsk(c.manual[id]?.ask ?? null);
+    setExit(c.manual[id]?.exit ?? null);
+  }, [c.manual[id]?.ask, c.manual[id]?.exit]);
   return (
     <details className="quote-editor">
       <summary>Enter your in-game quote / exit scenario</summary>
@@ -316,6 +325,7 @@ function App() {
         : "opportunities",
     ),
     [modal, setModal] = useState(false),
+    [restoreRevision, setRestoreRevision] = useState(0),
     [toast, setToast] = useState(""),
     [market, setMarket] = useState<MarketData>(unknownMarket),
     [loading, setLoading] = useState(false),
@@ -498,7 +508,7 @@ function App() {
           const budget =
             c.cash === null
               ? null
-              : Math.max(0, Math.min(c.cash, c.budget ?? c.cash) - c.reserve);
+              : Math.max(0, Math.min(c.budget ?? c.cash, c.cash - c.reserve));
           if (budget !== null) {
             const fits = (e: typeof a) =>
               e.cost.cash !== null && e.cost.cash <= budget;
@@ -519,7 +529,7 @@ function App() {
   const usable =
       c.cash === null
         ? null
-        : Math.max(0, Math.min(c.cash, c.budget ?? c.cash) - c.reserve),
+        : Math.max(0, Math.min(c.budget ?? c.cash, c.cash - c.reserve)),
     affordable = evaluations.filter(
       (e) =>
         e.eligible &&
@@ -573,7 +583,7 @@ function App() {
     market.updatedAt ||
     Object.values(c.manual)
       .map((q) => q.observedAt)
-      .sort()[0] ||
+      .sort((a, b) => Date.parse(a) - Date.parse(b))[0] ||
     null;
   function calculation(e: Evaluation) {
     const r = recipeById(e.action.recipeId || 0);
@@ -659,7 +669,7 @@ function App() {
           </p>
         )}
         <QuoteEditor
-          key={c.id + "-" + e.action.itemId}
+          key={c.id + "-" + restoreRevision + "-" + e.action.itemId}
           id={e.action.itemId}
           c={c}
           onUpdate={update}
@@ -1059,13 +1069,26 @@ function App() {
           </>
         )}
         {page === "leveling" && (
-          <Leveling c={c} market={market} update={update} add={add} />
+          <Leveling
+            key={c.id + restoreRevision}
+            c={c}
+            market={market}
+            update={update}
+            add={add}
+          />
         )}
         {page === "batch" && (
-          <Batch c={c} market={market} update={update} copy={copy} />
+          <Batch
+            key={c.id + restoreRevision}
+            c={c}
+            market={market}
+            update={update}
+            copy={copy}
+          />
         )}
         {page === "watchlist" && (
           <Watchlist
+            key={c.id + restoreRevision}
             c={c}
             market={market}
             update={update}
@@ -1140,6 +1163,9 @@ function App() {
                   localStorage.setItem(STORE, raw);
                   savedRaw.current = raw;
                   setState(next);
+                  setRestoreRevision((n) => n + 1);
+                  setModal(false);
+                  setHistory(null);
                   setStorageError("");
                   setStale(false);
                   setToast(
@@ -1155,6 +1181,7 @@ function App() {
       </footer>
       {modal && (
         <ProfileEditor
+          key={c.id + restoreRevision}
           c={c}
           state={state}
           update={update}
@@ -1508,6 +1535,18 @@ function Batch({
               : (old?.cash || 0) + l.cash,
         });
       }
+  const withdrawals = new Map<number, number>();
+  for (const row of plan.rows)
+    for (const line of row.cost.lines) {
+      if (line.cash === 0 && c.inventory[line.id]?.qty)
+        withdrawals.set(
+          line.id,
+          Math.min(
+            c.inventory[line.id].qty,
+            (withdrawals.get(line.id) || 0) + line.qty,
+          ),
+        );
+    }
   const text = [
     "THE COPPER LEDGER · " + c.name,
     "Market: " + MARKET,
@@ -1517,6 +1556,11 @@ function Batch({
     ...[...shopping].map(
       ([id, v]) =>
         `${v.qty} ${itemName(id)} · ${money(v.cash)} (unit-price scenario; verify lots)`,
+    ),
+    "WITHDRAW OWNED SUPPLIES",
+    ...[...withdrawals].map(
+      ([id, qty]) =>
+        `${qty} ${itemName(id)} from recorded inventory; zero additional cash`,
     ),
     "LEARN / PREPARE",
     ...plan.rows
@@ -1533,10 +1577,16 @@ function Batch({
     ]),
     "POST BEFORE LEAVING",
     ...plan.rows
-      .filter((r) => !r.action.retain)
-      .map(
+      .filter(
         (r) =>
-          `${r.units} output units from ${r.name}; proposed gross exit ${money(r.action.exit ?? exitFor(r.action.itemId, c, market))}; deposit ${money(r.action.deposit)} per output`,
+          !r.action.retain &&
+          !recipeById(r.action.recipeId || 0)?.service &&
+          recipeById(r.action.recipeId || 0)?.binding !== "BoP",
+      )
+      .map((r) =>
+        r.action.kind.includes("de")
+          ? `Post actual materials from ${r.units} × ${r.name} after disenchanting; possible outcomes: ${r.de?.outcomes.map((o) => o.label).join(" OR ") || "unknown"}. Check each material's gross exit and actual listing deposit; original-item allowance ${money(r.action.deposit)} per input.`
+          : `${r.units} output units from ${r.name}; proposed gross exit ${money(r.action.exit ?? exitFor(r.action.itemId, c, market))}; deposit ${money(r.action.deposit)} per output`,
       ),
     "Expected batch result: " + money(plan.profit) + " · not realized profit",
     "No automatic purchases or postings. Prices from AHledger (ahledger.com)",
@@ -1638,7 +1688,7 @@ function Batch({
                     <span className="eyebrow">
                       {i + 1} · {kindLabel[a.kind]}
                     </span>
-                    <h3>{e.name}</h3>
+                    <h2 className="batch-item-title">{e.name}</h2>
                   </div>
                   <button
                     className="text-button"
@@ -2213,17 +2263,32 @@ function ProfileEditor({
 }) {
   const dialog = useRef<HTMLDialogElement>(null),
     [inventoryItem, setInventoryItem] = useState(2592),
-    [inventoryQty, setInventoryQty] = useState(0),
-    [inventoryNote, setInventoryNote] = useState(""),
+    [inventoryQty, setInventoryQty] = useState(c.inventory[2592]?.qty || 0),
+    [inventoryNote, setInventoryNote] = useState(c.inventory[2592]?.note || ""),
     [to, setTo] = useState(
       state.characters.find((p) => p.id !== c.id)?.id || "",
     ),
+    [transferItem, setTransferItem] = useState(2592),
     [transferQty, setTransferQty] = useState(1),
-    [vendorId, setVendorId] = useState(2321);
+    [vendorId, setVendorId] = useState(2321),
+    [transferMessage, setTransferMessage] = useState("");
   useEffect(() => {
-    dialog.current?.showModal();
-    return () => dialog.current?.close();
+    const opener = document.activeElement as HTMLElement | null;
+    const node = dialog.current;
+    node?.showModal();
+    return () => {
+      node?.close();
+      opener?.focus();
+    };
   }, []);
+  useEffect(() => {
+    setInventoryQty(c.inventory[inventoryItem]?.qty || 0);
+    setInventoryNote(c.inventory[inventoryItem]?.note || "");
+  }, [
+    inventoryItem,
+    c.inventory[inventoryItem]?.qty,
+    c.inventory[inventoryItem]?.note,
+  ]);
   return (
     <dialog
       ref={dialog}
@@ -2460,12 +2525,12 @@ function ProfileEditor({
           <label>
             Recorded item
             <select
-              value={inventoryItem}
-              onChange={(e) => setInventoryItem(+e.target.value)}
+              value={transferItem}
+              onChange={(e) => setTransferItem(+e.target.value)}
             >
-              {!c.inventory[inventoryItem] && (
-                <option value={inventoryItem}>
-                  {itemName(inventoryItem)} · none recorded
+              {!c.inventory[transferItem] && (
+                <option value={transferItem}>
+                  {itemName(transferItem)} · none recorded
                 </option>
               )}
               {Object.entries(c.inventory).map(([id, v]) => (
@@ -2502,15 +2567,20 @@ function ProfileEditor({
         <button
           onClick={() => {
             try {
-              commit(transfer(state, c.id, to, inventoryItem, transferQty));
+              commit(transfer(state, c.id, to, transferItem, transferQty));
+              setTransferMessage(
+                "Recorded transfer; move the actual items in game.",
+              );
               notify("Recorded transfer; move the actual items in game.");
             } catch (e) {
+              setTransferMessage((e as Error).message);
               notify((e as Error).message);
             }
           }}
         >
           Record transfer
         </button>
+        <p role="status">{transferMessage}</p>
       </section>
       <section>
         <h3>Vendor quotes & tools</h3>

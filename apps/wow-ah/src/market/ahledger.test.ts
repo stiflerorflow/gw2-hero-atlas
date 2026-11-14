@@ -1,5 +1,10 @@
 import { it, expect, vi, afterEach } from "vitest";
-import { request } from "./ahledger";
+import {
+  request,
+  normalizeTooltip,
+  normalizeCrafting,
+  normalizeDE,
+} from "./ahledger";
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.useRealTimers();
@@ -7,14 +12,12 @@ afterEach(() => {
 it("honors cache TTL and no-store without persisting snapshots", async () => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-11-14T10:00:00Z"));
-  const fetcher = vi
-    .fn()
-    .mockImplementation(
-      async () =>
-        new Response(JSON.stringify({ ok: true }), {
-          headers: { "Cache-Control": "public,max-age=2" },
-        }),
-    );
+  const fetcher = vi.fn().mockImplementation(
+    async () =>
+      new Response(JSON.stringify({ ok: true }), {
+        headers: { "Cache-Control": "public,max-age=2" },
+      }),
+  );
   vi.stubGlobal("fetch", fetcher);
   await request("/cache-fixture");
   await request("/cache-fixture");
@@ -48,4 +51,81 @@ it("429 Retry-After pauses subsequent reads rather than retrying immediately", a
   );
   await request("/rate-fixture-2");
   expect(fetcher).toHaveBeenCalledTimes(2);
+});
+it("subtracts the HTTP cache Age instead of extending a snapshot TTL", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-11-16T10:00:00Z"));
+  const fetcher = vi
+    .fn()
+    .mockImplementation(
+      async () =>
+        new Response("{}", {
+          headers: { "Cache-Control": "max-age=300", Age: "299" },
+        }),
+    );
+  vi.stubGlobal("fetch", fetcher);
+  const response = await request("/aged-fixture");
+  expect(response.expires - Date.now()).toBe(1000);
+  vi.advanceTimersByTime(1001);
+  await request("/aged-fixture");
+  expect(fetcher).toHaveBeenCalledTimes(2);
+});
+
+it("keeps valid provider rows when other rows are null and canonicalizes timestamps", () => {
+  const market = "forever.rp.alliance.eu";
+  const quotes = normalizeTooltip(
+    {
+      market,
+      items: [
+        null,
+        {
+          id: 4306,
+          name: "Silk Cloth",
+          minBuyout: 100,
+          observedAt: "2026-11-14T09:00:00-05:00",
+        },
+      ],
+    },
+    Date.now() + 1000,
+  );
+  expect(quotes).toHaveLength(1);
+  expect(quotes[0].observedAt).toBe("2026-11-14T14:00:00.000Z");
+  const valid = {
+    recipe: {
+      spellId: 123456,
+      name: "Synthetic recipe",
+      profession: "Tailoring",
+    },
+    result: { id: 123456, name: "Synthetic item" },
+    reagents: [{ id: 4306, qty: 1, name: "Silk Cloth" }],
+  };
+  expect(
+    normalizeCrafting({
+      market,
+      recipes: [null, valid, { ...valid, reagents: [null] }],
+    }),
+  ).toHaveLength(1);
+  expect(
+    normalizeDE({
+      market,
+      opportunities: [
+        null,
+        {
+          item: { id: 123457, name: "Synthetic armor" },
+          yields: [{ id: 11084, chance: 1, minCount: 1, maxCount: 1 }, null],
+        },
+      ],
+    }),
+  ).toEqual([]);
+  expect(
+    normalizeDE({
+      market,
+      opportunities: [
+        {
+          item: { id: 123458, name: "Synthetic armor" },
+          yields: [{ id: 11084, chance: 1, minCount: 1, maxCount: 1 }],
+        },
+      ],
+    }),
+  ).toHaveLength(1);
 });

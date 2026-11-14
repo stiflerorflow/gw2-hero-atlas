@@ -82,6 +82,24 @@ export function defaults(): SavedState {
 }
 const integer = (x: unknown, min = 0, max = 300) =>
   typeof x === "number" && Number.isInteger(x) && x >= min && x <= max;
+const validItemKey = (key: string) =>
+  /^\d+$/.test(key) && integer(+key, 1, 2_000_000);
+function uniqueId(
+  value: unknown,
+  prefix: string,
+  index: number,
+  used: Set<string>,
+) {
+  const base =
+    typeof value === "string" && value.trim()
+      ? value.slice(0, 70)
+      : `${prefix}-${index}`;
+  let id = base,
+    suffix = 1;
+  while (used.has(id)) id = `${base.slice(0, 60)}-${suffix++}`;
+  used.add(id);
+  return id;
+}
 export function validateState(x: unknown): SavedState {
   if (!x || typeof x !== "object" || (x as SavedState).version !== 1)
     throw Error("Unsupported Copper Ledger backup.");
@@ -131,14 +149,14 @@ export function validateState(x: unknown): SavedState {
         };
     }
     for (const [id, v] of Object.entries(old.inventory || {}))
-      if (/^\d+$/.test(id) && integer(v?.qty, 0, 1_000_000))
+      if (validItemKey(id) && integer(v?.qty, 0, 1_000_000))
         c.inventory[+id] = {
           qty: v.qty,
           note: typeof v.note === "string" ? v.note.slice(0, 200) : "",
         };
     for (const [id, v] of Object.entries(old.manual || {}))
       if (
-        /^\d+$/.test(id) &&
+        validItemKey(id) &&
         v?.market === MARKET &&
         typeof v.observedAt === "string" &&
         Number.isFinite(Date.parse(v.observedAt)) &&
@@ -154,19 +172,28 @@ export function validateState(x: unknown): SavedState {
         };
     for (const k of ["vendor", "unlockCosts"] as const)
       for (const [id, v] of Object.entries(old[k] || {}))
-        if (/^\d+$/.test(id) && isCopper(v)) c[k][+id] = v;
+        if (validItemKey(id) && isCopper(v)) c[k][+id] = v;
+    const watchIds = new Set<number>();
     c.watch = (Array.isArray(old.watch) ? old.watch : [])
-      .filter((v) => integer(v?.id, 1, 2_000_000))
+      .filter((v) => {
+        if (!integer(v?.id, 1, 2_000_000) || watchIds.has(v.id)) return false;
+        watchIds.add(v.id);
+        return true;
+      })
       .slice(0, 100)
       .map((v) => ({
         id: v.id,
         buyBelow: isCopper(v.buyBelow) ? v.buyBelow : null,
         sellAbove: isCopper(v.sellAbove) ? v.sellAbove : null,
       }));
+    const batchIds = new Set<string>(),
+      saleIds = new Set<string>();
     c.batch = (Array.isArray(old.batch) ? old.batch : [])
       .slice(0, 50)
       .filter(
         (a) =>
+          a &&
+          typeof a === "object" &&
           ["craft", "craft-de", "buy-de", "convert", "resell"].includes(
             a.kind,
           ) &&
@@ -174,7 +201,7 @@ export function validateState(x: unknown): SavedState {
           integer(a.quantity, 1, 1000),
       )
       .map((a, i): Action => ({
-        id: typeof a.id === "string" ? a.id.slice(0, 70) : "batch-" + i,
+        id: uniqueId(a.id, "batch", i, batchIds),
         kind: a.kind,
         itemId: a.itemId,
         recipeId: Number.isInteger(a.recipeId) ? a.recipeId : undefined,
@@ -193,6 +220,8 @@ export function validateState(x: unknown): SavedState {
       .slice(0, 1000)
       .filter(
         (s) =>
+          s &&
+          typeof s === "object" &&
           integer(s.itemId, 1, 2_000_000) &&
           integer(s.qty, 1, 1_000_000) &&
           isCopper(s.gross) &&
@@ -200,9 +229,13 @@ export function validateState(x: unknown): SavedState {
           typeof s.when === "string" &&
           Number.isFinite(Date.parse(s.when)),
       )
-      .map((s) => ({
-        ...s,
-        id: String(s.id).slice(0, 70),
+      .map((s, i) => ({
+        id: uniqueId(s.id, "sale", i, saleIds),
+        itemId: s.itemId,
+        qty: s.qty,
+        gross: s.gross,
+        lostDeposit: s.lostDeposit,
+        when: new Date(s.when).toISOString(),
         cost: isCopper(s.cost) ? s.cost : null,
       }));
     result.push(c);
@@ -222,6 +255,7 @@ export function transfer(
   itemId: number,
   quantity: number,
 ): SavedState {
+  if (!integer(itemId, 1, 2_000_000)) throw Error("Choose a valid item.");
   if (ITEMS[itemId]?.binding === "BoP")
     throw Error("Soulbound items cannot be transferred.");
   if (from === to || !integer(quantity, 1, 1_000_000))
@@ -233,6 +267,10 @@ export function transfer(
     b = next.characters.find((c) => c.id === to);
   if (!a || !b || (a.inventory[itemId]?.qty || 0) < quantity)
     throw Error("The sending character does not have that quantity recorded.");
+  if ((b.inventory[itemId]?.qty || 0) + quantity > 1_000_000)
+    throw Error(
+      "The receiving inventory would exceed the 1,000,000-unit limit.",
+    );
   a.inventory[itemId].qty -= quantity;
   b.inventory[itemId] = {
     qty: (b.inventory[itemId]?.qty || 0) + quantity,

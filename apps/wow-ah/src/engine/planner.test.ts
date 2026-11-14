@@ -339,3 +339,164 @@ it("combined batch cannot buy the same quoted stock twice", () => {
   expect(plan.ready).toBe(false);
   expect(plan.rows[1].cost.missing.join()).toContain("Only 0");
 });
+
+describe("bug sweep regressions", () => {
+  it("unknown expiry deposits make partial/zero-sale recovery unknown, while all-sold remains known", () => {
+    const { c, m } = fixture({ 4253: 3555, 11084: 5022 });
+    expect(
+      batchPlan(
+        [action("buy-de", 4253, undefined, { sellFraction: 0, deposit: null })],
+        c,
+        m,
+      ).profit,
+    ).toBeNull();
+    expect(
+      batchPlan(
+        [
+          action("buy-de", 4253, undefined, {
+            sellFraction: 0.5,
+            deposit: null,
+          }),
+        ],
+        c,
+        m,
+      ).profit,
+    ).toBeNull();
+    expect(
+      batchPlan(
+        [action("buy-de", 4253, undefined, { sellFraction: 1, deposit: null })],
+        c,
+        m,
+      ).profit,
+    ).toBeCloseTo(1215.9);
+  });
+  it("service rows cannot lose a fictitious auction deposit", () => {
+    const { c, m } = fixture({ 10940: 100 });
+    c.known.push(7457);
+    const p = batchPlan(
+      [action("craft", -7457, 7457, { sellFraction: 0, deposit: 500 })],
+      c,
+      m,
+    );
+    expect(p.held).toBe(0);
+    expect(p.profit).toBe(-200);
+  });
+  it("cash reserve and spending cap are independent upper bounds", () => {
+    const { c, m } = fixture();
+    c.cash = 25000;
+    c.budget = 10000;
+    c.reserve = 5000;
+    expect(batchPlan([], c, m).spendable).toBe(10000);
+    c.budget = 24000;
+    expect(batchPlan([], c, m).spendable).toBe(20000);
+  });
+  it("batch rows share the same skill roll distribution and rank cap", () => {
+    const { c, m } = fixture({ 4305: 500 });
+    c.known.push(8760);
+    c.skills.Tailoring = { level: 120, cap: 125, target: 125 };
+    const a = action("craft", 7048, 8760, { quantity: 4, retain: true });
+    const p = batchPlan([a, { ...a, id: "again" }], c, m);
+    expect(p.rows[0].skill).toBe(4);
+    expect(p.rows[1].skill).toBe(1);
+    c.skills.Tailoring = { level: 130, cap: 150, target: 150 };
+    const one = { ...a, quantity: 3 };
+    const q = batchPlan([one, { ...one, id: "again" }], c, m);
+    expect(q.rows.reduce((sum, r) => sum + r.skill, 0)).toBeCloseTo(
+      expectedSkillGains(recipe(8760), 130, 6, 150),
+    );
+  });
+  it("imported DE tables survive catalogue name stubs, but cannot override curated exceptions", () => {
+    const { c, m } = fixture({ 4344: 100, 11084: 1000 });
+    m.deItems = [
+      {
+        id: 4344,
+        name: "Named catalogue stub",
+        de: [
+          {
+            probability: 1,
+            drops: [{ id: 11084, min: 1, max: 1 }],
+            source: "test",
+          },
+        ],
+      },
+    ];
+    expect(evaluate(action("buy-de", 4344), c, m).de?.expected).toBe(950);
+    const p = batchPlan(
+      [action("buy-de", 4344, undefined, { retain: true })],
+      c,
+      m,
+    );
+    expect(p.pool[11084]).toBe(1);
+    m.deItems = [
+      { id: 11288, name: "Greater Magic Wand", de: m.deItems[0].de },
+    ];
+    expect(evaluate(action("buy-de", 11288), c, m).de).toBeNull();
+  });
+});
+it("one-time tools cannot farm gains through repeated rows or existing ownership", () => {
+  const { c, m } = fixture({ 6338: 100, 10940: 100, 10938: 100, 1210: 100 });
+  c.known.push(7795);
+  const a = action("craft", 6339, 7795, { retain: true });
+  const p = batchPlan([a, { ...a, id: "repeat" }], c, m);
+  expect(p.ready).toBe(false);
+  expect(p.rows[1].eligible).toBe(false);
+  expect(p.rows[1].skill).toBe(0);
+  const unretained = batchPlan(
+    [
+      { ...a, retain: false },
+      { ...a, id: "repeat", retain: false },
+    ],
+    c,
+    m,
+  );
+  expect(unretained.rows[1].eligible).toBe(false);
+  c.tools = [6339];
+  expect(evaluate(a, c, m).eligible).toBe(false);
+  expect(evaluate(a, c, m).skill).toBe(0);
+  c.tools = [];
+  c.inventory[6339] = { qty: 1, note: "Owned tool" };
+  expect(evaluate(a, c, m).eligible).toBe(false);
+});
+it("mixes crafted and purchased bolts when raw listing stock only supports some crafts", () => {
+  const { c, m } = fixture({ 2997: 300 });
+  m.quotes[2592] = {
+    id: 2592,
+    name: "Wool Cloth",
+    ask: 50,
+    median: null,
+    median7d: null,
+    quantity: 3,
+    soldPerDay: null,
+    observedAt: new Date().toISOString(),
+    expiresAt: Date.now() + 60000,
+    source: "AHledger · test",
+    url: "",
+    detectedSale: null,
+    coveredHours: null,
+  };
+  const plan = acquire(2997, 2, c, m, {});
+  expect(plan.cash).toBe(450);
+  expect(plan.lines.find((l) => l.id === 2592)?.qty).toBe(3);
+  expect(plan.lines.find((l) => l.id === 2997)?.qty).toBe(1);
+});
+it("mixes owned raw stock and bought bolts rather than pricing every bolt from new cloth", () => {
+  const { c, m } = fixture({ 2592: 50, 2997: 100 });
+  const plan = acquire(2997, 2, c, m, { 2592: 3 });
+  expect(plan.cash).toBe(100);
+  expect(plan.pool[2592]).toBe(0);
+});
+it("orders observation ages by time rather than date-string offsets", () => {
+  const { c, m } = fixture({ 4306: 50, 4305: 9999, 7048: 1000 });
+  c.known.push(8760);
+  c.manual[4306].observedAt = "2026-11-14T10:00:00+02:00";
+  c.manual[2321] = {
+    market: MARKET,
+    ask: 100,
+    exit: 100,
+    observedAt: "2026-11-14T09:00:00Z",
+    note: "",
+  };
+  expect(evaluate(action("craft", 7048, 8760), c, m).oldest).toBe(
+    "2026-11-14T10:00:00+02:00",
+  );
+});

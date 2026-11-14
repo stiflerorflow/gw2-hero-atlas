@@ -210,10 +210,28 @@ export function acquire(
       ),
       ...CONVERSIONS.filter((r) => r.output === id),
     ].filter((r) => !access(r, c));
-    for (const r of candidates)
-      for (const crafts of [
-        ...new Set([Math.ceil(qty / r.count), Math.floor(qty / r.count)]),
-      ].filter((n) => n > 0)) {
+    for (const r of candidates) {
+      const maxCrafts = Math.ceil(qty / r.count);
+      const available = r.reagents.map((input) => {
+        const q = quoteFor(input.id, c, m);
+        const purchasable = q?.ask != null ? (q.quantity ?? Infinity) : 0;
+        return Math.floor(
+          ((result.pool[input.id] || 0) + purchasable) / input.qty,
+        );
+      });
+      // Cash cost changes at whole output lots, finite stock limits, and owned-stock
+      // boundaries. Check those breakpoints rather than enumerating every craft.
+      const counts = new Set([
+        maxCrafts,
+        Math.floor(qty / r.count),
+        Math.min(maxCrafts, ...available),
+      ]);
+      for (const input of r.reagents) {
+        const ownedCrafts = (result.pool[input.id] || 0) / input.qty;
+        counts.add(Math.floor(ownedCrafts));
+        counts.add(Math.ceil(ownedCrafts));
+      }
+      for (const crafts of [...counts].filter((n) => n > 0 && n <= maxCrafts)) {
         let attempt = emptyCost(result.pool);
         for (const reagent of r.reagents)
           attempt = combine(
@@ -240,6 +258,7 @@ export function acquire(
         )
           chosen = attempt;
       }
+    }
   }
   return combine(result, chosen);
 }
@@ -386,6 +405,15 @@ export type Evaluation = {
   vendorValue: number | null;
   eligible: boolean;
 };
+// Provider item-name stubs must not shadow separately normalized DE metadata.
+// Explicit catalogue exceptions and checked tables always take precedence.
+function resolvedItem(id: number, m: MarketData): Item {
+  const curated = ITEMS[id],
+    imported = m.deItems.find((i) => i.id === id);
+  return curated?.noDE || curated?.de?.length
+    ? curated
+    : imported || curated || { id, name: itemName(id) };
+}
 export function evaluate(
   a: Action,
   c: Character,
@@ -397,11 +425,7 @@ export function evaluate(
       a.recipeId !== undefined
         ? [...RECIPES, ...CONVERSIONS].find((r) => r.id === a.recipeId)
         : undefined,
-    item = ITEMS[a.itemId] ||
-      m.deItems.find((i) => i.id === a.itemId) || {
-        id: a.itemId,
-        name: itemName(a.itemId),
-      };
+    item = resolvedItem(a.itemId, m);
   let cost = emptyCost(pool),
     reasons: string[] = [],
     units = a.quantity * (r?.count || 1),
@@ -417,6 +441,16 @@ export function evaluate(
     } else {
       const problem = access(r, c);
       if (problem) reasons.push(problem);
+      const duplicateTool =
+        r.once &&
+        (a.quantity > 1 ||
+          c.tools.includes(r.output) ||
+          (pool[r.output] || 0) > 0 ||
+          charged.has(r.id));
+      if (duplicateTool)
+        reasons.push(
+          "One-time tool already owned or repeated in this batch; craft it only once.",
+        );
       cost = craftCost(r, a.quantity, c, m, pool, !charged.has(r.id));
       charged.add(r.id);
       skill = expectedSkillGains(
@@ -425,8 +459,7 @@ export function evaluate(
         a.quantity,
         c.skills[r.profession]?.cap || 300,
       );
-      if (r.once && a.quantity > 1)
-        reasons.push("One-time tool should only be crafted once.");
+      if (duplicateTool) skill = 0;
     }
   } else if (a.kind === "buy-de")
     cost = acquire(a.itemId, a.quantity, c, m, pool);
@@ -458,7 +491,8 @@ export function evaluate(
         const q = m.quotes[drop.id];
         if (q?.observedAt && q.expiresAt > Date.now()) dates.push(q.observedAt);
       }
-  const oldest = dates.slice().sort()[0] || null;
+  const oldest =
+    dates.slice().sort((a, b) => Date.parse(a) - Date.parse(b))[0] || null;
   const depositHeld =
     a.retain || r?.service || r?.binding === "BoP"
       ? 0
@@ -502,7 +536,8 @@ export function batchPlan(actions: Action[], c: Character, m: MarketData) {
     held: number | null = 0;
   const charged = new Set<number>(),
     rows: Evaluation[] = [],
-    marketUsed: Record<number, number> = {};
+    marketUsed: Record<number, number> = {},
+    skillStates = new Map<Recipe["profession"], Map<number, number>>();
   let plannedRecovery = 0;
   for (const a of actions) {
     const effective = {
@@ -530,6 +565,18 @@ export function batchPlan(actions: Action[], c: Character, m: MarketData) {
       ),
     };
     const e = evaluate(a, effective, availableMarket, pool, charged);
+    const r =
+      a.kind === "craft" || a.kind === "craft-de" || a.kind === "convert"
+        ? [...RECIPES, ...CONVERSIONS].find((r) => r.id === a.recipeId)
+        : undefined;
+    const profession = r && c.skills[r.profession];
+    if (r && profession && e.eligible) {
+      const before =
+        skillStates.get(r.profession) || new Map([[profession.level, 1]]);
+      const after = rollSkillStates(r, before, a.quantity, profession.cap);
+      e.skill = meanSkill(after) - meanSkill(before);
+      skillStates.set(r.profession, after);
+    }
     for (const l of e.cost.lines)
       if (l.cash !== null && l.cash > 0 && l.source.startsWith("AHledger"))
         marketUsed[l.id] = (marketUsed[l.id] || 0) + l.qty;
@@ -553,8 +600,11 @@ export function batchPlan(actions: Action[], c: Character, m: MarketData) {
         deAction || e.vendorValue === null
           ? null
           : plus(recovery, (e.vendorValue * unsold) / e.units);
-    if (!a.retain && recovery !== null && a.deposit !== null)
-      recovery -= a.deposit * unsold;
+    if (!a.retain && unsold > 0)
+      recovery =
+        recovery === null || e.depositHeld === null
+          ? null
+          : recovery - (e.depositHeld * unsold) / e.units;
     revenue = plus(revenue, recovery);
     if (recovery !== null) plannedRecovery += recovery;
     rows.push(e);
@@ -570,7 +620,7 @@ export function batchPlan(actions: Action[], c: Character, m: MarketData) {
       e.de?.guaranteed &&
       a.retain
     ) {
-      const item = ITEMS[a.itemId] || m.deItems.find((i) => i.id === a.itemId);
+      const item = resolvedItem(a.itemId, m);
       for (const d of item?.de?.[0].drops || [])
         pool[d.id] = (pool[d.id] || 0) + d.min * e.units;
     }
@@ -592,7 +642,7 @@ export function batchPlan(actions: Action[], c: Character, m: MarketData) {
     spendable =
       c.cash === null
         ? null
-        : Math.max(0, Math.min(c.cash, c.budget ?? c.cash) - c.reserve);
+        : Math.max(0, Math.min(c.cash - c.reserve, c.budget ?? c.cash));
   return {
     rows,
     cash,
@@ -706,7 +756,19 @@ export function expectedSkillGains(
   crafts: number,
   cap: number,
 ): number {
-  let states = new Map<number, number>([[start, 1]]);
+  return (
+    meanSkill(rollSkillStates(r, new Map([[start, 1]]), crafts, cap)) - start
+  );
+}
+const meanSkill = (states: Map<number, number>) =>
+  [...states].reduce((sum, [s, p]) => sum + s * p, 0);
+function rollSkillStates(
+  r: Recipe,
+  initial: Map<number, number>,
+  crafts: number,
+  cap: number,
+) {
+  let states = initial;
   for (let n = 0; n < Math.min(1000, crafts); n++) {
     const next = new Map<number, number>();
     for (const [s, chance] of states) {
@@ -716,7 +778,7 @@ export function expectedSkillGains(
     }
     states = next;
   }
-  return [...states].reduce((sum, [s, p]) => sum + (s - start) * p, 0);
+  return states;
 }
 
 export function patternPayback(e: Evaluation): number | null {
