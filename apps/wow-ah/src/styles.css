@@ -1454,3 +1454,145 @@ main:focus {
     font-size: 20px;
   }
 }
+/* Standalone market scanning stays separate from profession and profile flows. */
+.scanner-identity {
+  margin: 0;
+  font-size: 13px;
+  text-align: right;
+}
+.scan-presets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 22px 0;
+}
+.scan-presets button {
+  text-align: left;
+  padding: 17px;
+}
+.scan-presets small {
+  display: block;
+  font-weight: 400;
+  margin-top: 6px;
+}
+.scan-presets button[aria-pressed="true"] {
+  border-color: var(--green);
+  background: #e9efdf;
+}
+.scan-controls .form-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.scan-controls details {
+  margin-top: 20px;
+}
+.scan-controls summary,
+.flip-card summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 10px 0;
+  font-size: 13px;
+}
+.scan-controls form {
+  margin-top: 18px;
+}
+.scan-controls .inline {
+  margin: 18px 0;
+}
+.flip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.flip-card {
+  margin: 0;
+  min-width: 0;
+  padding: 22px;
+}
+.flip-card h3 {
+  margin-top: 17px;
+  min-height: 50px;
+}
+.flip-card .form-grid {
+  grid-template-columns: 1fr;
+}
+.flip-card .row-actions {
+  flex-wrap: wrap;
+}
+.flip-card .row-actions a {
+  font-size: 12px;
+  padding: 10px 0;
+}
+.flip-demand {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.flip-demand b {
+  display: block;
+  font-size: 22px;
+}
+.flip-demand span {
+  font-size: 11px;
+  color: var(--muted);
+}
+.flip-card .card-numbers dd {
+  font-size: 19px;
+}
+.flip-detail {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.flip-detail .mini-stats {
+  grid-template-columns: 1fr;
+}
+.flip-detail .mini-stats dd {
+  font-size: 16px;
+}
+.flip-card .warning {
+  font-size: 12px;
+  color: #735126;
+}
+.scanner-heading {
+  max-width: 780px;
+}
+@media (max-width: 1050px) {
+  .flip-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .flip-grid,
+  .scan-controls .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .scan-presets {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .scan-presets button {
+    padding: 13px 16px;
+  }
+  .scan-presets small {
+    margin-top: 2px;
+  }
+  .scanner-identity {
+    text-align: left;
+    margin-top: 15px;
+  }
+  .main-nav {
+    flex-wrap: wrap;
+    gap: 0 18px;
+    justify-content: flex-start;
+  }
+  .main-nav a {
+    padding: 13px 0;
+  }
+  .flip-card h3 {
+    min-height: 0;
+  }
+  .flip-card .card-numbers dd {
+    font-size: 22px;
+  }
+}
+.price-context{margin-top:22px;border-top:1px solid var(--line);padding-top:20px}.price-context svg{width:100%;display:block;margin-top:15px}.price-context .section-title{align-items:start;margin:0 0 15px;flex-wrap:wrap}.price-context .section-title h4{margin:0}.price-context label{font-size:11px}.history-legend{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--ink)}.flip-card:has(.price-context) .price-context{min-width:0}
+@media(min-width:601px){.flip-card:has(details[open]){grid-column:1/-1}.flip-card:has(details[open]) .flip-detail .form-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.price-context{max-width:850px}}
+@media(max-width:600px){.scanner-identity{display:none}.scan-presets{grid-template-columns:repeat(3,minmax(0,1fr))}.scan-presets button{padding:12px 8px;font-size:12px}.scan-presets small{display:none}.scan-controls>.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.scan-controls>.form-grid>label:first-child{grid-column:1/-1}.scanner-heading h1{font-size:43px}.scanner-heading>p{font-size:14px}.scanner-heading>.note{font-size:11px}}

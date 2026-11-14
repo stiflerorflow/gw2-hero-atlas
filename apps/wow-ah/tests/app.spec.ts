@@ -14,7 +14,7 @@ test("phone: navigation, isolated profiles, inventory, batch and accessible layo
       body: "Unavailable",
     }),
   );
-  await page.goto("");
+  await page.goto("#opportunities");
   await expect(
     page.getByRole("heading", { name: "Make your next copper count." }),
   ).toBeVisible();
@@ -77,7 +77,7 @@ test("manual quotes remain useful without provider and batch survives refresh", 
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.route(api, (r) => r.fulfill({ status: 503, body: "Unavailable" }));
-  await page.goto("");
+  await page.goto("#opportunities");
   await page
     .getByRole("combobox", { name: "Action", exact: true })
     .selectOption("buy-de");
@@ -192,7 +192,7 @@ test("synthetic provider: real adapter shapes, limited stock and history", async
       headers: { "Cache-Control": "public,max-age=300" },
     });
   });
-  await page.goto("");
+  await page.goto("#opportunities");
   await page
     .getByRole("combobox", { name: "Action", exact: true })
     .selectOption("buy-de");

@@ -55,14 +55,12 @@ it("429 Retry-After pauses subsequent reads rather than retrying immediately", a
 it("subtracts the HTTP cache Age instead of extending a snapshot TTL", async () => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-11-16T10:00:00Z"));
-  const fetcher = vi
-    .fn()
-    .mockImplementation(
-      async () =>
-        new Response("{}", {
-          headers: { "Cache-Control": "max-age=300", Age: "299" },
-        }),
-    );
+  const fetcher = vi.fn().mockImplementation(
+    async () =>
+      new Response("{}", {
+        headers: { "Cache-Control": "max-age=300", Age: "299" },
+      }),
+  );
   vi.stubGlobal("fetch", fetcher);
   const response = await request("/aged-fixture");
   expect(response.expires - Date.now()).toBe(1000);

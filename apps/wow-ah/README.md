@@ -2,6 +2,10 @@
 
 Standalone React/TypeScript app at `/gw2-hero-atlas/wow-ah/`, for **EU RP non-PvP Alliance** (`forever.rp.alliance.eu`). This directory owns all its UI, dependencies and calculations. It neither loads nor changes the GW2/Revenue Cloud applications, their navigation, API keys or storage. No service worker intercepts another application's routes.
 
+## Market scanning
+
+The default [flip scanner](https://stiflerorflow.github.io/gw2-hero-atlas/wow-ah/#scanner) finds resale leads without character setup or crafting. It includes daily activity, stock, assumed net profit, flexible filters and on-demand24h/7d asking-price history. [Scanner behavior and data limitations](SCANNER.md). Existing crafting, leveling, batch and watchlist workflows remain available.
+
 ## Use
 
 1. Choose Glimpo, Chumbles or Grimpo Grongo. Edit cash, spending limit, caps, learned recipes and actual inventory first. Unknown cash stays unknown. Donated cloth/free potions start at **zero available**, never unlimited.

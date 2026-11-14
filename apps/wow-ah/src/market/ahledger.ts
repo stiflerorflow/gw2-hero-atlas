@@ -373,6 +373,9 @@ export async function loadHistory(
     expiresAt: response.expires,
     detectedSale: null,
     coveredHours: num(sales.coveredHours),
+    windowDays: num(sales.windowDays),
+    salesMethod:
+      typeof sales.method === "string" ? safeURL(sales.method) : undefined,
     history: Array.isArray(x.series)
       ? x.series
           .filter((s: any) => s && stamp(s.t))

@@ -65,6 +65,8 @@ export type Quote = {
   expiresAt: number;
   detectedSale: number | null;
   coveredHours: number | null;
+  windowDays?: number | null;
+  salesMethod?: string;
   history?: { t: string; min: number | null; median: number | null }[];
 };
 export type Inventory = { qty: number; note: string };
@@ -125,7 +127,13 @@ export type MarketData = {
   quotes: Record<number, Quote>;
   imported: Recipe[];
   deItems: Item[];
-  deals?: { id: number; reference: number | null; basis: string }[];
+  deals?: {
+    id: number;
+    reference: number | null;
+    basis: string;
+    quality?: string;
+    assessment?: string;
+  }[];
   errors: string[];
   updatedAt: string | null;
   expiresAt: number;

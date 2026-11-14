@@ -39,6 +39,9 @@ import {
   purgeExpired,
   unknownMarket,
 } from "./market/ahledger";
+import { FlipScanner } from "./components/FlipScanner";
+import { loadScanner, DEFAULT_SCAN } from "./market/scanner";
+import type { ScanFilters } from "./market/scanner";
 import { MoneyInput } from "./components/MoneyInput";
 const uid = () => crypto.randomUUID(),
   time = (s: string | null) =>
@@ -318,16 +321,17 @@ function App() {
     [stale, setStale] = useState(false),
     savedRaw = useRef(initial.current.raw),
     [page, setPage] = useState(
-      ["opportunities", "leveling", "batch", "watchlist"].includes(
+      ["scanner", "opportunities", "leveling", "batch", "watchlist"].includes(
         location.hash.slice(1),
       )
         ? location.hash.slice(1)
-        : "opportunities",
+        : "scanner",
     ),
     [modal, setModal] = useState(false),
     [restoreRevision, setRestoreRevision] = useState(0),
     [toast, setToast] = useState(""),
     [market, setMarket] = useState<MarketData>(unknownMarket),
+    [scanFilters, setScanFilters] = useState<ScanFilters>(DEFAULT_SCAN),
     [loading, setLoading] = useState(false),
     [kind, setKind] = useState("all"),
     [search, setSearch] = useState(""),
@@ -376,11 +380,11 @@ function App() {
   useEffect(() => {
     const fn = () =>
       setPage(
-        ["opportunities", "leveling", "batch", "watchlist"].includes(
+        ["scanner", "opportunities", "leveling", "batch", "watchlist"].includes(
           location.hash.slice(1),
         )
           ? location.hash.slice(1)
-          : "opportunities",
+          : "scanner",
       );
     window.addEventListener("hashchange", fn);
     return () => window.removeEventListener("hashchange", fn);
@@ -403,7 +407,10 @@ function App() {
     abort.current = controller;
     setLoading(true);
     try {
-      const fresh = await loadMarket(allWatches, controller.signal);
+      const fresh =
+        page === "scanner"
+          ? await loadScanner(scanFilters, controller.signal)
+          : await loadMarket(allWatches, controller.signal);
       if (!controller.signal.aborted) setMarket(fresh);
     } catch (e) {
       if (!controller.signal.aborted)
@@ -414,7 +421,10 @@ function App() {
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
-  }, [allWatches.join(",")]);
+  }, [allWatches.join(","), page === "scanner", scanFilters]);
+  useEffect(() => {
+    setMarket(unknownMarket());
+  }, [page === "scanner", scanFilters]);
   useEffect(() => {
     void refresh();
     const timer = setInterval(() => void refresh(), 60000),
@@ -761,32 +771,40 @@ function App() {
         Skip to content
       </a>
       <header className="masthead">
-        <a className="brand" href="#opportunities">
+        <a className="brand" href="#scanner">
           <span className="brand-mark">
             C<span>↗</span>
           </span>
           <span>
             THE COPPER LEDGER
-            <small>A small workshop. A clearer next move.</small>
+            <small>Market insights. A clearer next move.</small>
           </span>
         </a>
-        <div className="profile-switch">
-          <label>
-            Character
-            <select
-              value={c.id}
-              onChange={(e) => commit({ ...state, active: e.target.value })}
-            >
-              {state.characters.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                  {p.className ? " · " + p.className : ""}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button onClick={() => setModal(true)}>Edit profile</button>
-        </div>
+        {page === "scanner" ? (
+          <p className="scanner-identity">
+            Market-wide scanning
+            <br />
+            <small>Character setup is optional</small>
+          </p>
+        ) : (
+          <div className="profile-switch">
+            <label>
+              Character
+              <select
+                value={c.id}
+                onChange={(e) => commit({ ...state, active: e.target.value })}
+              >
+                {state.characters.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                    {p.className ? " · " + p.className : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button onClick={() => setModal(true)}>Edit profile</button>
+          </div>
+        )}
       </header>
       <div className="market-bar" role="region" aria-label="Market status">
         <span>
@@ -799,7 +817,8 @@ function App() {
       </div>
       <nav className="main-nav" aria-label="Planner">
         {[
-          ["opportunities", "Opportunities", "01"],
+          ["scanner", "Flip scanner", "00"],
+          ["opportunities", "Crafting", "01"],
           ["leveling", "Leveling", "02"],
           ["batch", "Batch planner", "03"],
           ["watchlist", "Watchlist", "04"],
@@ -830,6 +849,24 @@ function App() {
         </div>
       )}
       <main id="main-content" tabIndex={-1}>
+        {page === "scanner" && (
+          <FlipScanner
+            market={market}
+            loading={loading}
+            filters={scanFilters}
+            onScan={setScanFilters}
+            copy={copy}
+            watch={watch}
+            character={c.name}
+            load={async (id) => {
+              const q = await loadHistory(id);
+              setMarket((old) => ({
+                ...old,
+                quotes: { ...old.quotes, [id]: q },
+              }));
+            }}
+          />
+        )}
         {page === "opportunities" && (
           <>
             <section className="intro">
@@ -1653,7 +1690,7 @@ function Batch({
       </section>
       <p className={"batch-status " + (plan.ready ? "good" : "warning")}>
         {!c.batch.length
-          ? "Add a small test batch from Opportunities or Leveling."
+          ? "Add a small test batch from Crafting or Leveling."
           : plan.ready
             ? "Fits the stated budget with known deposits. Verify all in-game quotes before acting."
             : plan.fits === false

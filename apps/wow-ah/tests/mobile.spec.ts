@@ -14,7 +14,7 @@ test("narrow phone controls avoid focus zoom and expanded calculations are acces
 }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.route("https://api.ahledger.com/**", (r) => r.abort());
-  await page.goto("");
+  await page.goto("#opportunities");
   for (const selector of [
     ".profile-switch select",
     ".filters input",
@@ -46,7 +46,7 @@ test("phone profile dialog remains usable with long names, expanded settings and
 }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.route("https://api.ahledger.com/**", (r) => r.abort());
-  await page.goto("");
+  await page.goto("#opportunities");
   const opener = page.getByRole("button", {
     name: "Edit profile",
     exact: true,
@@ -87,7 +87,7 @@ test("populated phone batch supports expanded inputs and readable money errors",
 }) => {
   await page.setViewportSize({ width: 320, height: 700 });
   await page.route("https://api.ahledger.com/**", (r) => r.abort());
-  await page.goto("");
+  await page.goto("#opportunities");
   await page
     .locator(".mobile-cards .opportunity")
     .first()
