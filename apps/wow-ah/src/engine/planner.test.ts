@@ -1,0 +1,341 @@
+import { describe, it, expect } from "vitest";
+import { defaults, transfer, validateState } from "../state/profile";
+import { MARKET } from "../types";
+import type { Action, MarketData } from "../types";
+import {
+  unknownMarket,
+  normalizeTooltip,
+  purgeExpired,
+  safeURL,
+} from "../market/ahledger";
+import { RECIPES, CONVERSIONS } from "../catalog/recipes";
+import { ITEMS } from "../catalog/items";
+import {
+  acquire,
+  craftCost,
+  evaluate,
+  batchPlan,
+  disenchantValue,
+  skillChance,
+  expectedSkillGains,
+  patternPayback,
+  access,
+  levelRoute,
+} from "./planner";
+import { copper, net } from "./money";
+const recipe = (id: number) => RECIPES.find((r) => r.id === id)!;
+function fixture(prices: Record<number, number> = {}) {
+  const c = defaults().characters[0],
+    m = unknownMarket();
+  for (const [id, p] of Object.entries(prices))
+    c.manual[+id] = {
+      market: MARKET,
+      ask: p,
+      exit: p,
+      observedAt: "2026-11-14T12:00:00Z",
+      note: "Synthetic test quote",
+    };
+  return { c, m };
+}
+function action(
+  kind: Action["kind"],
+  itemId: number,
+  recipeId?: number,
+  extra: Partial<Action> = {},
+): Action {
+  return {
+    id: "test",
+    kind,
+    itemId,
+    recipeId,
+    quantity: 1,
+    exit: null,
+    deposit: 0,
+    sellFraction: 1,
+    fallback: "keep",
+    ...extra,
+  };
+}
+describe("handoff acceptance fixtures", () => {
+  it("shirt raw cloth path, five orange gains and pattern paid once", () => {
+    const { c, m } = fixture({ 4306: 217, 4305: 2000, 4333: 3000 });
+    c.known.push(3870);
+    const r = recipe(3870);
+    expect(craftCost(r, 1, c, m).cash).toBe(2536);
+    expect(evaluate(action("craft", 4333, 3870), c, m).profit).toBe(314);
+    c.known = c.known.filter((x) => x !== 3870);
+    c.unlockCosts[3870] = 1100;
+    const e = evaluate(action("craft", 4333, 3870, { quantity: 5 }), c, m);
+    expect(e.profit).toBe(470);
+    expect(e.skill).toBe(5);
+    expect(patternPayback(e)).toBe(4);
+  });
+  it("finite donated potion and random DE expected recovery", () => {
+    const { c, m } = fixture({
+      2592: 130,
+      2997: 900,
+      3383: 700,
+      11083: 440,
+      11082: 2749,
+      11084: 5022,
+    });
+    c.inventory[3383].qty = 1;
+    expect(craftCost(recipe(3852), 1, c, m).cash).toBe(1860);
+    const d = disenchantValue(ITEMS[4318], null, c, m)!;
+    expect(d.expected).toBeCloseTo(1492.26, 2);
+    expect(d.guaranteed).toBe(false);
+    const a = action("craft-de", 4318, 3852, { sellFraction: 0 });
+    const p = batchPlan([a, { ...a, id: "two" }], c, m);
+    expect(p.cash).toBe(1860 * 2 + 700);
+    expect(p.pool[3383]).toBe(0);
+  });
+  it("guaranteed shard and unknown price do not become zero", () => {
+    const { c, m } = fixture({ 4253: 3555, 11084: 5022 });
+    const e = evaluate(action("buy-de", 4253), c, m);
+    expect(e.profit).toBeCloseTo(1215.9);
+    expect(e.de?.guaranteed).toBe(true);
+    delete c.manual[11084];
+    expect(evaluate(action("buy-de", 4253), c, m).profit).toBeNull();
+  });
+  it("red bag hotfix consumes five wool bolts", () => {
+    const { c, m } = fixture({ 2592: 150, 2997: 1000, 5763: 2300 });
+    const e = evaluate(action("craft", 5763, 6688), c, m);
+    expect(e.cost.cash).toBe(2400);
+    expect(e.profit).toBe(-215);
+  });
+  it("green pack pattern and skill gate are corrected; thirteen sales pay back", () => {
+    const { c, m } = fixture({
+      4305: 700,
+      4306: 1000,
+      4234: 450,
+      5764: 8000,
+      5774: 30000,
+    });
+    expect(access(recipe(6693), c)).toContain("140");
+    c.skills.Tailoring!.level = 140;
+    const e = evaluate(action("craft", 5764, 6693), c, m);
+    expect(e.cost.cash).toBe(35250);
+    expect(patternPayback(e)).toBe(13);
+    expect(recipe(6693).acquisition).toBe("drop");
+  });
+  it("whole essence lots have precise EV and no recursive cycles", () => {
+    const { c, m } = fixture({ 10939: 472, 10938: 208 });
+    const e = evaluate(action("convert", 10938, -1), c, m);
+    expect(e.cost.cash).toBe(472);
+    expect(e.profit).toBeCloseTo(120.8);
+    const cost = acquire(10938, 4, c, m, {});
+    expect(cost.cash).toBe(680);
+    expect(cost.pool[10938] || 0).toBe(0);
+    expect(CONVERSIONS).toHaveLength(4);
+  });
+  it("silk bolt grey at 120, caps stop gains and yellow is estimated", () => {
+    const r = recipe(3839);
+    expect(skillChance(r, 120)).toBe(0);
+    expect(expectedSkillGains(r, 120, 100, 150)).toBe(0);
+    expect(expectedSkillGains(recipe(8760), 129, 10, 130)).toBe(1);
+    expect(skillChance(recipe(3852), 125)).toBe(0.75);
+  });
+});
+describe("cash, stock and selling boundaries", () => {
+  it("deposits commit cash, return without income, and expiry loses only its deposit", () => {
+    const { c, m } = fixture({ 4253: 3555, 11084: 5022 });
+    const a = action("buy-de", 4253, undefined, { deposit: 100 });
+    const sold = batchPlan([a], c, m);
+    expect(sold.upfront).toBe(3655);
+    expect(sold.profit).toBeCloseTo(1215.9);
+    const expired = batchPlan([{ ...a, sellFraction: 0 }], c, m);
+    expect(expired.revenue).toBe(-100);
+    expect(expired.profit).toBe(-3655);
+  });
+  it("zero sales needs no exit price; fractions never sell part of a crafted item", () => {
+    const { c, m } = fixture({ 4306: 100, 4305: 9999 });
+    c.known.push(8760);
+    const a = action("craft", 7048, 8760, { sellFraction: 0 });
+    expect(batchPlan([a], c, m).revenue).toBe(0);
+    const b = { ...a, quantity: 3, sellFraction: 0.5, exit: 1000 };
+    expect(batchPlan([b], c, m).revenue).toBe(950);
+  });
+  it("DE vendor fallback never sells the already destroyed original item", () => {
+    const { c, m } = fixture({ 4253: 3555, 11084: 5022 });
+    expect(
+      batchPlan(
+        [
+          action("buy-de", 4253, undefined, {
+            sellFraction: 0,
+            fallback: "vendor",
+          }),
+        ],
+        c,
+        m,
+      ).revenue,
+    ).toBeNull();
+  });
+  it("future sales cannot fund first purchases and pattern only charged once", () => {
+    const { c, m } = fixture({ 4306: 217, 4305: 9999, 4333: 30000 });
+    c.cash = c.budget = 5000;
+    c.unlockCosts[3870] = 1100;
+    const a = action("craft", 4333, 3870);
+    const p = batchPlan([a, { ...a, id: "two" }], c, m);
+    expect(p.cash).toBe(6172);
+    expect(p.fits).toBe(false);
+    expect(p.ready).toBe(false);
+  });
+  it("retained guaranteed mats can be used once and cannot be sold too", () => {
+    const { c, m } = fixture({ 4253: 1000, 11084: 5000 });
+    const p = batchPlan(
+      [
+        action("buy-de", 4253, undefined, { retain: true }),
+        action("resell", 11084),
+      ],
+      c,
+      m,
+    );
+    expect(p.cash).toBe(1000);
+    expect(p.revenue).toBe(4750);
+    expect(p.economic).toBe(1000);
+    expect(p.pool[11084]).toBe(0);
+  });
+  it("random retained mats do not become guaranteed inputs", () => {
+    const { c, m } = fixture({
+      7048: 1000,
+      11083: 100,
+      11082: 200,
+      11084: 300,
+    });
+    const p = batchPlan(
+      [action("buy-de", 7048, undefined, { retain: true })],
+      c,
+      m,
+    );
+    expect(p.pool[11083] || 0).toBe(0);
+    expect(p.revenue).toBe(0);
+  });
+  it("wands excluded despite a generic table and duplicate outcome validation", () => {
+    const { c, m } = fixture();
+    expect(
+      disenchantValue(
+        {
+          ...ITEMS[11288],
+          de: [
+            {
+              probability: 1,
+              drops: [{ id: 10940, min: 1, max: 1 }],
+              source: "",
+            },
+          ],
+        },
+        1,
+        c,
+        m,
+      ),
+    ).toBeNull();
+    expect(
+      disenchantValue(
+        {
+          id: 1,
+          name: "bad",
+          de: [{ probability: 0.4, drops: [], source: "" }],
+        },
+        1,
+        c,
+        m,
+      ),
+    ).toBeNull();
+  });
+  it("unknown/stale inputs stop funding and routes respect caps", () => {
+    const { c, m } = fixture();
+    expect(craftCost(recipe(8760), 1, c, m).cash).toBeNull();
+    c.skills.Tailoring!.target = 200;
+    expect(levelRoute(c, m, "Tailoring").stopped).toBeTruthy();
+    c.cash = 0;
+    expect(batchPlan([action("craft", 7048, 8760)], c, m).ready).toBe(false);
+  });
+});
+describe("profiles and provider boundaries", () => {
+  it("seeds distinct three characters without invented free supplies or cash", () => {
+    const s = defaults();
+    expect(s.characters.map((c) => c.name)).toEqual([
+      "Glimpo",
+      "Chumbles",
+      "Grimpo Grongo",
+    ]);
+    expect(s.characters[1].skills.Alchemy?.level).toBe(130);
+    expect(s.characters[2].skills.Engineering?.level).toBe(130);
+    expect(s.characters[2].className).toBe("Warrior");
+    expect(s.characters[1].cash).toBeNull();
+    expect(s.characters[0].inventory[3383].qty).toBe(0);
+  });
+  it("explicit finite transfers isolate profiles and reject BoP", () => {
+    const s = defaults();
+    s.characters[0].inventory[2592].qty = 4;
+    const next = transfer(s, "glimpo", "chumbles", 2592, 3);
+    expect(s.characters[0].inventory[2592].qty).toBe(4);
+    expect(next.characters[0].inventory[2592].qty).toBe(1);
+    expect(next.characters[1].inventory[2592].qty).toBe(3);
+    expect(() => transfer(s, "glimpo", "chumbles", 2592, 5)).toThrow();
+    expect(() => transfer(s, "glimpo", "chumbles", 6339, 1)).toThrow();
+  });
+  it("import strips wrong market overrides and unsafe values", () => {
+    const s = defaults();
+    s.characters[0].manual[4306] = {
+      market: "other",
+      ask: 0,
+      exit: 12,
+      observedAt: new Date().toISOString(),
+      note: "",
+    };
+    expect(validateState(s).characters[0].manual[4306]).toBeUndefined();
+    expect(() => validateState({ version: 8 })).toThrow();
+  });
+  it("response identity, zero inferred sales, unknowns, stale removal and URL safety", () => {
+    expect(() =>
+      normalizeTooltip({ market: "other", items: [] }, 9999),
+    ).toThrow();
+    const rows = normalizeTooltip(
+      {
+        market: { slug: "forever/rp/alliance/eu" },
+        items: [
+          { id: 4306, name: "Silk", minBuyout: 0, salesPerDay: 0, quantity: 2 },
+          { id: 4305, name: "Bolt" },
+        ],
+      },
+      Date.now() - 1,
+    );
+    expect(rows[0].ask).toBeNull();
+    expect(rows[0].soldPerDay).toBe(0);
+    expect(rows[1].soldPerDay).toBeNull();
+    const m: MarketData = { ...unknownMarket(), quotes: { 4306: rows[0] } };
+    expect(purgeExpired(m).quotes[4306]).toBeUndefined();
+    expect(safeURL("javascript:alert(1)")).toBe("https://ahledger.com");
+  });
+  it("copper inputs and single AH cut", () => {
+    expect(copper("1g 12s 20c")).toBe(11220);
+    expect(copper("25000")).toBe(25000);
+    expect(copper("-1g")).toBeNull();
+    expect(copper("1g 2g")).toBeNull();
+    expect(net(3000)).toBe(2850);
+  });
+});
+it("combined batch cannot buy the same quoted stock twice", () => {
+  const { c, m } = fixture({ 11084: 5022 });
+  m.quotes[4253] = {
+    id: 4253,
+    name: "Toughened Leather Gloves",
+    ask: 3555,
+    median: null,
+    median7d: null,
+    quantity: 1,
+    soldPerDay: null,
+    observedAt: new Date().toISOString(),
+    expiresAt: Date.now() + 60000,
+    source: "AHledger · test",
+    url: "",
+    detectedSale: null,
+    coveredHours: null,
+  };
+  const a = action("buy-de", 4253);
+  const plan = batchPlan([a, { ...a, id: "second" }], c, m);
+  expect(plan.cash).toBeNull();
+  expect(plan.ready).toBe(false);
+  expect(plan.rows[1].cost.missing.join()).toContain("Only 0");
+});

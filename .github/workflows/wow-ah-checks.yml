@@ -1,0 +1,32 @@
+name: Copper Ledger checks
+on:
+  push:
+    paths: ['apps/wow-ah/**', 'wow-ah/**', '.github/workflows/wow-ah-checks.yml']
+  pull_request:
+    paths: ['apps/wow-ah/**', 'wow-ah/**', '.github/workflows/wow-ah-checks.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/wow-ah
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/wow-ah/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: node scripts/publish.mjs && git diff --exit-code -- ../../wow-ah
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: copper-ledger-test-results
+          path: apps/wow-ah/test-results
