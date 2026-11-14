@@ -29,6 +29,7 @@ test("default scanner needs no profile or crafting, ranks market activity and ev
               url: "https://ahledger.com/items/765",
             },
             minBuyout: 100,
+            median: 180,
             referenceMedian: 200,
             basis: "7d",
             quantity: 20,
@@ -133,4 +134,68 @@ test("scanner handles missing data without phantom flips and preserves crafting 
   await expect(
     page.getByRole("combobox", { name: "Character", exact: true }),
   ).toBeVisible();
+});
+
+test("historical recovery is opt-in and vendor competition/old quotes are exposed", async ({
+  page,
+}) => {
+  await page.route("https://api.ahledger.com/**", async (r) => {
+    const u = new URL(r.request().url()),
+      market = "forever.rp.alliance.eu";
+    const body = u.pathname.endsWith("/markets")
+      ? {
+          markets: [
+            { id: market, ruleset: "rp", region: "eu", faction: "alliance" },
+          ],
+        }
+      : {
+          market,
+          deals: [
+            {
+              item: { id: 254035, name: "Mageweave Reagent Bag" },
+              minBuyout: 30000,
+              median: 30000,
+              referenceMedian: 54214,
+              basis: "7d",
+              quantity: 22,
+              salesPerDay: 13.2,
+              observedAt: new Date(Date.now() - 7200000).toISOString(),
+            },
+            {
+              item: { id: 2320, name: "Coarse Thread" },
+              minBuyout: 32,
+              median: 32,
+              referenceMedian: 46,
+              basis: "7d",
+              quantity: 689,
+              salesPerDay: 546.7,
+              observedAt: new Date().toISOString(),
+            },
+          ],
+        };
+    await r.fulfill({
+      json: body,
+      headers: { "Cache-Control": "max-age=300" },
+    });
+  });
+  await page.goto("");
+  await expect(page.locator(".empty")).toContainText(
+    "No matching resale candidates",
+  );
+  await page
+    .getByRole("combobox", { name: "Resale model", exact: true })
+    .selectOption("historical");
+  await expect(page.locator(".flip-card")).toHaveCount(2);
+  const bag = page
+    .locator(".flip-card")
+    .filter({
+      has: page.getByRole("heading", { name: "Mageweave Reagent Bag" }),
+    });
+  await expect(bag).toContainText("needs a market recovery");
+  await expect(bag).toContainText("Quote is 120 minutes old");
+  const thread = page
+    .locator(".flip-card")
+    .filter({ has: page.getByRole("heading", { name: "Coarse Thread" }) });
+  await expect(thread).toContainText("Vendor competition");
+  await expect(thread).toContainText("10c per unit");
 });

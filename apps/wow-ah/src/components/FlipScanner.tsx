@@ -1,3 +1,4 @@
+import { ITEMS } from "../catalog/items";
 import { PriceContext } from "./PriceContext";
 import { useEffect, useState } from "react";
 import type { MarketData, Quote } from "../types";
@@ -62,6 +63,7 @@ export function FlipScanner({
   const [draft, setDraft] = useState(filters),
     [search, setSearch] = useState(""),
     [exitPercent, setExitPercent] = useState(90),
+    [model, setModel] = useState<"current" | "historical">("current"),
     [sort, setSort] = useState("activity"),
     [maxBuy, setMaxBuy] = useState<number | null>(null),
     [positive, setPositive] = useState(true),
@@ -70,7 +72,15 @@ export function FlipScanner({
     .map((d) => ({
       d,
       q: market.quotes[d.id],
-      s: flipScenario(market.quotes[d.id], d.reference, exitPercent),
+      s: flipScenario(
+        market.quotes[d.id],
+        d.reference,
+        exitPercent,
+        null,
+        0,
+        Date.now(),
+        model,
+      ),
     }))
     .filter(
       ({ q, s }) =>
@@ -107,8 +117,9 @@ export function FlipScanner({
         </p>
         <p className="note">
           Potential profit uses your assumed resale price after the 5% AH cut,
-          before lost deposits. Historical asks are a reference, not confirmed
-          sales.
+          before lost deposits. Current-spread mode caps the resale assumption
+          at today’s median asks. Historical recovery is a separate speculative
+          mode; neither price is a confirmed sale.
         </p>
       </section>
       <div className="scan-presets" role="group" aria-label="Scan presets">
@@ -146,16 +157,17 @@ export function FlipScanner({
             </select>
           </label>
           <label>
-            Assumed resale price
+            Resale model
             <select
-              value={exitPercent}
-              onChange={(e) => setExitPercent(+e.target.value)}
+              value={model}
+              onChange={(e) =>
+                setModel(e.target.value as "current" | "historical")
+              }
             >
-              {[80, 90, 100].map((n) => (
-                <option key={n} value={n}>
-                  {n}% of reference asks
-                </option>
-              ))}
+              <option value="current">Current market spread</option>
+              <option value="historical">
+                Historical recovery · speculative
+              </option>
             </select>
           </label>
         </div>
@@ -168,6 +180,20 @@ export function FlipScanner({
             }}
           >
             <div className="form-grid">
+              {" "}
+              <label>
+                Assumed resale price
+                <select
+                  value={exitPercent}
+                  onChange={(e) => setExitPercent(+e.target.value)}
+                >
+                  {[80, 90, 100].map((n) => (
+                    <option key={n} value={n}>
+                      {n}% of reference asks
+                    </option>
+                  ))}
+                </select>
+              </label>
               <label>
                 Minimum discount to reference
                 <select
@@ -336,7 +362,12 @@ export function FlipScanner({
                 ? "Unknown ROI"
                 : s.roi.toFixed(1) + "% return on cash"}
               <br />
+              {model === "current"
+                ? "Capped at current median; historical ceiling "
+                : "Speculative recovery to "}
               {exitPercent}% of {basisLabel(d.basis)} ({money(d.reference)})
+              <br />
+              Current median asks: {money(q.median)}
             </p>
             <p className="note">
               {s.daysSupply === null
@@ -353,6 +384,43 @@ export function FlipScanner({
                   : "Demand is not established. A large paper margin may never sell."}
               </p>
             )}
+            {model === "historical" &&
+              s.exit !== null &&
+              q.median !== null &&
+              s.exit > q.median && (
+                <p className="warning">
+                  Resale assumption is{" "}
+                  {((s.exit / q.median - 1) * 100).toFixed(0)}% above current
+                  median asks. This needs a market recovery, not just a relist.
+                </p>
+              )}
+            {ITEMS[q.id]?.vendor !== undefined && (
+              <p className="warning">
+                Vendor competition: catalogue purchase reference{" "}
+                {money(ITEMS[q.id].vendor)} per unit before reputation
+                discounts. Check NPC stock before buying from the AH.
+                {q.id === 2320 && (
+                  <>
+                    {" "}
+                    <a
+                      href="https://wow-forever.gg/spotlight/coarse-thread/"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Vendor check ↗
+                    </a>
+                  </>
+                )}
+              </p>
+            )}
+            {q.observedAt &&
+              Date.now() - Date.parse(q.observedAt) > 3600000 && (
+                <p className="warning">
+                  Quote is{" "}
+                  {Math.floor((Date.now() - Date.parse(q.observedAt)) / 60000)}{" "}
+                  minutes old. Verify the current in-game price before buying.
+                </p>
+              )}
             <p className="timestamp">
               Observed{" "}
               {q.observedAt
@@ -380,8 +448,29 @@ export function FlipScanner({
                 reference={d.reference}
                 basis={basisLabel(d.basis)}
                 percent={exitPercent}
+                model={model}
                 load={load}
               />
+              <p className="note">
+                Independent market checks:{" "}
+                <a
+                  href="https://hyjal.cc/auctions/eu/rp-pve/alliance"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Hyjal EU RP Alliance
+                </a>{" "}
+                ·{" "}
+                <a
+                  href="https://wowauctionhouse.com/forever/eu/rp-alliance/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  WoW Auction House EU RP Alliance
+                </a>
+                . Search this item and compare timestamps; their estimates and
+                scans may differ.
+              </p>
               {d.assessment && (
                 <p className="note">Provider assessment: {d.assessment}</p>
               )}
@@ -427,12 +516,14 @@ function FlipDetail({
   reference,
   basis,
   percent,
+  model,
   load,
 }: {
   q: Quote;
   reference: number | null;
   basis: string;
   percent: number;
+  model: "current" | "historical";
   load: (id: number) => Promise<void>;
 }) {
   const [exit, setExit] = useState<number | null>(null),
@@ -440,7 +531,15 @@ function FlipDetail({
     [qty, setQty] = useState(1),
     [loading, setLoading] = useState(false),
     [error, setError] = useState("");
-  const s = flipScenario(q, reference, percent, exit, deposit ?? 0);
+  const s = flipScenario(
+    q,
+    reference,
+    percent,
+    exit,
+    deposit ?? 0,
+    Date.now(),
+    model,
+  );
   return (
     <div className="flip-detail">
       <h4>Check the historical price context</h4>

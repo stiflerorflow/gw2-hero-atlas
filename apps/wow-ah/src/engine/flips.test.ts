@@ -77,3 +77,26 @@ it("historical context compares listing snapshots without inventing missing inte
     "Insufficient",
   );
 });
+it("current-spread mode does not assume a historical price rebound", () => {
+  const q = { ...fixture().quotes[4306], ask: 30000, median: 30000 };
+  expect(
+    flipScenario(q, 54214, 90, null, 0, Date.now(), "current").profit,
+  ).toBe(-1500);
+  expect(
+    flipScenario(q, 54214, 90, null, 0, Date.now(), "historical").profit,
+  ).toBeCloseTo(16352.4);
+  expect(
+    flipScenario(
+      { ...q, median: null },
+      54214,
+      90,
+      null,
+      0,
+      Date.now(),
+      "current",
+    ).profit,
+  ).toBeNull();
+  expect(
+    flipScenario(q, 54214, 90, 32000, 0, Date.now(), "current").profit,
+  ).toBe(400);
+});
