@@ -1148,7 +1148,7 @@ main:focus {
 .scan-presets {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 14px 0;
+  margin: 10px 0;
   gap: 10px;
 }
 .scan-presets button {
@@ -1169,7 +1169,7 @@ main:focus {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .scan-controls details {
-  margin-top: 8px;
+  margin-top: 0;
 }
 .scan-controls summary {
   cursor: pointer;
@@ -1293,6 +1293,7 @@ main:focus {
   letter-spacing: -0.025em;
   font-size: 30px;
   font-weight: 650;
+  margin-bottom: 8px;
 }
 .page-heading p {
   max-width: 70ch;
@@ -1412,8 +1413,8 @@ main:focus {
   font-variant-numeric: tabular-nums;
 }
 .scan-controls {
-  margin: 12px 0;
-  padding: 12px 14px;
+  padding: 8px 14px;
+  margin: 8px 0;
 }
 .scan-controls > .form-grid {
   margin: 0;
@@ -1863,7 +1864,7 @@ main:focus {
   }
   .scan-presets {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin: 14px 0;
+    margin: 10px 0;
     gap: 10px;
   }
   .scan-presets button {

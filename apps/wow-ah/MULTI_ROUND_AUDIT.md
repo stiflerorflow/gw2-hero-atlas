@@ -52,10 +52,12 @@ Three audit rounds completed with four reviewers. The cross-review reproduced an
 
 - System typography and tabular money replaced the oversized editorial hierarchy; external font downloads were removed.
 - Scanner buy, assumed resale and profit are visible together before explanatory detail.
-- First card starts at724px on320px screens,697px at390px and540px at1280px (previously about980px mobile/840px desktop). At390px, all first-card price values finish by827px, within an844px viewport. These are measured layout-test fixtures, not a claim that every long item name fits identically.
+- First card starts at635px on320px screens,627px at390px and481px at1280px with the system font (previously about980px mobile/840px desktop). Wider-font coverage is also tested: the worst mobile first-card position was673px; at390px, all first-card price values finished by765px, within an844px viewport. These are measured layout-test fixtures, not a claim that every long item name fits identically.
 - Provider cache payloads and displayed supplementary history expire on their actual deadlines. User drafts have separate session lifetimes and cannot prolong provider-data retention.
 - Exit-only overrides preserve purchase quotes; stale writes cannot report success; missing cash and missing material-price paths now give actionable guidance.
 - Catalogue expiry cannot turn a previously bound item into an AH recommendation through retained manual prices.
 - Manual overrides remain identified and reversible after their editors collapse.
 
 The combined local suite passed54 unit tests and27 browser tests. Final release checks also cover source/build consistency and the deployed app. One non-blocking limitation remains: the recipe catalogue is naturally long on narrow screens, though learned fees and source notes are collapsed. Disclosure controls retain44px minimum targets.
+
+Clean-runner release verification found a font-dependent density failure after local checks passed. Duplicate scanner copy and spacing were reduced; the original layout limits were retained and tested with both system and wider fallback fonts. This was corrected before final sign-off.

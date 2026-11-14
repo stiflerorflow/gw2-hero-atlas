@@ -33,53 +33,61 @@ test("scanner exposes candidates early with readable controls and stable local t
       headers: { "Cache-Control": "max-age=300" },
     });
   });
-  for (const [width, limit] of [
-    [320, 780],
-    [390, 750],
-    [1280, 650],
-  ]) {
-    await page.setViewportSize({ width, height: 900 });
-    await page.goto("");
-    const card = page.locator(".flip-card").first();
-    await expect(card).toBeVisible();
-    expect(
-      await card.evaluate((n) => n.getBoundingClientRect().top),
-    ).toBeLessThanOrEqual(limit);
-    if (width === 390) {
-      const prices = await card
-        .locator(".card-numbers dd")
-        .evaluateAll((nodes) =>
-          nodes.map((n) => n.getBoundingClientRect().bottom),
-        );
-      expect(Math.max(...prices)).toBeLessThanOrEqual(844);
+  // System-ui metrics differ by runner. Exercise a wider installed fallback as
+  // well, keeping the same viewport limits rather than relaxing the regression.
+  for (const fallback of [false, true]) {
+    for (const [width, limit] of [
+      [320, 780],
+      [390, 750],
+      [1280, 650],
+    ]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("");
+      if (fallback)
+        await page.addStyleTag({
+          content: ':root{--font-ui:"DejaVu Sans",system-ui,sans-serif}',
+        });
+      const card = page.locator(".flip-card").first();
+      await expect(card).toBeVisible();
+      expect(
+        await card.evaluate((n) => n.getBoundingClientRect().top),
+      ).toBeLessThanOrEqual(limit);
+      if (width === 390) {
+        const prices = await card
+          .locator(".card-numbers dd")
+          .evaluateAll((nodes) =>
+            nodes.map((n) => n.getBoundingClientRect().bottom),
+          );
+        expect(Math.max(...prices)).toBeLessThanOrEqual(844);
+      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      expect(
+        await page
+          .getByRole("heading", { level: 1 })
+          .evaluate((n) => getComputedStyle(n).fontFamily),
+      ).toContain("system-ui");
+      expect(
+        await card
+          .locator(".card-numbers dd")
+          .first()
+          .evaluate((n) => getComputedStyle(n).fontVariantNumeric),
+      ).toContain("tabular-nums");
+      for (const selector of [
+        ".scan-presets button",
+        ".scan-controls input",
+        ".scan-controls select",
+        ".main-nav a",
+      ])
+        for (const el of await page.locator(selector).all())
+          if (await el.isVisible())
+            expect(
+              await el.evaluate((n) => n.getBoundingClientRect().height),
+            ).toBeGreaterThanOrEqual(44);
     }
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBe(true);
-    expect(
-      await page
-        .getByRole("heading", { level: 1 })
-        .evaluate((n) => getComputedStyle(n).fontFamily),
-    ).toContain("system-ui");
-    expect(
-      await card
-        .locator(".card-numbers dd")
-        .first()
-        .evaluate((n) => getComputedStyle(n).fontVariantNumeric),
-    ).toContain("tabular-nums");
-    for (const selector of [
-      ".scan-presets button",
-      ".scan-controls input",
-      ".scan-controls select",
-      ".main-nav a",
-    ])
-      for (const el of await page.locator(selector).all())
-        if (await el.isVisible())
-          expect(
-            await el.evaluate((n) => n.getBoundingClientRect().height),
-          ).toBeGreaterThanOrEqual(44);
   }
   expect(fontRequests).toEqual([]);
 });

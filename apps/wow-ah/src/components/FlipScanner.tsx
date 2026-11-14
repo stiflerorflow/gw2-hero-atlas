@@ -115,11 +115,6 @@ export function FlipScanner({
     <>
       <section className="page-heading scanner-heading">
         <h1>Flip scanner</h1>
-        <p>
-          {loading
-            ? "Loading market quotes…"
-            : `${rows.length} candidates. Check the quoted prices before buying.`}
-        </p>
       </section>
       <div className="scan-presets" role="group" aria-label="Scan presets">
         {presets.map((p) => (
@@ -269,8 +264,8 @@ export function FlipScanner({
         <div>
           <h2 className="scanner-results-heading">Resale candidates</h2>
           <p className="note">
-            {Math.min(rows.length, showAll ? 200 : compact ? 3 : 12)} of{" "}
-            {rows.length} candidates · {filters.discount}%+ reference discount
+            {Math.min(rows.length, showAll ? 200 : compact ? 3 : 12)} /{" "}
+            {rows.length} candidates
           </p>
         </div>
         <a
