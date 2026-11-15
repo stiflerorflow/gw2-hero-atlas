@@ -45,3 +45,24 @@ export function assessCandidate(
     reason: `${q.ask ? ((profit / q.ask) * 100).toFixed(1) : "Unknown"}% return on the quoted buy price, before lost deposits.`,
   };
 }
+
+/** Listing evidence stays separate from any assumed exit or profitability calculation. */
+export function listingEvidence(q: Quote, now = Date.now()) {
+  const observed = q.observedAt ? Date.parse(q.observedAt) : NaN;
+  if (!Number.isFinite(observed) || observed > now + 5 * 60000)
+    return {
+      title: "Observation time unverified",
+      reason:
+        "The provider has not supplied a usable observation time. Check listings in game.",
+    };
+  const age = Math.max(0, Math.floor((now - observed) / 60000));
+  if (age >= 60)
+    return {
+      title: "Old listing snapshot",
+      reason: `Observed ${age} minutes ago. Refreshing the feed does not make this observation newer.`,
+    };
+  return {
+    title: "Recent listing snapshot",
+    reason: `Observed ${age < 1 ? "less than a minute" : age + " minutes"} ago. Asking prices are not completed sales.`,
+  };
+}

@@ -1982,7 +1982,7 @@ main:focus {
   .scan-controls > .form-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .scan-controls > .form-grid > label:first-child {
+  .scan-controls > .form-grid > label {
     grid-column: 1/-1;
   }
   .scanner-heading h1 {

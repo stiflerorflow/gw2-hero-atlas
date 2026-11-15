@@ -29,6 +29,9 @@ const recipe = (id: number) => RECIPES.find((r) => r.id === id)!;
 function fixture(prices: Record<number, number> = {}) {
   const c = defaults().characters[0],
     m = unknownMarket();
+  c.cash = c.budget = 25000;
+  c.known = [2963, 2964, 3839, 6688, 3852, 3848, 14293, 14807];
+  c.inventory[3383] = { qty: 0, note: "Synthetic finite input" };
   for (const [id, p] of Object.entries(prices))
     c.manual[+id] = {
       market: MARKET,
@@ -265,11 +268,19 @@ describe("profiles and provider boundaries", () => {
     expect(s.characters[2].skills.Engineering?.level).toBe(130);
     expect(s.characters[2].className).toBe("Warrior");
     expect(s.characters[1].cash).toBeNull();
-    expect(s.characters[0].inventory[3383].qty).toBe(0);
+    for (const c of s.characters) {
+      expect(c.cash).toBeNull();
+      expect(c.known).toEqual([]);
+      expect(c.inventory).toEqual({});
+      expect(c.watch).toEqual([]);
+    }
   });
   it("explicit finite transfers isolate profiles and reject BoP", () => {
     const s = defaults();
-    s.characters[0].inventory[2592].qty = 4;
+    s.characters[0].inventory[2592] = {
+      qty: 4,
+      note: "Recorded transfer stock",
+    };
     const next = transfer(s, "glimpo", "chumbles", 2592, 3);
     expect(s.characters[0].inventory[2592].qty).toBe(4);
     expect(next.characters[0].inventory[2592].qty).toBe(1);

@@ -1,4 +1,6 @@
+import { installScenario } from "./support/profiles";
 import { test, expect } from "@playwright/test";
+test.beforeEach(async ({ page }) => installScenario(page));
 const market = "forever.rp.alliance.eu";
 async function fixture(page: any, delayA = 0, historyTTL = 300) {
   await page.route("https://api.ahledger.com/**", async (r: any) => {
@@ -153,7 +155,7 @@ test("scanner calculator drafts survive navigation without storing provider pric
     .fill("150c");
   await card.getByRole("spinbutton", { name: "Test quantity" }).fill("3");
   await page.getByRole("link", { name: "Character plan", exact: true }).click();
-  await page.getByRole("link", { name: "Flip scanner", exact: true }).click();
+  await page.getByRole("link", { name: "Market scan", exact: true }).click();
   const again = page.locator(".flip-card").first();
   await again.getByText("Price history & calculator", { exact: true }).click();
   await expect(

@@ -35,7 +35,10 @@ export function CharacterPlan({
     <section className="character-plan">
       <div className="page-heading">
         <h1>Character plan</h1>
-        <p>Use your level, professions and gold to choose a small next step.</p>
+        <p>
+          Plan profession skill using your recorded context and a limited
+          checked recipe set.
+        </p>
       </div>
       <section className="panel" aria-label="Character context">
         <CharacterContext
@@ -58,8 +61,30 @@ export function CharacterPlan({
               : `${plan.checked} checked action types`}
           </span>
         </div>
+        <p className="note">
+          For current market evidence, <a href="#scanner">open Market scan</a>.
+          Skill options below are estimates within this catalogue, not a search
+          of every money-making activity.
+        </p>
         <details className="plan-priorities">
           <summary>Compare priorities</summary>
+          <label className="inline">
+            <input
+              type="checkbox"
+              checked={!!priorities.includeScenarios}
+              onChange={(e) =>
+                setPriorities({
+                  ...priorities,
+                  includeScenarios: e.target.checked,
+                })
+              }
+            />
+            Include crafting profit scenarios
+          </label>
+          <p className="note">
+            Optional what-if calculations. A recipe source verifies mechanics;
+            it does not establish demand or a profitable resale.
+          </p>
           <div className="form-grid">
             <label>
               Progress priority
@@ -137,7 +162,7 @@ export function CharacterPlan({
                             ? "Apply one enchant to suitable owned gear"
                             : e.action.kind === "convert"
                               ? "Make one conversion lot"
-                              : "Craft one to test the market"}
+                              : "Model one craft for resale"}
                       .
                     </p>
                     <dl className="mini-stats">
@@ -218,13 +243,12 @@ export function CharacterPlan({
                           I already know this recipe
                         </label>
                       )}
-                    {hasYieldDownside(e) &&
-                      goals.includes("Gold opportunity") && (
-                        <p className="warning">
-                          Higher-risk gold option · a bad drop can leave you
-                          worse off.
-                        </p>
-                      )}
+                    {hasYieldDownside(e) && goals.includes("Gold scenario") && (
+                      <p className="warning">
+                        Higher-risk gold option · a bad drop can leave you worse
+                        off.
+                      </p>
+                    )}
                     <p className="note">{reason}</p>
                     <div className="row-actions">
                       <button className="primary" onClick={() => add(e.action)}>

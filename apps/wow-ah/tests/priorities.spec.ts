@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { defaults, STORE } from "../src/state/profile";
+import { STORE } from "../src/state/profile";
+import { scenarioProfiles as defaults } from "./support/profiles";
 import { MARKET } from "../src/types";
 import AxeBuilder from "@axe-core/playwright";
 test("saved character lands on a compact next action and follows the missing-deposit guide", async ({
@@ -27,12 +28,20 @@ test("saved character lands on a compact next action and follows the missing-dep
     { state, key: STORE },
   );
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("");
+  await page.goto("#opportunities");
   await expect(
     page.getByRole("heading", { name: "Character plan", exact: true }),
   ).toBeVisible();
   const editor = page.locator(".context-editor");
   await expect(editor).not.toHaveAttribute("open", "");
+  await page.getByText("Compare priorities", { exact: true }).click();
+  await page
+    .getByRole("checkbox", {
+      name: "Include crafting profit scenarios",
+      exact: true,
+    })
+    .check();
+  await page.getByText("Compare priorities", { exact: true }).click();
   const card = page.locator(".plan-choice").first();
   await expect(card).toBeVisible();
   expect(

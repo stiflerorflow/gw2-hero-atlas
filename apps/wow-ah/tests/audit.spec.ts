@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { defaults, STORE } from "../src/state/profile";
+import { STORE } from "../src/state/profile";
+import {
+  scenarioProfiles as defaults,
+  installScenario,
+} from "./support/profiles";
 import { MARKET, type SavedState } from "../src/types";
 async function prepare(
   page: import("@playwright/test").Page,
@@ -289,6 +293,13 @@ test("whole essence conversions keep their operation count, output size and no-u
       note: "Synthetic conversion quote",
     };
   await prepare(page, s, "opportunities");
+  await page.getByText("Compare priorities", { exact: true }).click();
+  await page
+    .getByRole("checkbox", {
+      name: "Include crafting profit scenarios",
+      exact: true,
+    })
+    .check();
   const card = page.locator(".plan-choice").filter({
     has: page.getByRole("heading", {
       name: "Greater → Lesser Magic Essence",
@@ -310,6 +321,7 @@ test("expanded watch history preserves heading order and keyboard-accessible cha
   page,
 }) => {
   const market = MARKET;
+  await installScenario(page);
   await page.route("https://api.ahledger.com/**", async (r) => {
     const path = new URL(r.request().url()).pathname;
     let body: any = { market };

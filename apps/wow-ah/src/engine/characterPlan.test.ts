@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { characterPlan, keySupplies, rankCapForLevel } from "./characterPlan";
+import {
+  characterPlan,
+  DEFAULT_PRIORITIES,
+  keySupplies,
+  rankCapForLevel,
+} from "./characterPlan";
 import { defaults, validateState } from "../state/profile";
 import { unknownMarket } from "../market/ahledger";
 import { evaluate } from "./planner";
@@ -9,6 +14,8 @@ function fixture(prices: Record<number, number> = {}) {
   const c = defaults().characters[0],
     m = unknownMarket();
   c.characterLevel = 20;
+  c.cash = c.budget = 25000;
+  c.known = [3839, 14807];
   for (const [id, value] of Object.entries(prices))
     c.manual[+id] = {
       market: MARKET,
@@ -102,21 +109,27 @@ describe("character next steps", () => {
     const { c, m } = fixture({ 4306: 100, 4305: 200 });
     c.skills = { Tailoring: { level: 120, cap: 150, target: 120 } };
     c.inventory[4306] = { qty: 8, note: "Finite owned cloth" };
-    const plan = characterPlan(c, m);
+    const plan = characterPlan(c, m, {
+      ...DEFAULT_PRIORITIES,
+      includeScenarios: true,
+    });
     expect(plan.choices).toEqual([]);
-    expect(plan.notes.join()).toContain("No checked gold opportunity");
+    expect(plan.notes.join()).toContain("No positive gold scenario");
     expect(c.inventory[4306].qty).toBe(8);
   });
   it("keeps gray conversions out of progress but permits positive resale margin", () => {
     const { c, m } = fixture({ 4306: 100, 4305: 1000 });
     c.skills = { Tailoring: { level: 120, cap: 150, target: 150 } };
-    const plan = characterPlan(c, m);
+    const plan = characterPlan(c, m, {
+      ...DEFAULT_PRIORITIES,
+      includeScenarios: true,
+    });
     const bolt = plan.choices.find(
       (x) => x.evaluation.action.recipeId === 3839,
     )!;
     expect(bolt).toBeDefined();
     expect(bolt.evaluation.skill).toBe(0);
-    expect(bolt.goals).toEqual(["Gold opportunity"]);
+    expect(bolt.goals).toEqual(["Gold scenario"]);
     expect(new Set(plan.choices.map((x) => x.evaluation.action.id)).size).toBe(
       plan.choices.length,
     );
@@ -146,12 +159,17 @@ describe("character next steps", () => {
   });
   it("uses only a short profession-specific set of finite supplies", () => {
     const { c } = fixture();
-    expect(keySupplies(c)).toEqual([2592, 4306, 3383, 10940, 10938, 11083]);
+    expect(keySupplies(c)).toEqual([]);
+    c.inventory[777001] = {
+      qty: 3,
+      note: "Recorded item outside the recipe set",
+    };
+    expect(keySupplies(c)).toEqual([777001]);
     c.skills = {
       Herbalism: { level: 110, cap: 150, target: 150 },
       Alchemy: { level: 130, cap: 150, target: 150 },
     };
-    expect(keySupplies(c)).toEqual([785, 2450, 3820, 6359, 3355, 3356]);
+    expect(keySupplies(c)).toEqual([777001]);
   });
 });
 

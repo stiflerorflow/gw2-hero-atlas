@@ -9,8 +9,8 @@ export type ScanFilters = {
   sort: "saving" | "discount" | "sales";
 };
 export const DEFAULT_SCAN: ScanFilters = {
-  discount: 25,
-  sells: 1,
+  discount: 15,
+  sells: 0,
   units: 1,
   sort: "sales",
 };

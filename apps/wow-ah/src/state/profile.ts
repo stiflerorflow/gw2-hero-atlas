@@ -26,12 +26,7 @@ const char = (
   vendor: {},
   unlockCosts: {},
   tools: [],
-  watch: [
-    { id: 4306, buyBelow: null, sellAbove: null },
-    { id: 2592, buyBelow: null, sellAbove: null },
-    { id: 11083, buyBelow: null, sellAbove: null },
-    { id: 11084, buyBelow: null, sellAbove: null },
-  ],
+  watch: [],
   batch: [],
   duration: 24,
   sales: [],
@@ -44,16 +39,8 @@ export function defaults(): SavedState {
       ["Tailoring", 120],
       ["Enchanting", 100],
     ],
-    25000,
+    null,
   );
-  g.known = [2963, 2964, 3839, 6688, 3852, 3848, 14293, 14807];
-  g.inventory = {
-    2592: { qty: 0, note: "Matt’s donated cloth · enter actual quantity" },
-    3383: {
-      qty: 0,
-      note: "Personally free Elixirs of Wisdom · enter available quantity",
-    },
-  };
   return {
     version: 1,
     active: g.id,

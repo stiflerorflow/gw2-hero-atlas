@@ -16,6 +16,8 @@ function fixture(prices: Record<number, number>) {
   const c = defaults().characters[0],
     m = unknownMarket();
   c.characterLevel = 20;
+  c.cash = c.budget = 25000;
+  c.known = [3839];
   for (const [id, value] of Object.entries(prices))
     c.manual[+id] = {
       market: MARKET,
@@ -83,9 +85,11 @@ it("prefers fixed output by default, while letting users explicitly choose a hig
   c.skills.Tailoring!.target = 120;
   c.skills.Enchanting!.target = 100;
   const gold = (mode: "yield" | "margin") =>
-    characterPlan(c, m, { progress: "cash", gold: mode }).choices.find((v) =>
-      v.goals.includes("Gold opportunity"),
-    )!;
+    characterPlan(c, m, {
+      progress: "cash",
+      gold: mode,
+      includeScenarios: true,
+    }).choices.find((v) => v.goals.includes("Gold scenario"))!;
   expect(gold("yield").evaluation.action.recipeId).toBe(3839);
   expect(gold("margin").evaluation.action.itemId).toBe(10059);
   expect(gold("margin").evaluation.economicProfit).toBeGreaterThan(
@@ -162,12 +166,24 @@ it("funds whole vendor vial packs once and carries the unused vials forward", ()
   expect(next.pool[3371]).toBe(0);
 });
 it("compares upfront progress with net progress without spending future proceeds", () => {
-  const {c,m}=fixture({785:100,2450:200,3820:200,3383:1000,3385:400});
-  c.skills={Alchemy:{level:130,cap:150,target:150}};
-  c.known=[3171,3173];
-  const pick=(progress:"cash"|"net")=>characterPlan(c,m,{progress,gold:"yield"}).choices.find(v=>v.goals.includes("Alchemy progress"))!;
+  const { c, m } = fixture({
+    785: 100,
+    2450: 200,
+    3820: 200,
+    3383: 1000,
+    3385: 400,
+  });
+  c.skills = { Alchemy: { level: 130, cap: 150, target: 150 } };
+  c.known = [3171, 3173];
+  const pick = (progress: "cash" | "net") =>
+    characterPlan(c, m, { progress, gold: "yield" }).choices.find((v) =>
+      v.goals.includes("Alchemy progress"),
+    )!;
   expect(pick("cash").evaluation.action.recipeId).toBe(3173);
   expect(pick("net").evaluation.action.recipeId).toBe(3171);
-  c.cash=319;c.budget=319;
-  expect(characterPlan(c,m,{progress:"net",gold:"yield"}).choices).toEqual([]);
+  c.cash = 319;
+  c.budget = 319;
+  expect(
+    characterPlan(c, m, { progress: "net", gold: "yield" }).choices,
+  ).toEqual([]);
 });

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { defaults, STORE } from "../src/state/profile";
+import { STORE } from "../src/state/profile";
+import { scenarioProfiles as defaults } from "./support/profiles";
 const url = "./";
 async function setup(page: any) {
   const s = defaults();

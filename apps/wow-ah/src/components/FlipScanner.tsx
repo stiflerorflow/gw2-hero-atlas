@@ -1,4 +1,4 @@
-import { assessCandidate } from "../engine/assessment";
+import { assessCandidate, listingEvidence } from "../engine/assessment";
 import { ITEMS } from "../catalog/items";
 import { PriceContext } from "./PriceContext";
 import { useEffect, useState } from "react";
@@ -20,7 +20,7 @@ const presets: { label: string; note: string; filters: ScanFilters }[] = [
   {
     label: "Active markets",
     note: "At least 1 estimated sale/day",
-    filters: DEFAULT_SCAN,
+    filters: { discount: 25, sells: 1, units: 1, sort: "sales" },
   },
   {
     label: "Deep discounts",
@@ -30,7 +30,7 @@ const presets: { label: string; note: string; filters: ScanFilters }[] = [
   {
     label: "Broad scan",
     note: "15%+ below reference; all activity levels",
-    filters: { discount: 15, sells: 0, units: 1, sort: "saving" },
+    filters: DEFAULT_SCAN,
   },
 ];
 export function FlipScanner({
@@ -67,7 +67,7 @@ export function FlipScanner({
     [model, setModel] = useState<"current" | "historical">("current"),
     [sort, setSort] = useState("activity"),
     [maxBuy, setMaxBuy] = useState<number | null>(null),
-    [positive, setPositive] = useState(true),
+    [positive, setPositive] = useState(false),
     [showAll, setShowAll] = useState(false),
     [drafts, setDrafts] = useState<
       Record<
@@ -114,7 +114,10 @@ export function FlipScanner({
   return (
     <>
       <section className="page-heading scanner-heading">
-        <h1>Flip scanner</h1>
+        <h1>Market scan</h1>
+        <p>
+          Listing data first. Resale is a scenario.
+        </p>
       </section>
       <div className="scan-presets" role="group" aria-label="Scan presets">
         {presets.map((p) => (
@@ -133,7 +136,7 @@ export function FlipScanner({
       <div className="panel scan-controls">
         <div className="form-grid">
           <label>
-            Find item
+            Filter returned leads
             <input
               type="search"
               value={search}
@@ -144,22 +147,10 @@ export function FlipScanner({
           <label>
             Rank results
             <select value={sort} onChange={(e) => setSort(e.target.value)}>
-              <option value="activity">Daily demand</option>
-              <option value="profit">Profit / item</option>
+              <option value="activity">Inferred daily activity</option>
+              <option value="profit">Scenario profit / item</option>
               <option value="roi">Return %</option>
               <option value="cost">Buy price</option>
-            </select>
-          </label>
-          <label>
-            Resale model
-            <select
-              value={model}
-              onChange={(e) =>
-                setModel(e.target.value as "current" | "historical")
-              }
-            >
-              <option value="current">Current prices</option>
-              <option value="historical">Price recovery · speculative</option>
             </select>
           </label>
         </div>
@@ -173,6 +164,20 @@ export function FlipScanner({
           >
             <div className="form-grid">
               {" "}
+              <label>
+                Resale model
+                <select
+                  value={model}
+                  onChange={(e) =>
+                    setModel(e.target.value as "current" | "historical")
+                  }
+                >
+                  <option value="current">Current prices</option>
+                  <option value="historical">
+                    Price recovery · speculative
+                  </option>
+                </select>
+              </label>
               <label>
                 Assumed resale price
                 <select
@@ -262,10 +267,10 @@ export function FlipScanner({
       </div>
       <div className="section-title">
         <div>
-          <h2 className="scanner-results-heading">Resale candidates</h2>
+          <h2 className="scanner-results-heading">Listing leads</h2>
           <p className="note">
             {Math.min(rows.length, showAll ? 200 : compact ? 3 : 12)} /{" "}
-            {rows.length} candidates
+            {rows.length} provider leads
           </p>
         </div>
         <a
@@ -286,10 +291,11 @@ export function FlipScanner({
       )}
       {!loading && !rows.length && (
         <section className="empty">
-          <h3>No matching resale candidates</h3>
+          <h3>No matching listing leads</h3>
           <p>
             Try Broad scan, relax the price limit, or allow non-positive
-            scenarios. An empty result is not proof the market has no flips.
+            scenarios. An empty result is not proof the market has no
+            opportunities. No cached recipe ideas are substituted.
           </p>
         </section>
       )}
@@ -299,37 +305,25 @@ export function FlipScanner({
             <h3>{q.name}</h3>
             <dl className="card-numbers">
               <div>
-                <dt>Buy / unit</dt>
+                <dt>Lowest listed / unit</dt>
                 <dd>{money(s.buy)}</dd>
               </div>
               <div>
-                <dt>Assumed sell / unit</dt>
-                <dd>{money(s.exit)}</dd>
+                <dt>Median listed / unit</dt>
+                <dd>{money(q.median)}</dd>
               </div>
               <div>
-                <dt>Potential profit / unit</dt>
-                <dd
-                  className={
-                    s.profit !== null && s.profit > 0 ? "positive" : "negative"
-                  }
-                >
-                  {money(s.profit)}
+                <dt>Units listed</dt>
+                <dd>
+                  {q.quantity === null
+                    ? "Unknown"
+                    : q.quantity.toLocaleString()}
                 </dd>
               </div>
             </dl>
             <div className="candidate-verdict">
-              <strong>
-                {
-                  assessCandidate(q, s.profit, s.exit, ITEMS[q.id]?.vendor)
-                    .title
-                }
-              </strong>
-              <p>
-                {
-                  assessCandidate(q, s.profit, s.exit, ITEMS[q.id]?.vendor)
-                    .reason
-                }
-              </p>
+              <strong>{listingEvidence(q).title}</strong>
+              <p>{listingEvidence(q).reason}</p>
             </div>
             <div className="flip-demand">
               <b>
@@ -339,9 +333,7 @@ export function FlipScanner({
                       maximumFractionDigits: 1,
                     }) + " / day"}
               </b>
-              <span>
-                estimated market units sold · {q.quantity ?? "unknown"} listed
-              </span>
+              <span>inferred market activity · not confirmed sales</span>
             </div>
 
             <div className="row-actions">
@@ -356,6 +348,36 @@ export function FlipScanner({
             </div>
             <details>
               <summary>Price history & calculator</summary>
+              <div className="scenario-evidence">
+                <p className="eyebrow">Resale scenario · not observed profit</p>
+                <dl className="mini-stats">
+                  <div>
+                    <dt>Assumed sell / unit</dt>
+                    <dd>{money(s.exit)}</dd>
+                  </div>
+                  <div>
+                    <dt>Potential profit / unit</dt>
+                    <dd>{money(s.profit)}</dd>
+                  </div>
+                </dl>
+                <p className="note">
+                  {
+                    assessCandidate(q, s.profit, s.exit, ITEMS[q.id]?.vendor)
+                      .title
+                  }
+                  :{" "}
+                  {
+                    assessCandidate(q, s.profit, s.exit, ITEMS[q.id]?.vendor)
+                      .reason
+                  }
+                </p>
+                <p className="note">
+                  The exit uses an adjustable fraction of reference asking
+                  prices, capped by median asks in current-price mode. It is not
+                  evidence that a buyer paid that price. Deposits and executable
+                  listing depth still need checking.
+                </p>
+              </div>
               <details className="price-evidence">
                 <summary>Price assumptions and source details</summary>{" "}
                 <p className="card-note">
@@ -500,18 +522,19 @@ export function FlipScanner({
       </div>
       {rows.length > (compact ? 3 : 12) && !showAll && (
         <button className="wide" onClick={() => setShowAll(true)}>
-          Show all {rows.length} candidates
+          Show all {rows.length} provider leads
         </button>
       )}
       <details className="panel">
         <summary>How to use this scanner</summary>
         <p>
-          Potential profit includes one 5% AH cut and excludes lost deposits.
-          Search covers these provider leads, not every item in the game. Choose
-          a scan, compare daily activity and profit, then inspect the actual
-          listings before buying. Try a small position first. Your own listing
-          competes with other sellers, so market volume is not a promise of
-          personal sales.
+          The front of each card shows provider-reported listing data, not
+          realized trades. Optional potential profit includes one 5% AH cut and
+          excludes lost deposits. Search covers these provider leads, not every
+          item in the game. Choose a scan, compare daily activity and profit,
+          then inspect the actual listings before buying. Try a small position
+          first. Your own listing competes with other sellers, so market volume
+          is not a promise of personal sales.
         </p>
         <p>
           The provider supplies discounted-item leads, not complete market

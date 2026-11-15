@@ -195,11 +195,17 @@ export function CharacterContext({
         </div>
       )}
       <details>
-        <summary>Relevant supplies · optional</summary>
+        <summary>Recorded supplies · optional</summary>
         <p className="note">
-          Enter only what is available now. Unrecorded supplies are assumed
-          unavailable; free or donated stock is finite.
+          Record items you actually have. This list follows your inventory and
+          does not promote particular recipes or assume free supplies.
         </p>
+        {supplies.length === 0 && (
+          <p className="note">
+            No inventory has been recorded. Use the inventory editor to add an
+            item.
+          </p>
+        )}
         <div className="form-grid">
           {supplies.map((id) => (
             <label key={id}>
@@ -227,7 +233,7 @@ export function CharacterContext({
             </label>
           ))}
         </div>
-        <button onClick={settings}>Other inventory and tools</button>
+        <button onClick={settings}>Record inventory and tools</button>
       </details>
 
       <button

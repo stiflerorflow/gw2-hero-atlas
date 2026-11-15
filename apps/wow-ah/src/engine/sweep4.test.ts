@@ -94,6 +94,7 @@ it("conserves finite market stock across raw/conversion branches and later batch
   const c = defaults().characters[0],
     m = unknownMarket();
   c.tools = [6218];
+  c.known = [14807];
   c.cash = 2351;
   c.budget = 2351;
   m.quotes[10938] = marketQuote(10938, 100, 4);

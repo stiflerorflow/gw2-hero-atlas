@@ -1,4 +1,6 @@
+import { installScenario } from "./support/profiles";
 import { test, expect } from "@playwright/test";
+test.beforeEach(async ({ page }) => installScenario(page));
 import AxeBuilder from "@axe-core/playwright";
 const market = "forever.rp.alliance.eu";
 async function prices(page: import("@playwright/test").Page) {
@@ -57,7 +59,7 @@ test("character context is short, isolated and persistent without changing the g
     .getByRole("textbox", { name: "Current gold on this character" })
     .fill("3g");
   await context
-    .getByText("Relevant supplies · optional", { exact: true })
+    .getByText("Recorded supplies · optional", { exact: true })
     .click();
   await context
     .getByRole("spinbutton", { name: "Wool Cloth", exact: true })
@@ -92,7 +94,7 @@ test("character context is short, isolated and persistent without changing the g
     context.getByRole("textbox", { name: "Current gold on this character" }),
   ).toHaveValue("3g 0s");
   await context
-    .getByText("Relevant supplies · optional", { exact: true })
+    .getByText("Recorded supplies · optional", { exact: true })
     .click();
   await expect(
     context.getByRole("spinbutton", { name: "Wool Cloth", exact: true }),
@@ -109,9 +111,9 @@ test("character context is short, isolated and persistent without changing the g
   expect(saved.characters[1].skills.Alchemy.level).toBe(135);
   expect(saved.characters[1].characterLevel).toBe(24);
   expect(saved.characters[2].characterLevel).toBeNull();
-  await page.getByRole("link", { name: "Flip scanner", exact: true }).click();
+  await page.getByRole("link", { name: "Market scan", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Flip scanner", exact: true }),
+    page.getByRole("heading", { name: "Market scan", exact: true }),
   ).toBeVisible();
 });
 
@@ -123,6 +125,13 @@ test("a priced recommendation keeps gray conversions separate from skill gains a
   await page
     .getByRole("spinbutton", { name: "Current character level" })
     .fill("20");
+  await page.getByText("Compare priorities", { exact: true }).click();
+  await page
+    .getByRole("checkbox", {
+      name: "Include crafting profit scenarios",
+      exact: true,
+    })
+    .check();
   const card = page.locator(".plan-choice").filter({
     has: page.getByRole("heading", {
       name: "Bolt of Silk Cloth",
@@ -130,7 +139,7 @@ test("a priced recommendation keeps gray conversions separate from skill gains a
     }),
   });
   await expect(card).toBeVisible();
-  await expect(card.locator(".plan-goal")).toHaveText("Gold opportunity");
+  await expect(card.locator(".plan-goal")).toHaveText("Gold scenario");
   await expect(card.locator(".mini-stats dd").nth(1)).toHaveText("0.00");
   await expect(card).toContainText("5s 50c");
   await card
@@ -156,7 +165,14 @@ test("expanded character plan is readable and accessible on narrow phones and de
   await page
     .getByRole("spinbutton", { name: "Current character level" })
     .fill("20");
-  await page.getByText("Relevant supplies · optional", { exact: true }).click();
+  await page.getByText("Recorded supplies · optional", { exact: true }).click();
+  await page.getByText("Compare priorities", { exact: true }).click();
+  await page
+    .getByRole("checkbox", {
+      name: "Include crafting profit scenarios",
+      exact: true,
+    })
+    .check();
   await page
     .getByText("How character level and priorities are used", { exact: true })
     .click();
@@ -280,6 +296,12 @@ test("confirming a Copper Rod unlocks Wand progress, without assuming tool owner
   });
   await expect(wand).toContainText("Enchanting progress");
   await page.getByText("Compare priorities", { exact: true }).click();
+  await page
+    .getByRole("checkbox", {
+      name: "Include crafting profit scenarios",
+      exact: true,
+    })
+    .check();
   await page
     .getByRole("combobox", { name: "Gold priority", exact: true })
     .selectOption("margin");

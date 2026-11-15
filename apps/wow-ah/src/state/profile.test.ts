@@ -43,7 +43,7 @@ it("rejects out-of-range inventory keys and transfers that would be lost on relo
   expect(
     Object.keys(validateState(state).characters[0].inventory),
   ).not.toContain("999999999999999999999999");
-  c.inventory[2592].qty = 2;
+  c.inventory[2592] = { qty: 2, note: "Recorded transfer test stock" };
   state.characters[1].inventory[2592] = { qty: 1_000_000, note: "" };
   expect(() => transfer(state, "glimpo", "chumbles", 2592, 1)).toThrow("limit");
   expect(c.inventory[2592].qty).toBe(2);

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { defaults, STORE } from "../src/state/profile";
+import { STORE } from "../src/state/profile";
+import { scenarioProfiles as defaults } from "./support/profiles";
 import { MARKET, type SavedState } from "../src/types";
 async function seed(
   page: import("@playwright/test").Page,
@@ -164,11 +165,9 @@ test("clearing a vendor quote restores the catalogue reference rather than prese
     .click();
   await page.getByRole("button", { name: "Edit profile", exact: true }).click();
   await expect(
-    page
-      .getByRole("dialog")
-      .getByRole("textbox", {
-        name: "Actual vendor price per unit",
-        exact: true,
-      }),
+    page.getByRole("dialog").getByRole("textbox", {
+      name: "Actual vendor price per unit",
+      exact: true,
+    }),
   ).toHaveValue("1s");
 });

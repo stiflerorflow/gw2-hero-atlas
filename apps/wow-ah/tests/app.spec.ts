@@ -1,4 +1,6 @@
+import { installScenario } from "./support/profiles";
 import { test, expect } from "@playwright/test";
+test.beforeEach(async ({ page }) => installScenario(page));
 import AxeBuilder from "@axe-core/playwright";
 const api = "https://api.ahledger.com/v1/**";
 test("phone: navigation, isolated profiles, inventory, batch and accessible layout", async ({
@@ -17,7 +19,7 @@ test("phone: navigation, isolated profiles, inventory, batch and accessible layo
   await page.goto("#opportunities");
   await page.locator(".all-crafting > summary").click();
   await expect(
-    page.getByRole("heading", { name: "Crafting opportunities" }),
+    page.getByRole("heading", { name: "Crafting scenarios" }),
   ).toBeVisible();
   await expect(page.locator(".wallet")).toContainText("2g 50s");
   await expect(page.locator(".opportunity")).toHaveCount(3);

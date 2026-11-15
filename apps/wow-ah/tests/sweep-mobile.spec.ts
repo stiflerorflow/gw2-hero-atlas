@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { defaults, STORE } from "../src/state/profile";
+import { STORE } from "../src/state/profile";
+import { scenarioProfiles as defaults } from "./support/profiles";
 import { MARKET } from "../src/types";
 
 async function offline(page: import("@playwright/test").Page) {
@@ -35,7 +36,7 @@ test("all unavailable crafting candidates retain readable requirement badges", a
       await workbench.locator(":scope > summary").click();
     await expect(
       page.getByRole("heading", {
-        name: "Crafting opportunities",
+        name: "Crafting scenarios",
         exact: true,
       }),
     ).toBeVisible();

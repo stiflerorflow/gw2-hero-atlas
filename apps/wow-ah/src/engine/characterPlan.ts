@@ -12,26 +12,12 @@ export const CRAFTING: Profession[] = [
 export function rankCapForLevel(level: number) {
   return level < 10 ? 75 : level < 20 ? 150 : level < 35 ? 225 : 300;
 }
+// Context comes from recorded inventory, never a list of favored recipe ingredients.
 export function keySupplies(c: Character) {
-  const ids: number[] = [];
-  if (c.skills.Tailoring) {
-    const level = c.skills.Tailoring.level;
-    ids.push(level < 50 ? 2589 : 2592);
-    if (level >= 100) ids.push(4306);
-    if (level >= 105) ids.push(3383);
-  }
-  if (c.skills.Enchanting)
-    ids.push(
-      ...(c.skills.Enchanting.level < 130 ? [10940, 10938, 11083] : [11083]),
-    );
-  if (c.skills.Alchemy)
-    ids.push(
-      ...(c.skills.Alchemy.level < 160
-        ? [785, 2450, 3820, 6359, 3355, 3356]
-        : [3820, 3356, 6371, 3355]),
-    );
-  if (c.skills.Engineering) ids.push(2838, 2841, 2592, 3575, 10558, 7912);
-  return [...new Set(ids)].slice(0, 6);
+  return Object.keys(c.inventory)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .slice(0, 6);
 }
 export type Suggestion = {
   evaluation: Evaluation;
@@ -41,10 +27,12 @@ export type Suggestion = {
 export type PlanPreferences = {
   progress: "cash" | "net";
   gold: "yield" | "margin";
+  includeScenarios?: boolean;
 };
 export const DEFAULT_PRIORITIES: PlanPreferences = {
   progress: "cash",
   gold: "yield",
+  includeScenarios: false,
 };
 // Yield risk is separate from sale risk: fixed outputs still need buyers.
 export function hasYieldDownside(e: Evaluation) {
@@ -198,7 +186,7 @@ export function characterPlan(
           `${p}: no priced, eligible step fits the inputs budget. Check learned recipes, tools and material prices in the options below.`,
         );
     }
-  if (!blockers.length) {
+  if (!blockers.length && priorities.includeScenarios) {
     const earn = available
       .filter(
         (e) =>
@@ -221,11 +209,11 @@ export function characterPlan(
       const same = choices.find(
         (x) => x.evaluation.action.id === best.action.id,
       );
-      if (same) same.goals.push("Gold opportunity");
+      if (same) same.goals.push("Gold scenario");
       else
         choices.push({
           evaluation: best,
-          goals: ["Gold opportunity"],
+          goals: ["Gold scenario"],
           reason:
             priorities.gold === "yield"
               ? hasYieldDownside(best)
@@ -235,9 +223,13 @@ export function characterPlan(
         });
     } else
       notes.push(
-        "No checked gold opportunity currently has a positive margin within this budget after valuing owned materials.",
+        "No positive gold scenario was found within this limited recipe set and the entered assumptions.",
       );
   }
+  if (!priorities.includeScenarios)
+    notes.push(
+      "Crafting profit scenarios are off. This recipe subset cannot establish the best money-making activity; use Market scan to investigate current listings.",
+    );
   const coverage = Object.entries(c.skills)
     .filter(([p]) => CRAFTING.includes(p as Profession))
     .map(([profession, skill]) => {

@@ -520,7 +520,7 @@ function App() {
   useEffect(() => {
     document.title =
       ({
-        scanner: "Flip scanner",
+        scanner: "Market scan",
         sell: "Sell or vendor",
         opportunities: "Character plan",
         leveling: "Leveling",
@@ -1013,7 +1013,7 @@ function App() {
         Skip to content
       </a>
       <header className="masthead">
-        <a className="brand" href="#opportunities">
+        <a className="brand" href="#scanner">
           <span className="brand-mark">
             C<span>↗</span>
           </span>
@@ -1120,10 +1120,10 @@ function App() {
               settings={() => setModal(true)}
             />
             <details className="panel all-crafting">
-              <summary>Browse all crafting options</summary>
+              <summary>Crafting scenario workbench</summary>
               <section className="intro">
                 <div>
-                  <h2>Crafting opportunities</h2>
+                  <h2>Crafting scenarios</h2>
                   <p>
                     {loading
                       ? "Loading prices for this character’s professions."
@@ -1634,8 +1634,8 @@ function Leveling({
           <p>
             Record gathered materials in this character’s inventory. They cost
             zero extra gold to gather, but selling or transferring them has an
-            opportunity cost. Grimpo Grongo’s ore and Chumbles’ herbs are never
-            silently added to Glimpo’s stock.
+            opportunity cost. Other characters’ recorded supplies and cash are
+            not pooled.
           </p>
           <p>
             At the cap, confirm rank requirements and the trainer’s price in
@@ -2677,10 +2677,15 @@ function ProfileEditor({
   close: () => void;
   notify: (s: string) => void;
 }) {
+  const initialInventoryItem = Number(Object.keys(c.inventory)[0]) || 0;
   const dialog = useRef<HTMLDialogElement>(null),
-    [inventoryItem, setInventoryItem] = useState(2592),
-    [inventoryQty, setInventoryQty] = useState(c.inventory[2592]?.qty || 0),
-    [inventoryNote, setInventoryNote] = useState(c.inventory[2592]?.note || ""),
+    [inventoryItem, setInventoryItem] = useState(initialInventoryItem),
+    [inventoryQty, setInventoryQty] = useState(
+      c.inventory[initialInventoryItem]?.qty || 0,
+    ),
+    [inventoryNote, setInventoryNote] = useState(
+      c.inventory[initialInventoryItem]?.note || "",
+    ),
     [to, setTo] = useState(
       state.characters.find((p) => p.id !== c.id)?.id || "",
     ),
@@ -2777,8 +2782,9 @@ function ProfileEditor({
         />
       </div>
       <p>
-        Glimpo starts at 2g 50s. Cash for other characters is unknown until
-        entered; it is never copied or pooled.
+        New profiles do not assume current gold, owned supplies or learned
+        recipes. Confirm the saved profession skills against your character
+        before planning.
       </p>
       <section>
         <h3>Professions & rank caps</h3>
@@ -2861,6 +2867,7 @@ function ProfileEditor({
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            if (inventoryItem <= 0) return;
             update((c) => ({
               ...c,
               inventory: {
@@ -2885,7 +2892,8 @@ function ProfileEditor({
                   setInventoryNote(c.inventory[id]?.note || "");
                 }}
               >
-                {!ITEMS[inventoryItem] && (
+                <option value={0}>Choose an item…</option>
+                {inventoryItem > 0 && !ITEMS[inventoryItem] && (
                   <option value={inventoryItem}>
                     {itemName(inventoryItem)} · imported item
                   </option>
@@ -2918,12 +2926,14 @@ function ProfileEditor({
               <input
                 value={inventoryNote}
                 maxLength={200}
-                placeholder="Matt’s cloth / free potions"
+                placeholder="Where this stock is stored · optional"
                 onChange={(e) => setInventoryNote(e.target.value)}
               />
             </label>
           </div>
-          <button type="submit">Set available quantity</button>
+          <button type="submit" disabled={inventoryItem <= 0}>
+            Set available quantity
+          </button>
         </form>
         <ul className="inventory-list">
           {Object.entries(c.inventory).map(([id, v]) => (

@@ -72,14 +72,21 @@ test("default scanner needs no profile or crafting, ranks market activity and ev
   });
   await page.goto("#scanner");
   await expect(
-    page.getByRole("heading", { name: "Flip scanner" }),
+    page.getByRole("heading", { name: "Market scan" }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Edit profile", exact: true }),
   ).toHaveCount(0);
   const card = page.locator(".flip-card").first();
   await expect(card).toContainText("Trade Herb");
-  await expect(card).toContainText("71c");
+  await expect(card.locator(".card-numbers dd")).toHaveText([
+    "1s",
+    "1s 80c",
+    "20",
+  ]);
+  await expect(
+    card.getByText("Potential profit / unit", { exact: true }),
+  ).not.toBeVisible();
   await expect(card).toContainText("10 / day");
   expect(
     paths.some((p) => p.includes("crafting") || p.includes("disenchant")),
@@ -117,7 +124,7 @@ test("default scanner needs no profile or crafting, ranks market activity and ev
     .toBe(true);
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "Flip scanner" }),
+    page.getByRole("heading", { name: "Market scan" }),
   ).toBeVisible();
 });
 test("scanner handles missing data without phantom flips and preserves crafting workflow", async ({
@@ -179,9 +186,8 @@ test("historical recovery is opt-in and vendor competition/old quotes are expose
     });
   });
   await page.goto("#scanner");
-  await expect(page.locator(".empty")).toContainText(
-    "No matching resale candidates",
-  );
+  await expect(page.locator(".flip-card")).toHaveCount(2);
+  await page.getByText("Adjust scan and price limits", { exact: true }).click();
   await page
     .getByRole("combobox", { name: "Resale model", exact: true })
     .selectOption("historical");
@@ -189,6 +195,7 @@ test("historical recovery is opt-in and vendor competition/old quotes are expose
   const bag = page.locator(".flip-card").filter({
     has: page.getByRole("heading", { name: "Mageweave Reagent Bag" }),
   });
+  await bag.getByText("Price history & calculator", { exact: true }).click();
   await expect(bag).toContainText("Needs a price recovery");
   await expect(bag).toContainText("Quote is 120 minutes old");
   const thread = page

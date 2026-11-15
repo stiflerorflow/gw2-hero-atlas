@@ -342,7 +342,7 @@ export const RECIPES: Recipe[] = [
     ],
     {
       unlock: 500,
-      note: "Chumbles can plan production; transfer a finite number to Glimpo explicitly. Herbs you gathered have zero extra cash cost, but still have value.",
+      note: "Herbs you gathered have zero additional purchase cost, but still have a sale value. Output and recipe mechanics do not establish market demand.",
     },
   ),
 ];
