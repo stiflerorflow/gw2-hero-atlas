@@ -1,7 +1,10 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { STORE } from "../src/state/profile";
-import { scenarioProfiles as defaults } from "./support/profiles";
+import {
+  scenarioProfiles as defaults,
+  installScenario,
+} from "./support/profiles";
 import { MARKET } from "../src/types";
 
 async function offline(page: import("@playwright/test").Page) {
@@ -27,6 +30,7 @@ function contrast(a: string, b: string) {
 test("all unavailable crafting candidates retain readable requirement badges", async ({
   page,
 }) => {
+  await installScenario(page);
   await offline(page);
   for (const width of [390, 1280]) {
     await page.setViewportSize({ width, height: 844 });
@@ -116,6 +120,9 @@ test("profile selection meets touch sizing and toast dismissal has a visible key
     ).toBeGreaterThanOrEqual(44);
   }
   await page.setViewportSize({ width: 320, height: 700 });
+  await page
+    .getByRole("searchbox", { name: "Find catalogue item", exact: true })
+    .fill("Mageroyal");
   await page
     .getByRole("button", { name: "Add to watchlist", exact: true })
     .focus();

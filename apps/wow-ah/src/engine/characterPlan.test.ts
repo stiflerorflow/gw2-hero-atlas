@@ -5,7 +5,8 @@ import {
   keySupplies,
   rankCapForLevel,
 } from "./characterPlan";
-import { defaults, validateState } from "../state/profile";
+import { validateState } from "../state/profile";
+import { scenarioProfiles as defaults } from "../../tests/support/profiles";
 import { unknownMarket } from "../market/ahledger";
 import { evaluate } from "./planner";
 import { MARKET, type Action } from "../types";
@@ -159,6 +160,7 @@ describe("character next steps", () => {
   });
   it("uses only a short profession-specific set of finite supplies", () => {
     const { c } = fixture();
+    c.inventory = {};
     expect(keySupplies(c)).toEqual([]);
     c.inventory[777001] = {
       qty: 3,

@@ -23,8 +23,10 @@ it("a profitable calculator hypothesis is never promoted automatically", () => {
     m = unknownMarket();
   c.characterLevel = 20;
   c.cash = c.budget = 25000;
-  c.skills.Tailoring!.target = 120;
-  c.skills.Enchanting!.target = 100;
+  c.skills = {
+    Tailoring: { level: 120, cap: 150, target: 120 },
+    Enchanting: { level: 100, cap: 150, target: 100 },
+  };
   c.known = [3839];
   for (const [id, value] of [
     [4306, 100],

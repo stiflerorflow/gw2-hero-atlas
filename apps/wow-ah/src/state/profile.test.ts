@@ -1,5 +1,5 @@
 import { it, expect } from "vitest";
-import { defaults, validateState, transfer } from "./profile";
+import { defaults, addCharacter, validateState, transfer } from "./profile";
 it("restores valid rows around malformed backup entries and makes row IDs unique", () => {
   const state: any = defaults(),
     c = state.characters[0];
@@ -44,10 +44,11 @@ it("rejects out-of-range inventory keys and transfers that would be lost on relo
     Object.keys(validateState(state).characters[0].inventory),
   ).not.toContain("999999999999999999999999");
   c.inventory[2592] = { qty: 2, note: "Recorded transfer test stock" };
-  state.characters[1].inventory[2592] = { qty: 1_000_000, note: "" };
-  expect(() => transfer(state, "glimpo", "chumbles", 2592, 1)).toThrow("limit");
+  const second = addCharacter(state, "Other character");
+  second.characters[1].inventory[2592] = { qty: 1_000_000, note: "" };
+  expect(() => transfer(second, c.id, second.active, 2592, 1)).toThrow("limit");
   expect(c.inventory[2592].qty).toBe(2);
-  expect(() => transfer(state, "glimpo", "chumbles", 0, 1)).toThrow(
+  expect(() => transfer(second, c.id, second.active, 0, 1)).toThrow(
     "valid item",
   );
 });
@@ -64,8 +65,35 @@ it("preserves chosen profession slot order through backups and ignores unknown p
     "Alchemy",
     "Enchanting",
   ]);
-  expect(Object.keys(validateState(defaults()).characters[1].skills)).toEqual([
-    "Herbalism",
-    "Alchemy",
-  ]);
+  expect(Object.keys(validateState(defaults()).characters[0].skills)).toEqual(
+    [],
+  );
+});
+
+it("adds a blank character without inheriting the active character's context", () => {
+  const original = defaults(),
+    first = original.characters[0];
+  first.name = "Recorded character";
+  first.cash = 12345;
+  first.skills = { Alchemy: { level: 130, cap: 150, target: 150 } };
+  first.inventory[785] = { qty: 7, note: "Recorded stock" };
+  first.known = [3173];
+  const next = addCharacter(original, " Another character ");
+  expect(original.characters).toHaveLength(1);
+  expect(next.characters[0]).toEqual(first);
+  const fresh = next.characters[1];
+  expect(next.active).toBe(fresh.id);
+  expect(fresh.id).not.toBe(first.id);
+  expect(fresh.name).toBe("Another character");
+  expect(fresh.skills).toEqual({});
+  expect(fresh.characterLevel).toBeNull();
+  expect(fresh.cash).toBeNull();
+  expect(fresh.className).toBe("");
+  expect(fresh.inventory).toEqual({});
+  expect(fresh.known).toEqual([]);
+  expect(fresh.watch).toEqual([]);
+  expect(validateState(next)).toEqual(next);
+  let full = next;
+  while (full.characters.length < 20) full = addCharacter(full, "Character");
+  expect(() => addCharacter(full, "One too many")).toThrow("20");
 });

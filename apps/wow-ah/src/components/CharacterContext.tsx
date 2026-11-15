@@ -37,7 +37,7 @@ export function CharacterContext({
         · {money(c.cash)}
         <span className="note">
           {Object.entries(c.skills)
-            .map(([p, s]) => `${p} ${s.level}`)
+            .map(([p, s]) => `${p} ${s.level || "skill needed"}`)
             .join(" · ")}{" "}
           · tap to edit
         </span>
@@ -82,7 +82,7 @@ export function CharacterContext({
                     ...c,
                     skills: {
                       ...c.skills,
-                      [profession]: { level: 1, cap: 75, target: 150 },
+                      [profession]: { level: 0, cap: 75, target: 75 },
                     },
                   }));
               }}
@@ -107,7 +107,7 @@ export function CharacterContext({
                     const skills = Object.fromEntries(
                       Object.entries(c.skills).map(([slot, value]) =>
                         slot === p
-                          ? [profession, { level: 1, cap: 75, target: 150 }]
+                          ? [profession, { level: 0, cap: 75, target: 75 }]
                           : [slot, value],
                       ),
                     );
@@ -127,7 +127,8 @@ export function CharacterContext({
                 type="number"
                 min="1"
                 max="300"
-                value={s.level}
+                value={s.level || ""}
+                placeholder="Not entered"
                 onChange={(e) => {
                   const level = +e.target.value;
                   if (Number.isInteger(level) && level >= 1 && level <= 300)
@@ -197,8 +198,8 @@ export function CharacterContext({
       <details>
         <summary>Recorded supplies · optional</summary>
         <p className="note">
-          Record items you actually have. This list follows your inventory and
-          does not promote particular recipes or assume free supplies.
+          Enter quantities you currently have available. Owned stock still has a
+          sale value.
         </p>
         {supplies.length === 0 && (
           <p className="note">

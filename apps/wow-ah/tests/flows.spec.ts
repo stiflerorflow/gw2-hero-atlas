@@ -17,6 +17,10 @@ async function setup(page: any) {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(url + "#watchlist");
   await page.locator(".sales-log > summary").click();
+  await page
+    .locator(".sales-log")
+    .getByRole("combobox", { name: "Item", exact: true })
+    .selectOption("4306");
 }
 test("Enter saves current money edits, not previous quote or sale values", async ({
   page,

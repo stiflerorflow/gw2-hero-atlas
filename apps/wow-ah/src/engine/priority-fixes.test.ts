@@ -1,5 +1,5 @@
 import { it, expect } from "vitest";
-import { defaults } from "../state/profile";
+import { scenarioProfiles as defaults } from "../../tests/support/profiles";
 import { MARKET, type Action } from "../types";
 import { unknownMarket } from "../market/ahledger";
 import {

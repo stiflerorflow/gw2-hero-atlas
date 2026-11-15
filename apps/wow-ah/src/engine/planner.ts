@@ -779,6 +779,12 @@ export function levelRoute(
 ) {
   const s = c.skills[profession];
   if (!s) return { steps: [], stopped: "Profession not selected", end: 0 };
+  if (s.level < 1)
+    return {
+      steps: [],
+      stopped: "Enter current profession skill before estimating a route.",
+      end: 0,
+    };
   const target = Math.min(s.target, s.cap);
   let skill = s.level;
   const steps: {

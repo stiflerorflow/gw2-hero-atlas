@@ -139,8 +139,10 @@ test("existing recorded data survives the new defaults and only enters gold scen
   c.characterLevel = 20;
   c.cash = c.budget = 12345;
   c.known = [3839, 3852];
-  c.skills.Tailoring!.target = 120;
-  c.skills.Enchanting!.target = 100;
+  c.skills = {
+    Tailoring: { level: 120, cap: 150, target: 120 },
+    Enchanting: { level: 100, cap: 150, target: 100 },
+  };
   c.inventory[3383] = { qty: 9, note: "User recorded stock" };
   for (const [id, value] of [
     [4306, 100],

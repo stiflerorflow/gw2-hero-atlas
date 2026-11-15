@@ -31,42 +31,20 @@ const char = (
   duration: 24,
   sales: [],
 });
+export const createCharacter = (id: string, name: string) =>
+  char(id, name, [], null);
 export function defaults(): SavedState {
-  const g = char(
-    "glimpo",
-    "Glimpo",
-    [
-      ["Tailoring", 120],
-      ["Enchanting", 100],
-    ],
-    null,
+  const c = createCharacter("my-character", "My character");
+  return { version: 1, active: c.id, characters: [c] };
+}
+export function addCharacter(state: SavedState, name: string): SavedState {
+  if (state.characters.length >= 20)
+    throw Error("A backup supports up to 20 characters.");
+  const c = createCharacter(
+    "character-" + crypto.randomUUID(),
+    name.trim().slice(0, 60) || "My character",
   );
-  return {
-    version: 1,
-    active: g.id,
-    characters: [
-      g,
-      char(
-        "chumbles",
-        "Chumbles",
-        [
-          ["Herbalism", 110],
-          ["Alchemy", 130],
-        ],
-        null,
-      ),
-      char(
-        "grimpo-grongo",
-        "Grimpo Grongo",
-        [
-          ["Engineering", 130],
-          ["Mining", 110],
-        ],
-        null,
-        "Warrior",
-      ),
-    ],
-  };
+  return { ...state, active: c.id, characters: [...state.characters, c] };
 }
 const integer = (x: unknown, min = 0, max = 300) =>
   typeof x === "number" && Number.isInteger(x) && x >= min && x <= max;

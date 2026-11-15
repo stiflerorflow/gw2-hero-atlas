@@ -95,7 +95,7 @@ test("an incomplete restored profile can select a profession, and unknown invent
       name: "Current Alchemy skill",
       exact: true,
     }),
-  ).toHaveValue("1");
+  ).toHaveValue("");
   await page.getByRole("button", { name: "Edit profile", exact: true }).click();
   const dialog = page.getByRole("dialog");
   const row = dialog
@@ -123,6 +123,10 @@ test("a new completed sale does not reuse the previous sale lost-deposit cost", 
 }) => {
   await prepare(page, defaults(), "watchlist");
   await page.locator(".sales-log > summary").click();
+  await page
+    .locator(".sales-log")
+    .getByRole("combobox", { name: "Item", exact: true })
+    .selectOption("4306");
   const gross = page.getByRole("textbox", {
     name: "Total gross sale proceeds",
     exact: true,
@@ -200,6 +204,7 @@ test("backup restore remains usable for this session when storage writes are blo
   await expect(page.getByRole("alert")).toContainText(
     "loaded in this tab only",
   );
+  await page.locator(".context-editor > summary").click();
   await expect(
     page.getByRole("spinbutton", {
       name: "Current character level",

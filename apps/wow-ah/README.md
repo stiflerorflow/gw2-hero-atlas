@@ -9,12 +9,12 @@ The default [Market scan](https://stiflerorflow.github.io/gw2-hero-atlas/wow-ah/
 ## Use
 
 1. Start with **Market scan** for returned listing evidence, or **Sell or vendor** to inspect any item. A lead is something to investigate, not proof of a profitable sale. Search within Market scan filters returned leads; Sell/vendor searches the paged item catalogue.
-2. For profession skill planning, open **Character plan**, confirm current level, skills and gold, and record only supplies you actually have. New profiles have unknown cash, no learned recipes, no inventory and no watched-item assumptions. The named characters retain previously supplied profession starting skills; confirm those against the game.
+2. For profession skill planning, open **Character plan**, confirm current level, skills and gold, and record only supplies you actually have. New profiles have unknown cash, no learned recipes, no inventory and no watched-item assumptions. Fresh setup contains one neutral character with no selected professions, class or skill levels. Add more characters from Edit profile.
 3. Skill suggestions compare the limited checked recipe set. **Include crafting profit scenarios** is off by default and is an explicit what-if choice under Compare priorities. **Crafting scenario workbench** opens the detailed calculator. A checked recipe source establishes mechanics, not demand or profit.
 4. If acting on a scenario, enter actual deposits, inspect quantities and recipe access, and fund the complete batch before assumed future sales. Follow the manual checklist; nothing buys, crafts or posts automatically.
 5. Record actual completed sales separately and update your wallet/inventory. Export profiles to move between devices. Existing stored records are preserved; older starting assumptions should be reviewed rather than silently erased.
 
-Named workspaces: Glimpo Tailoring120/Enchanting100; Chumbles Herbalism110/Alchemy130; Grimpo Grongo Warrior Engineering130/Mining110. All new wallets are unknown. No character starts with assumed donated cloth, free potions or known recipes. Explicit transfers move finite recorded stock without pooling wallets.
+New characters start blank and independent. Enter their actual level, professions, skills and gold. Item forms require deliberate choices; completed sales cannot be recorded against an automatically selected product. Explicit transfers require recorded stock and another character, without pooling wallets.
 
 ## Character plan
 
@@ -51,7 +51,7 @@ Prices from [AHledger](https://ahledger.com), public read-only endpoints, no Bli
 
 [Developer terms](https://ahledger.com/developers) checked 2026-11-14: attribution required; personal/community use. Announced 2026-12-10 policy: unauthenticated 30 requests/min, seven-day history; caching only for the supplied TTL, no licensed archives. Monetization or persistent provider history requires revisiting the terms. No price snapshots are bundled, exported or persisted. Attribution links are constrained to AHledger HTTPS URLs, preserve supplied query parameters, and never inject provider HTML.
 
-The checked catalogue is deliberately small. Imported recipes are shown as unverified candidates and excluded from leveling recommendations. Chumbles and Grimpo have checked starting recipes; this isn't a complete Alchemy/Engineering catalogue or a gathering-route optimizer. Use the recipe list to confirm which recipes are actually known.
+The checked catalogue is deliberately small. Imported recipes are shown as unverified candidates and excluded from leveling recommendations. This is not a complete profession catalogue or a gathering-route optimizer. Use the recipe list to confirm which recipes are actually known.
 
 Next-point routes rank learned eligible recipes using replacement-material quotes, with explicit estimated yellow/green probabilities. They are **not** a globally optimized dual-profession route or a promise of a skill point. Future-skill batch rows still require confirming actual skill. Orange/grey thresholds are checked separately, rank caps and tools are enforced, and one-time rods aren't repeat leveling recommendations. Manual fees override catalogue references.
 
@@ -76,7 +76,7 @@ Catalogue reviewed 2026-11-14 against Forever client-data references and the Nov
 
 Manual vendor prices account for actual reputation discounts. Reference Fine Thread is1s, not the feed's2s. Bronze Framework requires Engineering145, not the feed's105. Engineering references that show three thresholds start at yellow; they do not imply an orange interval.
 
-Tests cover handoff acceptance values, finite donations, mixed essence purchases/whole lots, skill gates/caps, recipe fees once, missing/stale quotes, restricted market identity, shared market stock, retained outputs, budget and deposits, import/transfer isolation, mobile widths320–1280, all-screen accessibility, provider failure, synthetic endpoint shapes and a separate live-browser smoke check.
+Tests cover financial regression values, finite owned inputs, mixed essence purchases/whole lots, skill gates/caps, recipe fees once, missing/stale quotes, restricted market identity, shared market stock, retained outputs, budget and deposits, import/transfer isolation, mobile widths320–1280, all-screen accessibility, provider failure, synthetic endpoint shapes and a separate live-browser smoke check.
 
 [Multi-round product, UX, design and engineering audit](MULTI_ROUND_AUDIT.md) documents the findings, independent follow-through and layout measurements.
 
@@ -91,3 +91,7 @@ Tests cover handoff acceptance values, finite donations, mixed essence purchases
 ## Evidence-first correction — 2026-11-15
 
 [EVIDENCE_POLICY.md](EVIDENCE_POLICY.md) supersedes earlier default-landing and automatic gold-recommendation behavior. The fixed recipe list remains available for explicit mechanics/skill scenarios, with no preferential status for the original gloves/potion ideas. Historical calculation fixtures are now explicit test data rather than product defaults.
+
+## Neutral setup cleanup — 2026-11-15
+
+Removed preset character identities, profession levels/class, automatic item choices in sales/watch/vendor forms, and personal story wording from current product copy. New profession selections require actual skill input. Up to20 independently blank characters can be created from Edit profile. Existing saved records and referenced game mechanics remain available. Historical audit examples are regression fixtures, not application defaults.

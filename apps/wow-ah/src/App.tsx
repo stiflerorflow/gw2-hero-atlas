@@ -41,7 +41,13 @@ import {
 } from "./engine/planner";
 import type { Evaluation } from "./engine/planner";
 import { money, net, copper } from "./engine/money";
-import { defaults, STORE, transfer, validateState } from "./state/profile";
+import {
+  defaults,
+  addCharacter,
+  STORE,
+  transfer,
+  validateState,
+} from "./state/profile";
 import {
   loadHistory,
   loadMarket,
@@ -1138,7 +1144,9 @@ function App() {
                   <strong>{money(c.cash)}</strong>
                   <small>
                     {Object.entries(c.skills)
-                      .map(([name, s]) => name + " " + s.level)
+                      .map(
+                        ([name, s]) => name + " " + (s.level || "skill needed"),
+                      )
                       .join(" · ")}
                   </small>
                   <button onClick={() => setModal(true)}>
@@ -1565,7 +1573,8 @@ function Leveling({
                 type="number"
                 min="0"
                 max={s.cap}
-                value={s.level}
+                value={s.level || ""}
+                placeholder="Not entered"
                 onChange={(e) => {
                   const level = +e.target.value;
                   if (Number.isInteger(level) && level >= 0 && level <= s.cap)
@@ -2351,9 +2360,9 @@ function Watchlist({
   historyPending: number | null;
   load: (id: number) => Promise<void>;
 }) {
-  const [item, setItem] = useState(4306),
+  const [item, setItem] = useState(0),
     [itemSearch, setItemSearch] = useState(""),
-    [saleItem, setSaleItem] = useState(4306),
+    [saleItem, setSaleItem] = useState(0),
     [saleQty, setSaleQty] = useState(1),
     [gross, setGross] = useState<number | null>(null),
     [cost, setCost] = useState<number | null>(null),
@@ -2380,7 +2389,7 @@ function Watchlist({
         className="panel watch-add"
         onSubmit={(e) => {
           e.preventDefault();
-          watch(item);
+          if (item > 0) watch(item);
         }}
       >
         <label>
@@ -2391,11 +2400,13 @@ function Watchlist({
             onChange={(e) => {
               const value = e.target.value;
               setItemSearch(value);
-              const match = Object.values(ITEMS).find(
-                (i) =>
-                  i.id > 0 &&
-                  i.name.toLowerCase().includes(value.toLowerCase()),
-              );
+              const match = value.trim()
+                ? Object.values(ITEMS).find(
+                    (i) =>
+                      i.id > 0 &&
+                      i.name.toLowerCase().includes(value.toLowerCase()),
+                  )
+                : undefined;
               setItem(match?.id || 0);
             }}
             placeholder="Search item names"
@@ -2404,7 +2415,11 @@ function Watchlist({
         <label>
           Item
           <select value={item} onChange={(e) => setItem(+e.target.value)}>
-            {!item && <option value={0}>No matching item</option>}
+            {!item && (
+              <option value={0}>
+                {itemSearch.trim() ? "No matching item" : "Choose an item…"}
+              </option>
+            )}
             {item > 0 && !candidates.some((i) => i.id === item) && (
               <option value={item}>{itemName(item)}</option>
             )}
@@ -2552,7 +2567,7 @@ function Watchlist({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (gross === null) return;
+            if (gross === null || saleItem <= 0) return;
             const saved = update((c) => ({
               ...c,
               sales: [
@@ -2581,6 +2596,7 @@ function Watchlist({
                 value={saleItem}
                 onChange={(e) => setSaleItem(+e.target.value)}
               >
+                <option value={0}>Choose the item sold…</option>
                 {Object.values(ITEMS)
                   .filter((i) => i.id > 0)
                   .map((i) => (
@@ -2620,7 +2636,11 @@ function Watchlist({
               onChange={setDeposit}
             />
           </div>
-          <button className="primary" type="submit" disabled={gross === null}>
+          <button
+            className="primary"
+            type="submit"
+            disabled={gross === null || saleItem <= 0}
+          >
             Record actual sale
           </button>
         </form>
@@ -2689,9 +2709,9 @@ function ProfileEditor({
     [to, setTo] = useState(
       state.characters.find((p) => p.id !== c.id)?.id || "",
     ),
-    [transferItem, setTransferItem] = useState(2592),
+    [transferItem, setTransferItem] = useState(initialInventoryItem),
     [transferQty, setTransferQty] = useState(1),
-    [vendorId, setVendorId] = useState(2321),
+    [vendorId, setVendorId] = useState(0),
     [transferMessage, setTransferMessage] = useState("");
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
@@ -2730,6 +2750,20 @@ function ProfileEditor({
         Edit this character’s cash, skills and supplies. Other characters stay
         separate.
       </p>
+      <button
+        disabled={state.characters.length >= 20}
+        onClick={() => {
+          try {
+            commit(
+              addCharacter(state, `Character ${state.characters.length + 1}`),
+            );
+          } catch (error) {
+            notify((error as Error).message);
+          }
+        }}
+      >
+        Add another character
+      </button>
       <div className="form-grid">
         <label>
           Character name
@@ -2782,12 +2816,20 @@ function ProfileEditor({
         />
       </div>
       <p>
-        New profiles do not assume current gold, owned supplies or learned
-        recipes. Confirm the saved profession skills against your character
-        before planning.
+        Enter current values from the game. Balances, skills, inventory and
+        learned recipes are recorded per character.
       </p>
       <section>
         <h3>Professions & rank caps</h3>
+        {!Object.keys(c.skills).length && (
+          <p>
+            No professions recorded.{" "}
+            <a href="#opportunities" onClick={close}>
+              Set professions in Character plan
+            </a>
+            .
+          </p>
+        )}
         <div className="form-grid">
           {Object.entries(c.skills).map(([profession, s]) => (
             <fieldset key={profession}>
@@ -2803,7 +2845,8 @@ function ProfileEditor({
                     type="number"
                     min={k === "cap" ? 1 : 0}
                     max="300"
-                    value={s[k]}
+                    value={k === "level" && s[k] === 0 ? "" : s[k]}
+                    placeholder={k === "level" ? "Not entered" : undefined}
                     onChange={(e) => {
                       const value = +e.target.value;
                       if (
@@ -2841,7 +2884,7 @@ function ProfileEditor({
                     const skills = Object.fromEntries(
                       Object.entries(c.skills).map(([slot, value]) =>
                         slot === p
-                          ? [profession, { level: 1, cap: 75, target: 150 }]
+                          ? [profession, { level: 0, cap: 75, target: 75 }]
                           : [slot, value],
                       ),
                     );
@@ -2860,9 +2903,8 @@ function ProfileEditor({
       <section>
         <h3>Inventory · quantities available now</h3>
         <p>
-          Owned and donated inputs cost no additional cash, but their resale
-          value stays visible. Free supplies are finite; zero recorded quantity
-          means none is assumed available.
+          Recorded stock has no additional purchase cost, but still has a sale
+          value. Enter only quantities available now.
         </p>
         <form
           onSubmit={(e) => {
@@ -2968,85 +3010,95 @@ function ProfileEditor({
           ))}
         </ul>
       </section>
-      <section>
-        <h3>Explicit material transfer</h3>
-        <p>
-          This moves recorded stock only. It does not mail anything in game. You
-          cannot transfer more than the sender has, or move a soulbound tool.
-        </p>
-        <div className="form-grid">
-          <label>
-            Recorded item
-            <select
-              value={transferItem}
-              onChange={(e) => setTransferItem(+e.target.value)}
+      {state.characters.length > 1 &&
+        Object.values(c.inventory).some((v) => v.qty > 0) && (
+          <section>
+            <h3>Explicit material transfer</h3>
+            <p>
+              This moves recorded stock only. It does not mail anything in game.
+              You cannot transfer more than the sender has, or move a soulbound
+              tool.
+            </p>
+            <div className="form-grid">
+              <label>
+                Recorded item
+                <select
+                  value={transferItem}
+                  onChange={(e) => setTransferItem(+e.target.value)}
+                >
+                  <option value={0}>Choose recorded stock…</option>
+                  {transferItem > 0 && !c.inventory[transferItem] && (
+                    <option value={transferItem}>
+                      {itemName(transferItem)} · none recorded
+                    </option>
+                  )}
+                  {Object.entries(c.inventory).map(([id, v]) => (
+                    <option key={id} value={id}>
+                      {itemName(+id)} · {v.qty} units
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                To character
+                <select value={to} onChange={(e) => setTo(e.target.value)}>
+                  {state.characters
+                    .filter((p) => p.id !== c.id)
+                    .map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                </select>
+              </label>
+              <label>
+                Units
+                <input
+                  type="number"
+                  min="1"
+                  value={transferQty}
+                  onChange={(e) =>
+                    setTransferQty(
+                      Math.max(1, Math.floor(+e.target.value || 1)),
+                    )
+                  }
+                />
+              </label>
+            </div>
+            <button
+              disabled={transferItem <= 0 || !to}
+              onClick={() => {
+                try {
+                  if (
+                    !commit(
+                      transfer(state, c.id, to, transferItem, transferQty),
+                    )
+                  ) {
+                    setTransferMessage(
+                      "Not recorded. Reload to use the latest profiles.",
+                    );
+                    return;
+                  }
+                  setTransferMessage(
+                    "Recorded transfer; move the actual items in game.",
+                  );
+                  notify("Recorded transfer; move the actual items in game.");
+                } catch (e) {
+                  setTransferMessage((e as Error).message);
+                  notify((e as Error).message);
+                }
+              }}
             >
-              {!c.inventory[transferItem] && (
-                <option value={transferItem}>
-                  {itemName(transferItem)} · none recorded
-                </option>
-              )}
-              {Object.entries(c.inventory).map(([id, v]) => (
-                <option key={id} value={id}>
-                  {itemName(+id)} · {v.qty} units
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            To character
-            <select value={to} onChange={(e) => setTo(e.target.value)}>
-              {state.characters
-                .filter((p) => p.id !== c.id)
-                .map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-            </select>
-          </label>
-          <label>
-            Units
-            <input
-              type="number"
-              min="1"
-              value={transferQty}
-              onChange={(e) =>
-                setTransferQty(Math.max(1, Math.floor(+e.target.value || 1)))
-              }
-            />
-          </label>
-        </div>
-        <button
-          onClick={() => {
-            try {
-              if (
-                !commit(transfer(state, c.id, to, transferItem, transferQty))
-              ) {
-                setTransferMessage(
-                  "Not recorded. Reload to use the latest profiles.",
-                );
-                return;
-              }
-              setTransferMessage(
-                "Recorded transfer; move the actual items in game.",
-              );
-              notify("Recorded transfer; move the actual items in game.");
-            } catch (e) {
-              setTransferMessage((e as Error).message);
-              notify((e as Error).message);
-            }
-          }}
-        >
-          Record transfer
-        </button>
-        <p role="status">{transferMessage}</p>
-      </section>
+              Record transfer
+            </button>
+            <p role="status">{transferMessage}</p>
+          </section>
+        )}
       <section>
         <h3>Vendor quotes & tools</h3>
         <p>
-          Fine Thread defaults to 1s before discounts. Override the actual unit
-          quote here; live AH listings do not replace vendor supply prices.
+          Vendor purchase references are editable per unit. Enter the price you
+          see in game, including any reputation discount.
         </p>
         <div className="form-grid">
           <label>
@@ -3055,6 +3107,7 @@ function ProfileEditor({
               value={vendorId}
               onChange={(e) => setVendorId(+e.target.value)}
             >
+              <option value={0}>Choose a vendor item…</option>
               {Object.values(ITEMS)
                 .filter((i) => i.vendor !== undefined)
                 .map((i) => (
@@ -3067,8 +3120,10 @@ function ProfileEditor({
           <MoneyInput
             key={vendorId}
             label="Actual vendor price per unit"
+            disabled={vendorId <= 0}
             value={c.vendor[vendorId] ?? ITEMS[vendorId]?.vendor ?? null}
             onChange={(n) =>
+              vendorId > 0 &&
               update((c) => {
                 const vendor = { ...c.vendor };
                 if (n === null || n === ITEMS[vendorId]?.vendor)
@@ -3080,8 +3135,14 @@ function ProfileEditor({
           />
         </div>
         <p className="note">
-          Blank restores this item's catalogue purchase reference:{" "}
-          {money(ITEMS[vendorId]?.vendor)}.
+          {vendorId > 0 ? (
+            <>
+              Blank restores this item's catalogue purchase reference:{" "}
+              {money(ITEMS[vendorId]?.vendor)}.
+            </>
+          ) : (
+            "Choose an item to view its reference or enter a current quote."
+          )}
         </p>
         {relevantTools(c).map((id) => (
           <label className="inline" key={id}>

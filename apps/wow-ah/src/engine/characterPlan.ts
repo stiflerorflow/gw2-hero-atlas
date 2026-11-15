@@ -60,6 +60,11 @@ export function characterPlan(
     );
   if (c.cash === null)
     blockers.push("Enter current gold to check what you can fund.");
+  if (!Object.keys(c.skills).length && !priorities.includeScenarios)
+    blockers.push("Choose your professions to plan a skill step.");
+  for (const [profession, skill] of Object.entries(c.skills))
+    if (skill.level < 1)
+      blockers.push(`Enter your current ${profession} skill.`);
   if (c.characterLevel != null)
     for (const [p, s] of Object.entries(c.skills))
       if (

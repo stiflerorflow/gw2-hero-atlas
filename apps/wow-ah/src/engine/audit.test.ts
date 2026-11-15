@@ -1,5 +1,6 @@
 import { it, expect } from "vitest";
-import { defaults, validateState } from "../state/profile";
+import { validateState } from "../state/profile";
+import { scenarioProfiles as defaults } from "../../tests/support/profiles";
 import { unknownMarket } from "../market/ahledger";
 import { evaluate, batchPlan } from "./planner";
 import { MARKET, type Action } from "../types";

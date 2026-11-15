@@ -148,6 +148,9 @@ test("clearing a vendor quote restores the catalogue reference rather than prese
   await seed(page, defaults());
   await page.getByRole("button", { name: "Edit profile", exact: true }).click();
   const dialog = page.getByRole("dialog");
+  await dialog
+    .getByRole("combobox", { name: "Vendor item", exact: true })
+    .selectOption("2321");
   const quote = dialog.getByRole("textbox", {
     name: "Actual vendor price per unit",
     exact: true,
@@ -164,6 +167,10 @@ test("clearing a vendor quote restores the catalogue reference rather than prese
     .getByRole("button", { name: "Close profile", exact: true })
     .click();
   await page.getByRole("button", { name: "Edit profile", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("combobox", { name: "Vendor item", exact: true })
+    .selectOption("2321");
   await expect(
     page.getByRole("dialog").getByRole("textbox", {
       name: "Actual vendor price per unit",

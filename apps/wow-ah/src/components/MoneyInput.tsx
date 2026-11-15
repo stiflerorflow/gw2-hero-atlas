@@ -5,11 +5,13 @@ export function MoneyInput({
   onChange,
   label,
   allowUnknown = true,
+  disabled = false,
 }: {
   value: number | null;
   onChange: (n: number | null) => void;
   label: string;
   allowUnknown?: boolean;
+  disabled?: boolean;
 }) {
   const input = useRef<HTMLInputElement>(null),
     id = useId();
@@ -37,8 +39,9 @@ export function MoneyInput({
       <span id={id + "-label"}>{label}</span>
       <input
         ref={input}
+        disabled={disabled}
         value={text}
-        placeholder={allowUnknown ? "Unknown · e.g. 12s 50c" : "e.g. 2g 50s"}
+        placeholder={allowUnknown ? "Unknown · e.g. 12s 50c" : "e.g. 1g 20s"}
         onChange={(e) => {
           const next = e.target.value,
             invalid = validate(next);

@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { defaults, transfer, validateState } from "../state/profile";
+import {
+  defaults as blankProfiles,
+  transfer,
+  validateState,
+} from "../state/profile";
+import { scenarioProfiles as defaults } from "../../tests/support/profiles";
 import { MARKET } from "../types";
 import type { Action, MarketData } from "../types";
 import {
@@ -257,23 +262,18 @@ describe("cash, stock and selling boundaries", () => {
   });
 });
 describe("profiles and provider boundaries", () => {
-  it("seeds distinct three characters without invented free supplies or cash", () => {
-    const s = defaults();
-    expect(s.characters.map((c) => c.name)).toEqual([
-      "Glimpo",
-      "Chumbles",
-      "Grimpo Grongo",
-    ]);
-    expect(s.characters[1].skills.Alchemy?.level).toBe(130);
-    expect(s.characters[2].skills.Engineering?.level).toBe(130);
-    expect(s.characters[2].className).toBe("Warrior");
-    expect(s.characters[1].cash).toBeNull();
-    for (const c of s.characters) {
-      expect(c.cash).toBeNull();
-      expect(c.known).toEqual([]);
-      expect(c.inventory).toEqual({});
-      expect(c.watch).toEqual([]);
-    }
+  it("starts with one character without invented identity, skills or property", () => {
+    const s = blankProfiles();
+    expect(s.characters).toHaveLength(1);
+    const c = s.characters[0];
+    expect(c.name).toBe("My character");
+    expect(c.className).toBe("");
+    expect(c.skills).toEqual({});
+    expect(c.cash).toBeNull();
+    expect(c.characterLevel).toBeNull();
+    expect(c.known).toEqual([]);
+    expect(c.inventory).toEqual({});
+    expect(c.watch).toEqual([]);
   });
   it("explicit finite transfers isolate profiles and reject BoP", () => {
     const s = defaults();
