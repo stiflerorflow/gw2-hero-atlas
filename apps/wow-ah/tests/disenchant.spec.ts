@@ -5,6 +5,8 @@ async function feed(
   page: import("@playwright/test").Page,
   missing = false,
   ttl = 300,
+  gearAge = 300000,
+  materialAge = gearAge,
 ) {
   const paths: string[] = [];
   await page.route("https://api.ahledger.com/**", async (r) => {
@@ -32,7 +34,7 @@ async function feed(
             },
             minBuyout: 3800,
             quantity: 2,
-            observedAt: new Date(Date.now() - 7200000).toISOString(),
+            observedAt: new Date(Date.now() - gearAge).toISOString(),
             profit: 999999,
             yields: [
               {
@@ -76,7 +78,7 @@ async function feed(
             median: minBuyout,
             quantity: 20,
             salesPerDay: 10,
-            observedAt: new Date(Date.now() - 7200000).toISOString(),
+            observedAt: new Date(Date.now() - materialAge).toISOString(),
           })),
       };
     await r.fulfill({
@@ -109,7 +111,7 @@ test("standalone scan shows expected profit, strict profit odds and the full loo
   await expect(card).toContainText(
     "Positive average, but one item can lose gold",
   );
-  await expect(card).toContainText("over an hour old");
+  await expect(card).not.toContainText("over an hour old");
   expect(paths.some((p) => p.includes("crafting") || p.includes("deals"))).toBe(
     false,
   );
@@ -341,4 +343,53 @@ test("Top 10 recomputes ranking and never fills with losses, missing prices or u
   await expect(page.locator(".de-card").first()).toContainText(
     "No positive expected margin",
   );
+});
+
+for (const [label, gearAge, materialAge] of [
+  ["gear", 7200000, 300000],
+  ["material", 300000, 7200000],
+] as const) {
+  test(`old ${label} prices cannot qualify for Top 10 after a fresh API response`, async ({
+    page,
+  }) => {
+    await feed(page, false, 300, gearAge, materialAge);
+    await page.goto("#disenchant");
+    await expect(page.getByRole("status")).toContainText(
+      "excluded from Top 10",
+    );
+    await expect(page.locator(".de-card")).toHaveCount(0);
+    await page
+      .getByRole("button", { name: "All candidates", exact: true })
+      .click();
+    await expect(page.locator(".de-card")).toHaveCount(1);
+    await expect(page.locator(".de-card")).toContainText("over an hour old");
+    await page
+      .getByText("Loot table, prices & calculator", { exact: true })
+      .click();
+    await page
+      .getByRole("textbox", {
+        name: "Override gear buy price / item",
+        exact: true,
+      })
+      .fill("1s");
+    await page
+      .getByRole("button", { name: "Top 10 to verify", exact: true })
+      .click();
+    await expect(page.locator(".de-card")).toHaveCount(0);
+  });
+}
+test("a source observation ages out of Top 10 while its API cache remains valid", async ({
+  page,
+}) => {
+  await page.clock.install();
+  await feed(page, false, 300, 3590000);
+  await page.goto("#disenchant");
+  await expect(page.locator(".de-card")).toHaveCount(1);
+  await page.clock.fastForward(16000);
+  await expect(page.locator(".de-card")).toHaveCount(0);
+  await expect(page.getByRole("status")).toContainText("excluded from Top 10");
+  await page
+    .getByRole("button", { name: "All candidates", exact: true })
+    .click();
+  await expect(page.locator(".de-card")).toHaveCount(1);
 });

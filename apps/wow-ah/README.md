@@ -8,7 +8,7 @@ The default [Market scan](https://stiflerorflow.github.io/gw2-hero-atlas/wow-ah/
 
 ## Disenchant scanning
 
-[Disenchant](https://stiflerorflow.github.io/gw2-hero-atlas/wow-ah/#disenchant) is a separate, character-independent scan. Its computed Top 10 uses positive expected profit, available quoted stock, complete material quotes and checked or reference-matched loot tables. Each card exposes strict profit odds, loss range, exclusive drops, material prices and the full after-fee arithmetic. All candidates retains incomplete, unverified and negative scenarios. Asking prices, modeled count odds and inferred demand remain explicit assumptions. [Coverage, table sources, calculations and validation](DISENCHANT_SCANNER.md).
+[Disenchant](https://stiflerorflow.github.io/gw2-hero-atlas/wow-ah/#disenchant) is a separate, character-independent scan. Its computed Top 10 uses positive expected profit, source observations less than one hour old for both gear and every material, available quoted stock, complete material quotes and checked or reference-matched loot tables. Each card exposes strict profit odds, loss range, exclusive drops, material prices and the full after-fee arithmetic. All candidates retains incomplete, unverified and negative scenarios. Asking prices, modeled count odds and inferred demand remain explicit assumptions. [Coverage, table sources, calculations and validation](DISENCHANT_SCANNER.md).
 
 ## Use
 

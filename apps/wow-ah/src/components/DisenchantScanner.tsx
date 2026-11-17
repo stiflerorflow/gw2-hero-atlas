@@ -3,7 +3,8 @@ import {
   DE_CLASSIC_REFERENCE,
 } from "../catalog/disenchantTables";
 import { DE_LIMIT } from "../market/disenchant";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { recentPrice } from "../engine/freshness";
 import type { MarketData, Quote } from "../types";
 import { analyzeDisenchant } from "../engine/disenchant";
 import { listingEvidence } from "../engine/assessment";
@@ -42,11 +43,28 @@ export function DisenchantScanner({
     [basis, setBasis] = useState<"ask" | "median">("ask"),
     [shown, setShown] = useState(10),
     [drafts, setDrafts] = useState<Record<number, Draft>>({});
+  const [clock, setClock] = useState(Date.now);
+  useEffect(() => {
+    if (!active) return;
+    setClock(Date.now());
+    const timer = setInterval(() => setClock(Date.now()), 15000);
+    return () => clearInterval(timer);
+  }, [active]);
   const scan = market.deScan;
-  const getQuote = (id: number) => {
+  const quotesRecent = (
+    candidate: NonNullable<typeof scan>["candidates"][number],
+  ) =>
+    recentPrice(getQuote(candidate.id), clock) &&
+    (candidate.outcomes || []).every((o) =>
+      o.drops.every((d) => recentPrice(getQuote(d.id), clock)),
+    );
+  const outdated = (scan?.candidates || []).filter(
+    (c) => !quotesRecent(c),
+  ).length;
+  function getQuote(id: number) {
     const q = market.quotes[id];
     return q?.expiresAt > Date.now() ? q : undefined;
-  };
+  }
   const name = (id: number) =>
     scan?.names[id] ??
     market.quotes[id]?.name ??
@@ -92,6 +110,7 @@ export function DisenchantScanner({
           return (
             (view === "all" ||
               (r.candidate.tableOrigin !== "provider" &&
+                quotesRecent(r.candidate) &&
                 r.result.profit !== null &&
                 r.result.profit > 0 &&
                 (r.quote?.quantity ?? 0) > 0)) &&
@@ -117,6 +136,7 @@ export function DisenchantScanner({
         ),
     [
       market,
+      clock,
       search,
       sort,
       maximum,
@@ -160,8 +180,15 @@ export function DisenchantScanner({
     <>
       <section className="page-heading">
         <h1>Disenchant scanner</h1>
-        <p>Ranked gear-to-material opportunities.</p>
+        <p>Compare gear prices and disenchant returns.</p>
       </section>
+      {outdated > 0 && (
+        <p className="alert" role="status">
+          {outdated} candidates have old, missing or unverified price
+          observations and are excluded from Top 10. Refreshing cannot update an
+          old source scan. All candidates retains the historical calculations.
+        </p>
+      )}
       <section
         className="panel de-controls"
         aria-label="Disenchant scan controls"
@@ -276,8 +303,8 @@ export function DisenchantScanner({
       </div>
       <p className="note de-assumption">
         {view === "top"
-          ? "Top 10 from up to 200 listings. "
-          : "Includes incomplete and unverified scenarios. "}
+          ? "Top 10 requires gear and material observations less than one hour old. "
+          : "Historical quotes and manual scenarios; check current prices. "}
         Returns assume sale after the 5% cut; drop odds are not sale odds.
       </p>
       {loading && <p role="status">Scanning gear and material quotes…</p>}
@@ -302,7 +329,7 @@ export function DisenchantScanner({
           </h2>
           <p>
             {view === "top"
-              ? "Try All candidates to inspect missing quotes or unverified tables. Fewer than 10 qualifying items are never padded with guesses."
+              ? "Top 10 requires recent gear and material observations, quoted stock, complete prices and checked or reference-matched tables. Try All candidates to inspect the historical data."
               : "Check the filters or refresh the feed. Missing prices stay unknown."}
           </p>
         </section>
@@ -677,9 +704,48 @@ export function DisenchantScanner({
         </p>
       )}
       <details className="panel">
+        <summary>Get current prices</summary>
+        <p>
+          The market here is EU · RP · Alliance. Check that it matches your
+          character. Public prices depend on uploaded auction scans, and even
+          recent observations can already have sold.
+        </p>
+        <ol>
+          <li>
+            With the{" "}
+            <a
+              href="https://ahledger.com/get-started"
+              target="_blank"
+              rel="noreferrer"
+            >
+              AHledger addon and sync setup ↗
+            </a>
+            , open the auction house and run <code>/ahl scan</code>.
+          </li>
+          <li>
+            Run <code>/reload</code> to save the scan. The optional
+            Windows/macOS sync app uploads it when contribution is enabled.
+            Refresh here after the source reports the new observation time; an
+            upload or a refresh alone does not prove publication.
+          </li>
+          <li>
+            For an immediate calculation, open All candidates and enter the
+            current gear price and every material price in its calculator.
+            Manual scenarios do not establish a recent source observation or
+            update public prices.
+          </li>
+        </ol>
+        <p>
+          Direct import of your local scan file is not implemented yet. The
+          addon keeps local scans without the sync app, but our tool cannot read
+          them automatically.
+        </p>
+      </details>
+      <details className="panel">
         <summary>How the odds and prices work</summary>
         <p>
-          Top 10 includes only positive expected profit, quoted stock and
+          Top 10 requires every source price observation to be less than one
+          hour old, as well as positive expected profit, quoted stock and
           checked or reference-matched loot tables. It ranks by your selected
           criterion, expected profit per item by default; it does not predict
           sale probability. Manual edits open All candidates so a losing
