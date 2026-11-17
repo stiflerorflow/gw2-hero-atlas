@@ -1,5 +1,6 @@
 export const ROUTES = [
   ["scanner", "Market scan"],
+  ["disenchant", "Disenchant"],
   ["opportunities", "Character plan"],
   ["sell", "Sell or vendor"],
   ["leveling", "Leveling"],

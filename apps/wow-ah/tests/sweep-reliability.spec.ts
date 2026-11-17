@@ -43,6 +43,7 @@ test("an open comparison changes its conclusion when the observation crosses the
   page,
 }) => {
   await page.clock.install({ time: new Date("2026-11-14T12:00:00Z") });
+  await page.clock.setFixedTime(new Date("2026-11-14T12:00:00Z"));
   await page.route("https://thewowdb.com/api/v1/**", (r) =>
     r.fulfill({
       json: {
@@ -77,6 +78,7 @@ test("an open comparison changes its conclusion when the observation crosses the
   await expect(
     page.getByRole("heading", { name: "AH could pay more", exact: true }),
   ).toBeVisible();
+  await page.clock.setFixedTime(new Date("2026-11-14T12:00:01.100Z"));
   await page.clock.fastForward(1100);
   await expect(
     page.getByRole("heading", { name: "Refresh the AH quote", exact: true }),

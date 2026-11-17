@@ -62,6 +62,7 @@ test("phone: navigation, isolated profiles, inventory, batch and accessible layo
     await page.setViewportSize({ width, height: 844 });
     for (const hash of [
       "scanner",
+      "disenchant",
       "sell",
       "opportunities",
       "leveling",
@@ -124,6 +125,7 @@ test("every screen passes accessibility checks on phone and desktop", async ({
     await page.setViewportSize({ width, height: 844 });
     for (const hash of [
       "scanner",
+      "disenchant",
       "sell",
       "opportunities",
       "leveling",

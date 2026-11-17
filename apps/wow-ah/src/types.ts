@@ -129,6 +129,7 @@ export type SavedState = {
   characters: Character[];
 };
 export type MarketData = {
+  deScan?: import("./market/disenchant").DEScan;
   quotes: Record<number, Quote>;
   imported: Recipe[];
   deItems: Item[];

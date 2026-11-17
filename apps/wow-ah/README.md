@@ -6,6 +6,10 @@ Standalone React/TypeScript app at `/gw2-hero-atlas/wow-ah/`, for **EU RP non-Pv
 
 The default [Market scan](https://stiflerorflow.github.io/gw2-hero-atlas/wow-ah/#scanner) discovers provider-returned listing leads independently of the recipe catalogue. Cards lead with lowest asks, median asks, listed stock, observation age and explicitly inferred activity. Resale assumptions and potential profits live inside the optional calculator. The broad default includes zero/unknown activity and does not hide leads because a profit model cannot evaluate them. [Evidence policy](EVIDENCE_POLICY.md), [scanner behavior](SCANNER.md).
 
+## Disenchant scanning
+
+[Disenchant](https://stiflerorflow.github.io/gw2-hero-atlas/wow-ah/#disenchant) is a separate, character-independent scan. Its computed Top 10 uses positive expected profit, available quoted stock, complete material quotes and checked or reference-matched loot tables. Each card exposes strict profit odds, loss range, exclusive drops, material prices and the full after-fee arithmetic. All candidates retains incomplete, unverified and negative scenarios. Asking prices, modeled count odds and inferred demand remain explicit assumptions. [Coverage, table sources, calculations and validation](DISENCHANT_SCANNER.md).
+
 ## Use
 
 1. Start with **Market scan** for returned listing evidence, or **Sell or vendor** to inspect any item. A lead is something to investigate, not proof of a profitable sale. Search within Market scan filters returned leads; Sell/vendor searches the paged item catalogue.

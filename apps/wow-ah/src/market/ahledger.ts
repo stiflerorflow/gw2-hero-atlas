@@ -405,7 +405,7 @@ export function purgeExpired(m: MarketData): MarketData {
   );
   const hasExpiredCatalog =
     m.expiresAt <= now &&
-    (m.imported.length || m.deItems.length || m.deals?.length);
+    (m.imported.length || m.deItems.length || m.deals?.length || m.deScan);
   if (!hasExpiredQuote && !hasExpiredCatalog) return m;
   return {
     ...m,
@@ -423,6 +423,7 @@ export function purgeExpired(m: MarketData): MarketData {
           return [id, q];
         }),
     ),
+    deScan: m.expiresAt > now ? m.deScan : undefined,
     imported: m.expiresAt > Date.now() ? m.imported : [],
     deItems: m.expiresAt > Date.now() ? m.deItems : [],
     deals: m.expiresAt > Date.now() ? m.deals : [],

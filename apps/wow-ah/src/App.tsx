@@ -1,3 +1,5 @@
+import { DisenchantScanner } from "./components/DisenchantScanner";
+import { loadDisenchantScan } from "./market/disenchant";
 import { ROUTES, pageFromHash } from "./state/routes";
 import { BatchGuide } from "./components/BatchGuide";
 import { mergeHistoryQuote } from "./market/historyMerge";
@@ -527,6 +529,7 @@ function App() {
     document.title =
       ({
         scanner: "Market scan",
+        disenchant: "Disenchant scanner",
         sell: "Sell or vendor",
         opportunities: "Character plan",
         leveling: "Leveling",
@@ -588,7 +591,9 @@ function App() {
       const fresh =
         page === "scanner"
           ? await loadScanner(scanFilters, controller.signal)
-          : await loadMarket(allWatches, controller.signal);
+          : page === "disenchant"
+            ? await loadDisenchantScan(controller.signal)
+            : await loadMarket(allWatches, controller.signal);
       if (!controller.signal.aborted)
         setMarket((old) => mergeHistory(fresh, old));
     } catch (e) {
@@ -600,16 +605,27 @@ function App() {
     } finally {
       if (!controller.signal.aborted) setLoading(false);
     }
-  }, [allWatches.join(","), page === "scanner", page === "sell", scanFilters]);
+  }, [
+    allWatches.join(","),
+    page === "scanner",
+    page === "sell",
+    page === "disenchant",
+    scanFilters,
+  ]);
   useEffect(() => {
     setMarket(unknownMarket());
-  }, [page === "scanner", page === "sell", scanFilters]);
+  }, [page === "scanner", page === "sell", page === "disenchant", scanFilters]);
   useEffect(() => {
     const deadlines = Object.values(market.quotes).flatMap((q) => [
       q.expiresAt,
       ...(q.history ? [q.historyExpiresAt ?? q.expiresAt] : []),
     ]);
-    if (market.imported.length || market.deItems.length || market.deals?.length)
+    if (
+      market.imported.length ||
+      market.deItems.length ||
+      market.deals?.length ||
+      market.deScan
+    )
       deadlines.push(market.expiresAt);
     const times = deadlines.filter(Number.isFinite);
     if (!times.length) return;
@@ -996,14 +1012,7 @@ function App() {
         if (
           destination &&
           destination !== page &&
-          [
-            "scanner",
-            "sell",
-            "opportunities",
-            "leveling",
-            "batch",
-            "watchlist",
-          ].includes(destination)
+          ROUTES.some(([id]) => id === destination)
         )
           explicitRoute.current = destination;
       }}
@@ -1028,7 +1037,7 @@ function App() {
             <small>Auction prices and profession planning.</small>
           </span>
         </a>
-        {["scanner", "sell"].includes(page) ? (
+        {["scanner", "sell", "disenchant"].includes(page) ? (
           <p className="scanner-identity">
             Market-wide scanning
             <br />
@@ -1112,6 +1121,14 @@ function App() {
             watch={watch}
             character={c.name}
             load={(id) => fetchHistory(id)}
+          />
+        </div>
+        <div hidden={page !== "disenchant"}>
+          <DisenchantScanner
+            active={page === "disenchant"}
+            market={market}
+            loading={loading}
+            copy={copy}
           />
         </div>
         {page === "opportunities" && (

@@ -2090,3 +2090,107 @@ main:focus {
 .batch-row [data-deposit] {
   min-width: 0;
 }
+/* Standalone disenchant scan: a few comparable figures, with the full math on demand. */
+.de-controls {
+  margin-bottom: 16px;
+}
+.de-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.de-card {
+  min-width: 0;
+  margin: 0;
+}
+.de-card h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+.de-card h3 {
+  font-size: 17px;
+  margin: 20px 0 10px;
+}
+.de-numbers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.de-numbers div {
+  min-width: 0;
+}
+.de-numbers dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.de-numbers dd {
+  margin: 5px 0 0;
+  font-size: 21px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.de-card .row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 16px 0;
+}
+.de-card > details {
+  border-top: 1px solid var(--line);
+}
+.de-outcomes {
+  padding-left: 24px;
+}
+.de-outcomes li {
+  padding: 8px 0;
+}
+.de-material {
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.de-material h4 {
+  margin-bottom: 8px;
+}
+.de-material a {
+  display: inline-block;
+  margin-top: 10px;
+}
+.de-card > details .form-grid {
+  grid-template-columns: 1fr;
+}
+.de-card p,
+.de-card li {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .de-grid,
+  .de-controls > .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .de-numbers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .de-numbers > div:last-child {
+    grid-column: 1/-1;
+  }
+}
+.de-controls > .form-grid {
+  margin: 0 0 12px;
+}
+.de-controls > .button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.de-controls button[aria-pressed="true"] {
+  border-color: var(--green);
+  background: #e9efdf;
+  font-weight: 650;
+}
+.de-rank {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
